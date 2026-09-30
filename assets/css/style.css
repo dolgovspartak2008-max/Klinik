@@ -507,6 +507,9 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .phone-card b { font-size: clamp(22px, 2.6vw, 30px); font-weight: 800; letter-spacing: -.01em; }
 .phone-card__arrow { margin-left: auto; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; background: #fff; color: var(--indigo-900); font-size: 18px; transition: transform .4s var(--ease-out); }
 .phone-card:hover .phone-card__arrow { transform: translateX(4px) rotate(-20deg); }
+.phone-line { justify-self: start; padding: 4px 6px; font-size: 15px; color: var(--ink-soft); font-weight: 600; transition: color .2s; }
+.phone-line b { color: var(--indigo-900); }
+.phone-line:hover { color: var(--indigo-700); }
 .is-soon { opacity: .55; }
 .is-soon .social__name::after { content: "скоро"; display: block; font-size: 11px; font-weight: 600; color: var(--ink-soft); text-align: center; }
 

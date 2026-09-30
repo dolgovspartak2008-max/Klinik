@@ -34,7 +34,7 @@
       });
       return;
     }
-    if (key === "phone") {
+    if (key === "phone" || key === "phoneDoctor") {
       a.href = "tel:" + val.replace(/[^\d+]/g, "");
     } else {
       a.href = val;

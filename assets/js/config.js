@@ -9,14 +9,16 @@
  *   salavatMap / ufaMap: ссылка на Яндекс Карты или 2ГИС
  */
 window.SITE_CONTACTS = {
-  phone: "+79173816478",
-  phoneLabel: "8 (917) 381-64-78",
+  phone: "+79930440619",            // номер для записи — на всех кнопках «Позвонить»
+  phoneLabel: "8 (993) 044-06-19",
+  phoneDoctor: "+79173816478",      // номер врача
+  phoneDoctorLabel: "8 (917) 381-64-78",
   whatsapp: "https://api.whatsapp.com/send?phone=79173816478",
   telegram: "",
   vk: "https://vk.ru/id26910903",
   instagram: "https://www.instagram.com/fiziotera.ufa/",
   instagramDoctor: "https://www.instagram.com/dr.gorshechnikov/",
-  max: "",
+  max: "https://max.ru/u/f9LHodD0cOJ5qM7mAcu-cj0ZwwqdU4QYS6IZzzRQHWl3sGrnLaILVVGCSmU",
   salavatAddress: "",
   salavatMap: "",
   ufaAddress: "",
