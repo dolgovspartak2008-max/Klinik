@@ -14,7 +14,7 @@ window.SITE_CONTACTS = {
   phoneDoctor: "+79173816478",      // номер врача
   phoneDoctorLabel: "8 (917) 381-64-78",
   whatsapp: "https://api.whatsapp.com/send?phone=79173816478",
-  telegram: "",
+  telegram: "https://t.me/DrGorshechnikov",
   vk: "https://vk.ru/id26910903",
   instagram: "https://www.instagram.com/fiziotera.ufa/",
   instagramDoctor: "https://www.instagram.com/dr.gorshechnikov/",
