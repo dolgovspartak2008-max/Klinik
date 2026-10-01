@@ -105,7 +105,7 @@
     body.style.overflow = open ? "hidden" : "";
     doc.documentElement.classList.toggle("menu-lock", open);
     var tc = doc.querySelector('meta[name="theme-color"]');
-    if (tc) tc.setAttribute("content", open ? "#06134f" : "#0b1f7a");
+    if (tc) tc.setAttribute("content", open ? "#050b24" : "#0b1742");
   }
   burger.addEventListener("click", function () { setMenu(!nav.classList.contains("is-open")); });
   nav.querySelectorAll("a, button").forEach(function (el) {
@@ -213,6 +213,61 @@
     el.textContent = m ? "@" + m[1] : "скоро появится";
   });
   igModal.querySelectorAll("a").forEach(function (a) { a.addEventListener("click", function () { if (a.target === "_blank") closeModal(); }); });
+
+  /* ---------- Подробнее об услуге ---------- */
+  var INFO = window.SERVICES_INFO || {}, METHODS = window.SERVICE_METHODS || {};
+  var svcModal = doc.getElementById("svcModal");
+  function el(tag, cls, text) { var e = doc.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function openInfo(id) {
+    var d = INFO[id]; if (!d || !svcModal) return;
+    var img = doc.getElementById("svcImg"); img.src = d.img; img.alt = d.title;
+    doc.getElementById("svcKind").textContent = d.kind;
+    doc.getElementById("svcTitle").textContent = d.title;
+    doc.getElementById("svcLead").textContent = d.lead;
+    var pr = doc.getElementById("svcPrices"); pr.innerHTML = "";
+    (d.prices || []).forEach(function (p) {
+      var row = el("div", "svc-modal__price");
+      row.appendChild(el("span", null, p[0]));
+      var right = el("span", "svc-modal__price-val"); right.appendChild(el("b", null, p[1]));
+      if (p[2]) right.appendChild(el("small", "time", p[2]));
+      row.appendChild(right); pr.appendChild(row);
+    });
+    pr.hidden = !(d.prices && d.prices.length);
+    var gift = doc.getElementById("svcGift"); gift.textContent = d.gift || ""; gift.hidden = !d.gift;
+    var ul = doc.getElementById("svcFor"); ul.innerHTML = "";
+    (d.forWhat || []).forEach(function (t) { ul.appendChild(el("li", null, t)); });
+    doc.getElementById("svcHow").textContent = d.how;
+    var mw = doc.getElementById("svcMethodsWrap"), ml = doc.getElementById("svcMethods");
+    ml.innerHTML = "";
+    if (d.methods) {
+      doc.getElementById("svcMethodsNote").textContent = d.methodsNote || "";
+      d.methods.forEach(function (k) {
+        var m = METHODS[k]; if (!m) return;
+        var li = el("li"); li.appendChild(el("b", null, m[0])); li.appendChild(el("span", null, m[1])); ml.appendChild(li);
+      });
+    }
+    mw.hidden = !d.methods;
+    doc.getElementById("svcCta").setAttribute("data-service", d.service || "promo");
+    svcModal.querySelector(".modal__card").scrollTop = 0;
+    openModal(svcModal);
+  }
+  doc.querySelectorAll(".price-card[data-info]").forEach(function (card) {
+    var id = card.getAttribute("data-info");
+    var cta = card.querySelector(".price-card__cta");
+    var row = el("div", "price-card__actions");
+    var more = el("button", "btn btn--outline price-card__more", "Подробнее");
+    more.type = "button";
+    cta.parentNode.insertBefore(row, cta);
+    row.appendChild(more); row.appendChild(cta);
+    more.addEventListener("click", function () { openInfo(id); });
+    card.addEventListener("click", function (e) {
+      if (e.target.closest("button, a")) return;
+      openInfo(id);
+    });
+  });
+  doc.querySelectorAll("[data-info-open]").forEach(function (b) {
+    b.addEventListener("click", function () { openInfo(b.getAttribute("data-info-open")); });
+  });
 
   /* ---------- Заявки ---------- */
   var L = window.SITE_LEADS || {};

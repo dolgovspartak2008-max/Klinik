@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Физиотера в Уфе — бесплатная консультация и процедура</title>
   <meta name="description" content="Физиотера — клиника физиотерапии в Уфе, ул. Энтузиастов, 16: лечение боли в спине и суставах, резорбция грыжи, ударно-волновая терапия, магнит, хиджама, иглоукалывание. Бесплатная консультация и процедура для новых пациентов." />
-  <meta name="theme-color" content="#0b1f7a" />
+  <meta name="theme-color" content="#0b1742" />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="ru_RU" />
   <meta property="og:title" content="Физиотера, Уфа — консультация и процедура бесплатно" />
@@ -19,9 +19,9 @@
   <link rel="stylesheet" href="assets/css/style.css" />
   <style>
     /* Критичные стили: пока идёт заставка, сайт под ней не виден (важно для телефонов) */
-    html { background: #06134f; }
+    html { background: #050b24; }
     body.is-loading > :not(.intro) { visibility: hidden; }
-    body.is-loading { background: #06134f; }
+    body.is-loading { background: #050b24; }
   </style>
   <noscript><style>body.is-loading > * { visibility: visible !important; } .intro { display: none !important; } body.is-loading { overflow: auto; background: #fff; }</style></noscript>
   <script>
@@ -234,7 +234,7 @@
 
         <div class="price-grid" id="priceGrid">
           <!-- Комплексы -->
-          <article class="price-card" data-kind="complex" data-reveal>
+          <article data-info="spina3" class="price-card" data-kind="complex" data-reveal>
             <div class="price-card__media"><img src="assets/img/svc-spina3.jpg" alt="Магнитотерапия и тейпирование спины" loading="lazy" width="900" height="675" /><span class="price-card__badge">Комплекс</span></div>
             <div class="price-card__body">
               <h3>Здоровая спина 3.0</h3>
@@ -245,7 +245,7 @@
             </div>
           </article>
 
-          <article class="price-card price-card--hit" data-kind="complex" data-reveal>
+          <article data-info="spina57" class="price-card price-card--hit" data-kind="complex" data-reveal>
             <div class="price-card__media"><img src="assets/img/svc-spina57.jpg" alt="Вакуумно-градиентная терапия и магнит на спине" loading="lazy" width="900" height="675" /><span class="price-card__badge">Популярное</span></div>
             <div class="price-card__body">
               <h3>Здоровая спина 5.0 / 7.0</h3>
@@ -258,7 +258,7 @@
             </div>
           </article>
 
-          <article class="price-card" data-kind="complex" data-reveal>
+          <article data-info="sustavy" class="price-card" data-kind="complex" data-reveal>
             <div class="price-card__media">
               <video src="assets/video/laser.mp4" poster="assets/img/svc-sustavy.jpg" muted loop playsinline preload="none" aria-label="Процедура высокоинтенсивной лазерной терапии" data-autoplay></video>
               <span class="price-card__badge">Комплекс</span>
@@ -272,7 +272,7 @@
             </div>
           </article>
 
-          <article class="price-card" data-kind="complex" data-reveal>
+          <article data-info="gryzha" class="price-card" data-kind="complex" data-reveal>
             <div class="price-card__media"><img src="assets/img/svc-gryzha.jpg" alt="Врач изучает МРТ поясничного отдела позвоночника" loading="lazy" width="900" height="675" /><span class="price-card__badge">Комплекс</span></div>
             <div class="price-card__body">
               <h3>Резорбция грыжи</h3>
@@ -283,7 +283,7 @@
           </article>
 
           <!-- Отдельные процедуры -->
-          <article class="price-card" data-kind="single" data-reveal>
+          <article data-info="uvt" class="price-card" data-kind="single" data-reveal>
             <div class="price-card__media"><img src="assets/img/svc-uvt.jpg" alt="Ударно-волновая терапия стопы" loading="lazy" width="900" height="675" /><span class="price-card__badge price-card__badge--soft">Процедура</span></div>
             <div class="price-card__body">
               <h3>Ударно-волновая терапия</h3>
@@ -293,7 +293,7 @@
             </div>
           </article>
 
-          <article class="price-card" data-kind="single" data-reveal>
+          <article data-info="magnit" class="price-card" data-kind="single" data-reveal>
             <div class="price-card__media"><img src="assets/img/svc-magnit.jpg" alt="Магнитотерапия высокой интенсивности" loading="lazy" width="900" height="675" /><span class="price-card__badge price-card__badge--soft">Процедура</span></div>
             <div class="price-card__body">
               <h3>Магнит высокой интенсивности</h3>
@@ -303,7 +303,7 @@
             </div>
           </article>
 
-          <article class="price-card" data-kind="single" data-reveal>
+          <article data-info="vakuum" class="price-card" data-kind="single" data-reveal>
             <div class="price-card__media"><img src="assets/img/svc-vakuum.jpg" alt="Вакуумно-градиентная терапия" loading="lazy" width="900" height="675" /><span class="price-card__badge price-card__badge--soft">Процедура</span></div>
             <div class="price-card__body">
               <h3>Вакуумно-градиентная терапия</h3>
@@ -313,7 +313,7 @@
             </div>
           </article>
 
-          <article class="price-card" data-kind="single" data-reveal>
+          <article data-info="hijama" class="price-card" data-kind="single" data-reveal>
             <div class="price-card__media"><img src="assets/img/svc-hijama.jpg" alt="Хиджама — банки на спине пациента" loading="lazy" width="900" height="675" /><span class="price-card__badge price-card__badge--soft">Процедура</span></div>
             <div class="price-card__body">
               <h3>Хиджама</h3>
@@ -324,7 +324,7 @@
             </div>
           </article>
 
-          <article class="price-card" data-kind="single" data-reveal>
+          <article data-info="iglo" class="price-card" data-kind="single" data-reveal>
             <div class="price-card__media"><img src="assets/img/svc-iglo.jpg" alt="Иглоукалывание спины" loading="lazy" width="900" height="675" /><span class="price-card__badge price-card__badge--soft">Процедура</span></div>
             <div class="price-card__body">
               <h3>Иглоукалывание</h3>
@@ -343,9 +343,9 @@
             <span class="eyebrow">Дополнительно</span>
             <h3>Дополнительные методы</h3>
             <ul class="extra__list">
-              <li>Мануальная терапия</li><li>Ультразвук</li><li>Перкуссионная терапия</li><li>Тейпирование</li>
+              <li><button type="button" data-info-open="manual">Мануальная терапия</button></li><li><button type="button" data-info-open="uzi">Ультразвук</button></li><li><button type="button" data-info-open="perkussia">Перкуссионная терапия</button></li><li><button type="button" data-info-open="teip">Тейпирование</button></li>
             </ul>
-            <p>Подбор методик осуществляется специалистом.</p>
+            <p>Нажмите на метод, чтобы узнать подробнее. Подбор методик осуществляется специалистом.</p>
             <button class="btn btn--outline" data-open-booking data-service="Консультация по методикам" type="button">Узнать подробнее <span class="btn__arrow" aria-hidden="true">→</span></button>
           </div>
         </div>
@@ -587,9 +587,36 @@
     </div>
   </div>
 
+  <!-- ===== Подробнее об услуге ===== -->
+  <div class="modal modal--svc" id="svcModal" role="dialog" aria-modal="true" aria-labelledby="svcTitle" hidden>
+    <div class="modal__backdrop" data-close-modal></div>
+    <div class="modal__card svc-modal">
+      <button class="modal__close" type="button" data-close-modal aria-label="Закрыть">×</button>
+      <div class="svc-modal__media"><img id="svcImg" src="" alt="" /><span class="price-card__badge" id="svcKind"></span></div>
+      <div class="svc-modal__body">
+        <h2 id="svcTitle"></h2>
+        <p class="svc-modal__lead" id="svcLead"></p>
+        <div class="svc-modal__prices" id="svcPrices"></div>
+        <p class="price-card__gift" id="svcGift" hidden></p>
+        <h3>Кому подходит</h3>
+        <ul class="svc-modal__list" id="svcFor"></ul>
+        <h3>Как проходит</h3>
+        <p id="svcHow"></p>
+        <div id="svcMethodsWrap" hidden>
+          <h3>Состав</h3>
+          <p class="svc-modal__note" id="svcMethodsNote"></p>
+          <ul class="svc-modal__methods" id="svcMethods"></ul>
+        </div>
+        <p class="svc-modal__warn">Имеются противопоказания. Необходима консультация специалиста.</p>
+        <button class="btn btn--primary btn--lg svc-modal__cta" id="svcCta" data-open-booking type="button">Записаться <span class="btn__arrow" aria-hidden="true">→</span></button>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="assets/js/config.js"></script>
+  <script src="assets/js/services-info.js"></script>
   <script src="assets/js/main.js"></script>
 </body>
 </html>

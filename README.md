@@ -16,7 +16,8 @@ index.html            — вся страница
 politika.html         — политика конфиденциальности (152-ФЗ)
 assets/css/style.css  — стили (белый + индиго, акцент — бирюзовый из логотипа)
 assets/js/config.js   — КОНТАКТЫ и настройки заявок
-assets/js/main.js     — интро, меню, фильтр услуг, окна записи и Instagram, отправка формы
+assets/js/main.js     — интро, меню, фильтр услуг, окна записи, «Подробнее» и Instagram, отправка формы
+assets/js/services-info.js — тексты описаний услуг (окно «Подробнее»)
 assets/img/           — логотип (logo.png, favicon.png, apple-touch-icon.png) и фото (hero, promo, svc-*, case-*, center)
 assets/video/laser.mp4 — видео лазерной процедуры (карточка «Здоровые суставы»)
 api/lead.js           — приём заявок → WhatsApp (GREEN-API) и/или Telegram
