@@ -3,14 +3,22 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Физиотера в Уфе — бесплатная консультация и процедура</title>
-  <meta name="description" content="Физиотера — клиника физиотерапии в Уфе, ул. Энтузиастов, 16: лечение боли в спине и суставах, резорбция грыжи, ударно-волновая терапия, магнит, хиджама, иглоукалывание. Бесплатная консультация и процедура для новых пациентов." />
+  <title>Физиотера — клиника лечения и реабилитации в Уфе</title>
+  <meta name="description" content="Физиотера — клиника лечения и реабилитации в Уфе, ул. Энтузиастов, 16. Лечение боли в спине и суставах, резорбция грыжи, ударно-волновая терапия, магнит, лазер, массаж. Бесплатная консультация и процедура для новых пациентов." />
   <meta name="theme-color" content="#0b1742" />
+  <link rel="canonical" href="https://clinic-alpha-one.vercel.app/" />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="ru_RU" />
-  <meta property="og:title" content="Физиотера, Уфа — консультация и процедура бесплатно" />
-  <meta property="og:description" content="Врач-физиотерапевт, современное оборудование, комплексные программы для спины и суставов. Запишитесь на бесплатный первичный приём." />
-  <meta property="og:image" content="assets/img/hero.jpg" />
+  <meta property="og:site_name" content="Физиотера" />
+  <meta property="og:url" content="https://clinic-alpha-one.vercel.app/" />
+  <meta property="og:title" content="Уфа · Клиника Физиотера" />
+  <meta property="og:description" content="Клиника лечения и реабилитации в Уфе, ул. Энтузиастов, 16. Бесплатная консультация и процедура для новых пациентов." />
+  <meta property="og:image" content="https://clinic-alpha-one.vercel.app/assets/img/og.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Уфа · Клиника Физиотера" />
+  <meta name="twitter:image" content="https://clinic-alpha-one.vercel.app/assets/img/og.jpg" />
   <link rel="icon" href="assets/img/favicon.png" type="image/png" />
   <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -40,7 +48,7 @@
     <div class="intro__center">
       <div class="intro__logo">
         <svg class="intro__ring-svg" viewBox="0 0 120 120" fill="none" aria-hidden="true"><circle class="intro__ring" cx="60" cy="60" r="57" /></svg>
-        <img class="intro__img" src="assets/img/logo.png" alt="" width="320" height="320" fetchpriority="high" />
+        <img class="intro__img" src="assets/img/logo-mark.svg" alt="" width="320" height="320" fetchpriority="high" />
       </div>
       <div class="intro__title">
         <span class="intro__word">Физиотера</span>
@@ -57,8 +65,8 @@
   <header class="header" id="header">
     <div class="container header__inner">
       <a href="#top" class="logo" aria-label="Физиотера — на главную">
-        <img class="logo__mark" src="assets/img/logo.png" alt="" width="44" height="44" />
-        <span class="logo__text">Физиотера<small>Уфа</small></span>
+        <img class="logo__mark" src="assets/img/logo-mark.svg" alt="" width="44" height="44" />
+        <span class="logo__text">Физиотера<small>Клиника лечения и&nbsp;реабилитации</small></span>
       </a>
 
       <nav class="nav" id="nav" aria-label="Основная навигация">
@@ -66,6 +74,7 @@
         <a href="#promo" class="nav__link nav__link--hot">Акция</a>
         <a href="#services" class="nav__link">Услуги и цены</a>
         <a href="#cases" class="nav__link">С чем помогаем</a>
+        <a href="#team" class="nav__link">Специалисты</a>
         <a href="#center" class="nav__link">О центре</a>
         <a href="#contacts" class="nav__link">Контакты</a>
         <button class="btn btn--primary nav__cta-mobile" data-open-booking data-service="promo" type="button">Записаться бесплатно <span class="btn__arrow" aria-hidden="true">→</span></button>
@@ -158,6 +167,35 @@
           </div>
         </div>
 
+      </div>
+    </section>
+
+    <!-- ===== Видео: что взять на приём ===== -->
+    <section class="section prep" id="prep">
+      <div class="container prep__grid">
+        <div class="prep__video" data-reveal>
+          <video id="prepVideo" src="assets/video/priem.mp4" poster="assets/img/priem-poster.jpg" muted playsinline loop preload="metadata" aria-label="Главный врач рассказывает, что взять с собой на приём"></video>
+          <button class="prep__play" id="prepPlay" type="button" aria-label="Смотреть видео со звуком">
+            <span class="prep__play-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
+            <span>Смотреть со звуком</span>
+          </button>
+        </div>
+        <div class="prep__text" data-reveal>
+          <span class="eyebrow">Рекомендуем посмотреть</span>
+          <h2 class="section__title">Что взять с&nbsp;собой на&nbsp;приём</h2>
+          <p class="section__lead">Главный врач Андрей Сергеевич за&nbsp;20&nbsp;секунд рассказывает, какие документы помогут разобраться в&nbsp;причине боли уже на&nbsp;первом визите.</p>
+          <ol class="prep__list">
+            <li><span>1</span><b>Анализы</b></li>
+            <li><span>2</span><b>МРТ</b></li>
+            <li><span>3</span><b>Рентген</b></li>
+            <li><span>4</span><b>УЗИ</b></li>
+          </ol>
+          <p class="prep__note">Нет снимков или не&nbsp;знаете, что нужно именно вам? Напишите нам — подскажем перед визитом.</p>
+          <div class="prep__actions">
+            <button class="btn btn--primary btn--lg" data-open-booking data-service="promo" type="button">Записаться на приём <span class="btn__arrow" aria-hidden="true">→</span></button>
+            <a class="btn btn--outline btn--lg" data-contact="whatsapp" href="#contacts">Спросить в WhatsApp</a>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -302,7 +340,7 @@
           </article>
 
           <article data-info="magnit" class="price-card" data-kind="single" data-reveal>
-            <div class="price-card__media"><img src="assets/img/svc-magnit.jpg" alt="Магнитотерапия высокой интенсивности" loading="lazy" width="900" height="675" /><span class="price-card__badge price-card__badge--soft">Процедура</span></div>
+            <div class="price-card__media"><img src="assets/img/svc-magnit-doc.jpg" alt="Главный врач у аппарата магнитотерапии высокой интенсивности" loading="lazy" width="900" height="675" /><span class="price-card__badge price-card__badge--soft">Процедура</span></div>
             <div class="price-card__body">
               <h3>Магнит высокой интенсивности</h3>
               <div class="price-card__price"><small>1 процедура</small><b>1&nbsp;800&nbsp;₽</b><span class="time">20 минут</span></div>
@@ -357,7 +395,7 @@
           </article>
 
           <article data-info="emsella" class="price-card" data-kind="single" data-reveal>
-            <div class="price-card__media price-card__media--plain"><img src="assets/img/logo.png" alt="" loading="lazy" width="320" height="320" /><span class="price-card__plain-name">EMSELLA</span><span class="price-card__badge price-card__badge--soft">Процедура</span></div>
+            <div class="price-card__media price-card__media--plain"><img src="assets/img/logo-mark.svg" alt="" loading="lazy" width="320" height="320" /><span class="price-card__plain-name">EMSELLA</span><span class="price-card__badge price-card__badge--soft">Процедура</span></div>
             <div class="price-card__body">
               <h3>Кресло Emsella</h3>
               <div class="price-card__price"><small>1 процедура</small><b>1&nbsp;500&nbsp;₽</b><span class="time">20 минут</span></div>
@@ -369,9 +407,10 @@
         </div>
 
         <div class="mass" data-kind-block="massage" data-reveal>
+          <div class="mass__photo"><img src="assets/img/mass-main.jpg" alt="Массажист Данил проводит массаж спины" loading="lazy" width="1000" height="667" /><span class="mass__promo">−20% на&nbsp;массаж у&nbsp;Владислава до&nbsp;конца октября</span></div>
           <div class="mass__head">
             <div><span class="eyebrow">Массаж</span><h3>Массаж</h3></div>
-            <p>Классический массаж с&nbsp;элементами фасциального и&nbsp;глубокого, с&nbsp;проработкой триггерных точек. Абонементы на&nbsp;5 и&nbsp;10 процедур, к&nbsp;абонементу на&nbsp;10&nbsp;— вакуумно-градиентная терапия в&nbsp;подарок.</p>
+            <p>Классический массаж с&nbsp;элементами фасциального и&nbsp;глубокого, с&nbsp;проработкой триггерных точек. Абонементы на&nbsp;5 и&nbsp;10 процедур — выгода до&nbsp;5&nbsp;385&nbsp;₽, к&nbsp;абонементу на&nbsp;10&nbsp;— вакуумно-градиентная терапия в&nbsp;подарок.</p>
           </div>
           <div class="mass__list">
             <a class="mass__row" href="usluga.html?s=massage_body"><span class="mass__name">Массаж всего тела<small>60 / 90 минут</small></span><b>от 2&nbsp;950&nbsp;₽</b><span class="mass__arrow" aria-hidden="true">→</span></a>
@@ -381,6 +420,7 @@
             <a class="mass__row" href="usluga.html?s=massage_pregnant"><span class="mass__name">Массаж для беременных<small>60 минут</small></span><b>3&nbsp;500&nbsp;₽</b><span class="mass__arrow" aria-hidden="true">→</span></a>
             <a class="mass__row" href="usluga.html?s=massage_cellulite"><span class="mass__name">Антицеллюлитный массаж<small>60 минут</small></span><b>3&nbsp;000&nbsp;₽</b><span class="mass__arrow" aria-hidden="true">→</span></a>
             <a class="mass__row" href="usluga.html?s=massage_sport"><span class="mass__name">Спортивный массаж<small>60 минут</small></span><b>3&nbsp;290&nbsp;₽</b><span class="mass__arrow" aria-hidden="true">→</span></a>
+            <a class="mass__row" href="usluga.html?s=massage_kids"><span class="mass__name">Детский массаж<small>40 минут</small></span><b>2&nbsp;000&nbsp;₽</b><span class="mass__arrow" aria-hidden="true">→</span></a>
           </div>
         </div>
 
@@ -481,6 +521,57 @@
       </div>
     </section>
 
+    <!-- ===== Специалисты ===== -->
+    <section class="section team" id="team">
+      <div class="container">
+        <div class="section__head">
+          <div data-reveal>
+            <span class="eyebrow">Специалисты</span>
+            <h2 class="section__title">Наши специалисты</h2>
+            <p class="section__lead">Врачи-физиотерапевты и&nbsp;массажисты клиники «Физиотера». Первичную консультацию проводит врач — он подберёт методики и&nbsp;специалиста.</p>
+          </div>
+        </div>
+        <div class="team__grid">
+          <article class="team-card" data-reveal>
+            <div class="team-card__photo"><img src="assets/img/team/andrey-s.jpg" alt="Врач-физиотерапевт Андрей Сергеевич" loading="lazy" width="900" height="675" /></div>
+            <div class="team-card__body">
+              <h3>Андрей Сергеевич</h3>
+              <div class="team-card__tags"><span class="team-card__tag team-card__tag--role">Главный врач</span><span class="team-card__tag team-card__tag--role">Физиотерапевт</span><span class="team-card__tag">Стаж более 10 лет</span></div>
+              <ul class="team-card__list"><li>Проводит консультации и&nbsp;определяет подходящую тактику лечения</li></ul>
+              <button class="btn btn--outline team-card__cta" data-open-booking data-service="promo" type="button">Записаться <span class="btn__arrow" aria-hidden="true">→</span></button>
+            </div>
+          </article>
+          <article class="team-card" data-reveal>
+            <div class="team-card__photo"><img src="assets/img/team/vladislav-e.jpg" alt="Физиотерапевт Владислав Эдуардович" loading="lazy" width="760" height="570" /></div>
+            <div class="team-card__body">
+              <h3>Владислав Эдуардович</h3>
+              <div class="team-card__tags"><span class="team-card__tag team-card__tag--role">Физиотерапевт</span><span class="team-card__tag">Стаж более 6 лет</span></div>
+              <ul class="team-card__list"><li><b>Основное направление:</b> физиотерапевтические методы восстановления и&nbsp;лечения</li><li>Поможет подобрать подходящие методы физиотерапии после оценки вашего состояния</li></ul>
+              <button class="btn btn--outline team-card__cta" data-open-booking data-service="promo" type="button">Записаться <span class="btn__arrow" aria-hidden="true">→</span></button>
+            </div>
+          </article>
+          <article class="team-card" data-reveal>
+            <div class="team-card__photo"><img src="assets/img/team/vladislav.jpg" alt="Массажист Владислав" loading="lazy" width="420" height="315" /><span class="team-card__promo">−20% на&nbsp;массаж до&nbsp;конца октября</span></div>
+            <div class="team-card__body">
+              <h3>Владислав</h3>
+              <div class="team-card__tags"><span class="team-card__tag team-card__tag--role">Массажист</span><span class="team-card__tag">Стаж более 5 лет</span></div>
+              <ul class="team-card__list"><li>Массажные техники для работы с&nbsp;мышечным напряжением и&nbsp;дискомфортом</li></ul>
+              <button class="btn btn--outline team-card__cta" data-open-booking data-service="Массаж всего тела" type="button">Записаться <span class="btn__arrow" aria-hidden="true">→</span></button>
+            </div>
+          </article>
+          <article class="team-card" data-reveal>
+            <div class="team-card__photo"><img src="assets/img/team/danil.jpg" alt="Массажист Данил" loading="lazy" width="450" height="338" /></div>
+            <div class="team-card__body">
+              <h3>Данил</h3>
+              <div class="team-card__tags"><span class="team-card__tag team-card__tag--role">Массажист</span><span class="team-card__tag">Стаж более 3 лет</span></div>
+              <ul class="team-card__list"><li>Специалист по массажным техникам для восстановления и&nbsp;расслабления</li></ul>
+              <button class="btn btn--outline team-card__cta" data-open-booking data-service="Массаж всего тела" type="button">Записаться <span class="btn__arrow" aria-hidden="true">→</span></button>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
     <!-- ===== О центре ===== -->
     <section class="centers" id="center">
       <div class="centers__panel">
@@ -548,8 +639,8 @@
       <div class="footer__grid">
         <div class="footer__brand">
           <a href="#top" class="logo logo--footer" aria-label="Наверх">
-            <img class="logo__mark" src="assets/img/logo.png" alt="" width="44" height="44" />
-            <span class="logo__text">Физиотера<small>Уфа</small></span>
+            <img class="logo__mark" src="assets/img/logo-mark.svg" alt="" width="44" height="44" />
+            <span class="logo__text">Физиотера<small>Клиника лечения и&nbsp;реабилитации</small></span>
           </a>
           <p class="footer__tagline">Клиника лечения и&nbsp;реабилитации</p>
         </div>

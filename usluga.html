@@ -6,6 +6,8 @@
   <title>Услуга — Физиотера, Уфа</title>
   <meta name="description" content="Описание услуги, цены и запись — клиника Физиотера, Уфа, ул. Энтузиастов, 16." />
   <meta name="theme-color" content="#0b1742" />
+  <meta property="og:site_name" content="Физиотера" />
+  <meta property="og:image" content="https://clinic-alpha-one.vercel.app/assets/img/og.jpg" />
   <link rel="icon" href="assets/img/favicon.png" type="image/png" />
   <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -22,8 +24,8 @@
         <span>Все услуги</span>
       </a>
       <a href="index.html" class="logo" aria-label="Физиотера — на главную">
-        <img class="logo__mark" src="assets/img/logo.png" alt="" width="44" height="44" />
-        <span class="logo__text">Физиотера<small>Уфа</small></span>
+        <img class="logo__mark" src="assets/img/logo-mark.svg" alt="" width="44" height="44" />
+        <span class="logo__text">Физиотера<small>Клиника лечения и&nbsp;реабилитации</small></span>
       </a>
     </div>
   </header>
@@ -98,7 +100,7 @@
       doc.getElementById("svcLead").textContent = d.lead;
       var media = doc.getElementById("svcMedia");
       if (d.img) { var im = el("img"); im.src = d.img; im.alt = d.title; media.appendChild(im); }
-      else { media.classList.add("svc-hero__media--plain"); var lg = el("img"); lg.src = "assets/img/logo.png"; lg.alt = ""; media.appendChild(lg); }
+      else { media.classList.add("svc-hero__media--plain"); var lg = el("img"); lg.src = "assets/img/logo-mark.svg"; lg.alt = ""; media.appendChild(lg); }
 
       var pr = doc.getElementById("svcPrices");
       (d.prices || []).forEach(function (p) {

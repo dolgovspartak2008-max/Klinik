@@ -13,7 +13,7 @@ window.SITE_CONTACTS = {
   phoneLabel: "+7 (987) 600-00-37",
   whatsapp: "https://api.whatsapp.com/send?phone=79876000037",
   telegram: "https://t.me/DrGorshechnikov",
-  vk: "https://vk.ru/id26910903",
+  vk: "https://vk.ru/fiziotera",
   instagram: "https://www.instagram.com/fiziotera.ufa/",          // Instagram клиники
   instagramDoctor: "https://www.instagram.com/dr.gorshechnikov/", // Instagram врача
   max: "https://max.ru/u/f9LHodD0cOJ5qM7mAcu-cj0ZwwqdU4QYS6IZzzRQHWl3sGrnLaILVVGCSmU",

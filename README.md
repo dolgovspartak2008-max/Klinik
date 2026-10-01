@@ -21,6 +21,8 @@ assets/js/main.js     — интро, меню, фильтр услуг, окн�
 assets/js/services-info.js — тексты описаний услуг (окно «Подробнее»)
 assets/img/           — логотип (logo.png, favicon.png, apple-touch-icon.png) и фото (hero, promo, svc-*, case-*, center)
 assets/video/laser.mp4 — видео лазерной процедуры (карточка «Здоровые суставы»)
+assets/video/priem.mp4 — видео «Что взять с собой на приём» (блок после первого экрана)
+assets/img/team/      — фото специалистов; assets/img/logo-mark.svg — логотип (вектор); og.jpg — картинка для превью ссылки
 api/lead.js           — приём заявок → WhatsApp (GREEN-API) и/или Telegram
 ```
 

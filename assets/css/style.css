@@ -76,8 +76,8 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .intro__center { position: relative; display: grid; justify-items: center; gap: 18px; text-align: center; }
 .intro__logo { position: relative; width: 132px; height: 132px; }
 .intro__ring-svg { position: absolute; inset: -14px; width: calc(100% + 28px); height: calc(100% + 28px); overflow: visible; }
-.intro__img { position: relative; width: 100%; height: 100%; border-radius: 50%; opacity: 0; transform: scale(.4) rotate(-40deg);
-  box-shadow: 0 20px 50px -12px rgba(0,0,0,.6), 0 0 60px rgba(64,224,208,.35);
+.intro__img { position: relative; width: 100%; height: 100%; object-fit: contain; padding: 14px; opacity: 0; transform: scale(.4) rotate(-40deg);
+  filter: drop-shadow(0 0 22px rgba(51,184,172,.45));
   animation: logoIn 1s .3s var(--ease-out) forwards, logoBeat 1s 1.5s ease-in-out 1; }
 @keyframes logoIn { to { opacity: 1; transform: none; } }
 @keyframes logoBeat { 0%,100% { transform: scale(1); } 25% { transform: scale(1.07); } 50% { transform: scale(.99); } 70% { transform: scale(1.04); } }
@@ -149,8 +149,8 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   color: var(--ink);
 }
 .logo { display: inline-flex; align-items: center; gap: 12px; font-weight: 800; text-transform: uppercase; font-size: 17px; letter-spacing: .05em; line-height: 1.05; }
-.logo__text small { display: block; margin-top: 3px; font-size: 11px; font-weight: 700; letter-spacing: .18em; opacity: .7; }
-.logo__mark { width: 44px; height: 44px; flex: none; border-radius: 50%; box-shadow: 0 6px 16px -6px rgba(5,11,36,.6), 0 0 0 1.5px rgba(255,255,255,.25); transition: transform .6s var(--ease-out); }
+.logo__text small { display: block; margin-top: 4px; font-size: 9.5px; font-weight: 700; letter-spacing: .06em; opacity: .75; }
+.logo__mark { width: 46px; height: 46px; flex: none; object-fit: contain; transition: transform .6s var(--ease-out); }
 .logo__dot { fill: var(--indigo-400); }
 .logo:hover .logo__mark { transform: rotate(-12deg) scale(1.06); }
 
@@ -677,7 +677,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
       radial-gradient(60% 40% at 0% 100%, rgba(64,224,208,.18), transparent 70%),
       linear-gradient(170deg, var(--indigo-900), var(--indigo-950)); }
   .nav::before { content: ""; position: absolute; right: -90px; top: 38%; width: 300px; height: 300px; border-radius: 50%;
-    background: url("../img/logo.png") center / cover; opacity: .07; pointer-events: none; }
+    background: url("../img/logo-mark.svg") center / contain no-repeat; opacity: .08; pointer-events: none; }
   .nav__link { font-size: clamp(24px, 7vw, 30px); font-weight: 800; padding: 6px 0; counter-increment: navc; display: flex; align-items: baseline; gap: 14px; }
   .nav { counter-reset: navc; }
   .nav__link::before { content: "0" counter(navc); font-size: 13px; font-weight: 700; color: var(--indigo-400); min-width: 20px; }
@@ -847,7 +847,7 @@ html.menu-lock, html.menu-lock body { overflow: hidden; height: 100%; }
 /* ================= Абонементы / Emsella / Массаж ================= */
 .price-card__abon { font-size: 13.5px; font-weight: 600; color: var(--ink-soft); padding-left: 2px; }
 .price-card__media--plain { display: grid; place-items: center; background: radial-gradient(80% 80% at 50% 30%, var(--indigo-700), var(--indigo-950)); }
-.price-card__media--plain img { width: 34%; height: auto; object-fit: contain; border-radius: 50%; }
+.price-card__media--plain img { width: 34%; height: auto; object-fit: contain; }
 .price-card__plain-name { position: absolute; bottom: 18px; left: 0; right: 0; text-align: center; color: #fff; font-weight: 800; letter-spacing: .3em; font-size: 15px; opacity: .85; }
 .mass { margin-top: 30px; padding: 30px 34px; border-radius: var(--radius-lg); background: #fff; border: 1.5px solid var(--indigo-100); }
 .mass__head { display: grid; grid-template-columns: minmax(0, .7fr) minmax(0, 1.3fr); gap: 24px; align-items: end; margin-bottom: 20px; }
@@ -882,7 +882,7 @@ html.menu-lock, html.menu-lock body { overflow: hidden; height: 100%; }
 .svc-hero__media { aspect-ratio: 4 / 3; border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 30px 60px -30px rgba(0,0,0,.6); }
 .svc-hero__media img { width: 100%; height: 100%; object-fit: cover; }
 .svc-hero__media--plain { display: grid; place-items: center; background: radial-gradient(80% 80% at 50% 30%, var(--indigo-700), var(--indigo-950)); }
-.svc-hero__media--plain img { width: 40%; height: auto; border-radius: 50%; }
+.svc-hero__media--plain img { width: 40%; height: auto; }
 .svc-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, .9fr); gap: 40px; align-items: start; padding-top: 44px; padding-bottom: 20px; }
 .svc-content section + section { margin-top: 30px; }
 .svc-content h2, .svc-price-card h2 { font-size: 13px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
@@ -920,4 +920,80 @@ html:has(body.svc-page) { scroll-behavior: auto; }
 @media (max-width: 620px) {
   .svc-modal__price-val { flex-direction: column; align-items: flex-end; gap: 0; }
   .svc-modal__price-val .time { font-size: 12.5px; }
+}
+
+/* ================= Специалисты ================= */
+.team { background: linear-gradient(180deg, var(--indigo-50), #fff); }
+.team__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; }
+.team-card { display: flex; flex-direction: column; overflow: hidden; border-radius: var(--radius-lg); background: #fff; border: 1.5px solid var(--indigo-100);
+  box-shadow: 0 24px 44px -32px rgba(11,23,66,.5); transition: transform .5s var(--ease-out), box-shadow .5s, border-color .4s, opacity .9s var(--ease-out); }
+.team-card:hover { transform: translateY(-6px); border-color: var(--teal); box-shadow: 0 30px 56px -30px rgba(11,23,66,.55); }
+.team-card__photo { position: relative; aspect-ratio: 4 / 3.4; overflow: hidden; background: #eef0f3; }
+.team-card__photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; }
+.team-card__body { display: flex; flex-direction: column; gap: 12px; padding: 20px 20px 22px; flex: 1; }
+.team-card h3 { font-size: 21px; font-weight: 800; color: var(--indigo-900); line-height: 1.15; }
+.team-card__tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.team-card__tag { padding: 5px 10px; border-radius: 8px; font-size: 12.5px; font-weight: 700; background: var(--indigo-50); color: var(--ink-soft); }
+.team-card__tag--role { background: var(--teal-soft); color: #0b6b63; }
+.team-card__list { display: grid; gap: 8px; }
+.team-card__list li { position: relative; padding-left: 16px; font-size: 14.5px; color: var(--ink-soft); line-height: 1.45; }
+.team-card__list li::before { content: ""; position: absolute; left: 0; top: .5em; border: 5px solid transparent; border-left: 6px solid var(--teal); border-right: 0; }
+.team-card__list b { color: var(--indigo-900); }
+.team-card__cta { margin-top: auto; width: 100%; }
+@media (max-width: 1080px) { .team__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 620px) {
+  .team__grid { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 82%; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 12px; margin: 0 -16px; padding-inline: 16px; scrollbar-width: none; }
+  .team__grid::-webkit-scrollbar { display: none; }
+  .team-card { scroll-snap-align: center; }
+}
+.header__cta { flex: none; }
+.nav { min-width: 0; }
+@media (min-width: 921px) { .nav__link:first-child { display: none; } }
+@media (min-width: 921px) and (max-width: 1280px) {
+  .header__inner { gap: 18px; }
+  .nav__link[href="#cases"] { display: none; }
+  .nav__link { padding: 8px 9px; font-size: 14px; }
+  .nav__link::after { left: 9px; right: 9px; }
+}
+@media (min-width: 921px) and (max-width: 1040px) {
+  .logo__text small { display: none; }
+  .nav__link { padding: 8px 6px; font-size: 13.5px; }
+}
+
+/* ================= Видео «Что взять на приём» ================= */
+.prep__grid { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: 64px; align-items: center; justify-content: center; }
+.prep__video { position: relative; aspect-ratio: 9 / 16; border-radius: 28px; overflow: hidden; background: var(--indigo-900); box-shadow: 0 40px 70px -36px rgba(5,11,36,.7); }
+.prep__video video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.prep__play { position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 10px; white-space: nowrap;
+  padding: 8px 18px 8px 8px; border-radius: 999px; background: rgba(255,255,255,.94); color: var(--indigo-900); font-weight: 800; font-size: 15px;
+  box-shadow: 0 14px 30px -12px rgba(5,11,36,.6); transition: transform .3s var(--ease-out); }
+.prep__play:hover { transform: translateX(-50%) translateY(-2px); }
+.prep__play-ico { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); }
+.prep__play-ico svg { width: 18px; height: 18px; fill: #fff; margin-left: 2px; }
+.prep__list { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 26px; }
+.prep__list li { display: flex; align-items: center; gap: 12px; padding: 16px; border-radius: 16px; background: var(--indigo-50); box-shadow: inset 0 0 0 1px var(--indigo-100); }
+.prep__list span { width: 34px; height: 34px; flex: none; border-radius: 50%; display: grid; place-items: center; font-weight: 800; color: #fff; background: var(--indigo-900); }
+.prep__list b { font-size: 17px; color: var(--indigo-900); }
+.prep__note { margin-top: 18px; color: var(--ink-soft); }
+.prep__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+@media (max-width: 1080px) { .prep__list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 920px) {
+  .prep__grid { grid-template-columns: minmax(0, 1fr); gap: 30px; }
+  .prep__video { width: min(340px, 100%); margin-inline: auto; }
+  .prep__text { order: -1; }
+}
+@media (max-width: 620px) { .prep__actions .btn { flex: 1 1 100%; } }
+
+/* Массаж: фото и акция */
+.mass__photo { position: relative; margin: -30px -34px 24px; aspect-ratio: 21 / 8; overflow: hidden; }
+.mass__photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+.mass__promo, .team-card__promo { position: absolute; left: 16px; bottom: 16px; padding: 8px 14px; border-radius: 12px; font-size: 14px; font-weight: 800; color: #fff; background: var(--accent); box-shadow: 0 10px 24px -10px rgba(5,11,36,.6); }
+.team-card__promo { left: 12px; right: 12px; bottom: 12px; font-size: 13px; text-align: center; }
+@media (max-width: 620px) { .mass__photo { margin: -22px -18px 18px; aspect-ratio: 16 / 9; } }
+.mass { overflow: hidden; }
+@media (min-width: 1281px) {
+  .header__inner { gap: 20px; }
+  .nav { gap: 2px; }
+  .nav__link { padding: 8px 9px; font-size: 14px; }
+  .nav__link::after { left: 9px; right: 9px; }
 }

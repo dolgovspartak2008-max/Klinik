@@ -231,6 +231,27 @@
   });
   igModal.querySelectorAll("a").forEach(function (a) { a.addEventListener("click", function () { if (a.target === "_blank") closeModal(); }); });
 
+  /* ---------- Видео «Что взять на приём» ---------- */
+  var pv = doc.getElementById("prepVideo"), pb = doc.getElementById("prepPlay");
+  if (pv && pb) {
+    var withSound = false;
+    if ("IntersectionObserver" in window && !reduceMotion) {
+      new IntersectionObserver(function (en) {
+        en.forEach(function (e) {
+          if (e.isIntersecting) { var pr = pv.play(); if (pr && pr.catch) pr.catch(function () {}); }
+          else pv.pause();
+        });
+      }, { threshold: 0.4 }).observe(pv);
+    }
+    pb.addEventListener("click", function () {
+      withSound = true;
+      pv.muted = false; pv.loop = false; pv.currentTime = 0; pv.controls = true;
+      var pr = pv.play(); if (pr && pr.catch) pr.catch(function () {});
+      pb.hidden = true;
+    });
+    pv.addEventListener("ended", function () { if (withSound) { pb.hidden = false; pv.controls = false; pv.muted = true; pv.loop = true; withSound = false; } });
+  }
+
   /* ---------- Подробнее об услуге — отдельная страница ---------- */
   doc.querySelectorAll(".price-card[data-info]").forEach(function (card) {
     var url = "usluga.html?s=" + card.getAttribute("data-info");
@@ -267,6 +288,7 @@
     { v: "Массаж для беременных", name: "Массаж для беременных", price: "3 500 ₽" },
     { v: "Антицеллюлитный массаж", name: "Антицеллюлитный массаж", price: "3 000 ₽" },
     { v: "Спортивный массаж", name: "Спортивный массаж", price: "3 290 ₽" },
+    { v: "Детский массаж", name: "Детский массаж", price: "2 000 ₽" },
     { v: "Консультация по методикам", name: "Другое — подберёт врач", price: "", group: "Другое" }
   ];
   function findService(v) {
