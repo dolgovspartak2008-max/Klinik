@@ -19,7 +19,7 @@
   }
 
   /* ---------- Контакты из config.js ---------- */
-  var mapKeys = { salavatMap: true };
+  var mapKeys = { map: true };
   doc.querySelectorAll("[data-contact]").forEach(function (a) {
     var key = a.getAttribute("data-contact");
     var val = (C[key] || "").trim();
@@ -34,7 +34,7 @@
       });
       return;
     }
-    if (key === "phone" || key === "phoneDoctor") {
+    if (key === "phone") {
       a.href = "tel:" + val.replace(/[^\d+]/g, "");
     } else {
       a.href = val;
@@ -54,6 +54,7 @@
   var introDone = false;
 
   function startPage() {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
     body.classList.remove("is-loading");
     body.classList.add("is-ready");
   }
@@ -295,7 +296,7 @@
     return d;
   }
   function leadText(data) {
-    return "Заявка с сайта — Центр здоровья, Салават\n" +
+    return "Заявка с сайта — Физиотера, Уфа\n" +
       "Имя: " + data.name + "\n" +
       "Телефон: +" + data.phone + "\n" +
       "Интересует: " + serviceLabel(data.service);

@@ -10,7 +10,7 @@
  *     GREEN_API_ID      — idInstance
  *     GREEN_API_TOKEN   — apiTokenInstance
  *     GREEN_API_URL     — apiUrl из личного кабинета (по умолчанию https://api.green-api.com)
- *     WHATSAPP_TO       — номер, куда присылать заявки, только цифры: 79173816478
+ *     WHATSAPP_TO       — номер, куда присылать заявки, только цифры: 79876000037
  *
  *   Telegram (запасной/дополнительный канал):
  *     TELEGRAM_BOT_TOKEN — токен бота от @BotFather
@@ -81,7 +81,7 @@ module.exports = async function handler(req, res) {
 
   var time = new Date().toLocaleString("ru-RU", { timeZone: "Asia/Yekaterinburg" });
   var text =
-    "🆕 Заявка с сайта — Центр здоровья, Салават\n" +
+    "🆕 Заявка с сайта — Физиотера, Уфа\n" +
     "Имя: " + name + "\n" +
     "Телефон: +" + phone + "\n" +
     "Интересует: " + (service || "—") + "\n" +

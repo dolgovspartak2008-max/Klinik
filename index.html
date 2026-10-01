@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Центр здоровья в Салавате — бесплатная консультация и процедура</title>
-  <meta name="description" content="Центр здоровья в Салавате: лечение боли в спине и суставах, резорбция грыжи, ударно-волновая терапия, магнит, хиджама, иглоукалывание. Бесплатная консультация и процедура для новых пациентов." />
+  <title>Физиотера в Уфе — бесплатная консультация и процедура</title>
+  <meta name="description" content="Физиотера — клиника физиотерапии в Уфе, ул. Энтузиастов, 16: лечение боли в спине и суставах, резорбция грыжи, ударно-волновая терапия, магнит, хиджама, иглоукалывание. Бесплатная консультация и процедура для новых пациентов." />
   <meta name="theme-color" content="#0b1f7a" />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="ru_RU" />
-  <meta property="og:title" content="Центр здоровья, Салават — консультация и процедура бесплатно" />
+  <meta property="og:title" content="Физиотера, Уфа — консультация и процедура бесплатно" />
   <meta property="og:description" content="Врач-физиотерапевт, современное оборудование, комплексные программы для спины и суставов. Запишитесь на бесплатный первичный приём." />
   <meta property="og:image" content="assets/img/hero.jpg" />
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
@@ -16,6 +16,19 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Marck+Script&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/style.css" />
+  <style>
+    /* Критичные стили: пока идёт заставка, сайт под ней не виден (важно для телефонов) */
+    html { background: #06134f; }
+    body.is-loading > :not(.intro) { visibility: hidden; }
+    body.is-loading { background: #06134f; }
+  </style>
+  <noscript><style>body.is-loading > * { visibility: visible !important; } .intro { display: none !important; } body.is-loading { overflow: auto; background: #fff; }</style></noscript>
+  <script>
+    /* Сайт всегда открывается с первого экрана */
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    if (location.hash) history.replaceState(null, "", location.pathname + location.search);
+    window.scrollTo(0, 0);
+  </script>
 </head>
 <body class="is-loading">
   <a class="skip-link" href="#main">Перейти к содержимому</a>
@@ -35,13 +48,12 @@
         <circle class="intro__dot" cx="60" cy="60" r="7" />
       </svg>
       <div class="intro__title">
-        <span class="intro__word">Центр</span>
-        <span class="intro__word">здоровья</span>
+        <span class="intro__word">Физиотера</span>
       </div>
       <svg class="intro__pulse" viewBox="0 0 600 80" preserveAspectRatio="none">
         <path d="M0 40 H210 L232 40 L248 12 L266 70 L284 22 L300 48 L312 40 H600" />
       </svg>
-      <p class="intro__script">Салават · Здоровье · Движение</p>
+      <p class="intro__script">Уфа · Здоровье · Движение</p>
     </div>
     <div class="intro__curtain"></div>
   </div>
@@ -49,7 +61,7 @@
   <!-- ===== Шапка ===== -->
   <header class="header" id="header">
     <div class="container header__inner">
-      <a href="#top" class="logo" aria-label="Центр здоровья — на главную">
+      <a href="#top" class="logo" aria-label="Физиотера — на главную">
         <svg class="logo__mark" viewBox="0 0 120 120" aria-hidden="true">
           <rect x="48" y="12" width="24" height="40" rx="12" />
           <rect x="48" y="68" width="24" height="40" rx="12" />
@@ -57,7 +69,7 @@
           <rect x="68" y="48" width="40" height="24" rx="12" />
           <circle cx="60" cy="60" r="7" class="logo__dot" />
         </svg>
-        <span class="logo__text">Центр<br />здоровья</span>
+        <span class="logo__text">Физиотера<small>Уфа</small></span>
       </a>
 
       <nav class="nav" id="nav" aria-label="Основная навигация">
@@ -92,7 +104,7 @@
             <div class="chips" data-hero-item>
               <a href="#promo" class="chip chip--promo">
                 <span class="chip__pulse" aria-hidden="true"></span>
-                <span><b>Акция для новых пациентов</b><small>Центр здоровья · Салават</small></span>
+                <span><b>Акция для новых пациентов</b><small>Физиотера · Уфа, Энтузиастов 16</small></span>
               </a>
             </div>
 
@@ -122,7 +134,7 @@
 
           <div class="hero__visual" data-hero-visual>
             <div class="hero__blob" id="heroBlob">
-              <img src="assets/img/hero.jpg" alt="Врач-физиотерапевт Центра здоровья в кабинете" width="1100" height="1166" fetchpriority="high" />
+              <img src="assets/img/hero.jpg" alt="Врач-физиотерапевт клиники Физиотера в кабинете" width="1100" height="1166" fetchpriority="high" />
               <div class="hero__blob-shade" aria-hidden="true"></div>
             </div>
 
@@ -188,7 +200,7 @@
               <label class="field"><span>Телефон</span><input name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="+7 (___) ___-__-__" required /></label>
               <label class="field"><span>Что вас интересует</span><select name="service" data-service-select></select></label>
               <label class="field field--hp" aria-hidden="true">Не заполняйте<input name="website" type="text" tabindex="-1" autocomplete="off" /></label>
-              <label class="check"><input type="checkbox" name="consent" required /><span>Согласен(на) на&nbsp;обработку персональных данных</span></label>
+              <label class="check"><input type="checkbox" name="consent" required /><span>Согласен(на) на&nbsp;обработку персональных данных согласно <a href="politika.html" target="_blank" rel="noopener">политике конфиденциальности</a></span></label>
               <button class="btn btn--accent btn--lg lead-form__submit" type="submit">Записаться бесплатно <span class="btn__arrow" aria-hidden="true">→</span></button>
               <p class="lead-form__status" role="status" aria-live="polite"></p>
             </form>
@@ -421,18 +433,18 @@
           <div class="centers__grid">
             <div class="centers__text" data-reveal>
               <span class="eyebrow eyebrow--light">О центре</span>
-              <h2 class="section__title">Центр здоровья в&nbsp;Салавате</h2>
+              <h2 class="section__title">Физиотера в&nbsp;Уфе</h2>
               <p class="section__lead">Внимание к&nbsp;человеку и&nbsp;современное оборудование: магнит высокой интенсивности, лазер, ударно-волновая и&nbsp;вакуумно-градиентная терапия.</p>
-              <p class="centers__addr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12Z"/><circle cx="12" cy="10" r="2.6"/></svg><span data-contact-text="salavatAddress">Адрес уточняется</span></p>
+              <p class="centers__addr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12Z"/><circle cx="12" cy="10" r="2.6"/></svg><span data-contact-text="address">Адрес уточняется</span></p>
               <div class="center-card__actions">
-                <a class="btn btn--light" data-contact="salavatMap" href="#contacts">Маршрут <span class="btn__arrow" aria-hidden="true">→</span></a>
+                <a class="btn btn--light" data-contact="map" href="#contacts">Маршрут <span class="btn__arrow" aria-hidden="true">→</span></a>
                 <a class="btn btn--glass" data-contact="phone" href="#contacts">Позвонить</a>
               </div>
             </div>
             <div class="center-card" data-reveal>
-              <img src="assets/img/center-salavat.jpg" alt="Кабинет Центра здоровья с оборудованием" loading="lazy" width="1400" height="788" />
+              <img src="assets/img/center.jpg" alt="Вход в клинику Физиотера на ул. Энтузиастов, 16 — вывеска над средней дверью" loading="lazy" width="1100" height="1214" />
               <div class="center-card__shade" aria-hidden="true"></div>
-              <div class="center-card__body"><span class="center-card__city">Салават</span></div>
+              <div class="center-card__body"><span class="center-card__city">Энтузиастов, 16</span></div>
             </div>
           </div>
         </div>
@@ -454,9 +466,6 @@
           <span class="social__ico social--phone"><svg viewBox="0 0 24 24"><path d="M5 4h3.2l1.6 4-2 1.3a11 11 0 0 0 5 5l1.3-2 4 1.6V17a2 2 0 0 1-2 2A15 15 0 0 1 3 6a2 2 0 0 1 2-2Z"/></svg></span>
           <span class="phone-card__text"><small>Запись на приём</small><b data-contact-text="phoneLabel">Телефон уточняется</b></span>
           <span class="phone-card__arrow" aria-hidden="true">→</span>
-        </a>
-        <a class="phone-line" data-contact="phoneDoctor" href="#contacts" data-reveal>
-          Телефон врача: <b data-contact-text="phoneDoctorLabel">уточняется</b>
         </a>
         <ul class="socials" id="socials">
           <li data-reveal><a class="social social--wa" data-contact="whatsapp" href="#contacts">
@@ -489,10 +498,10 @@
           <rect x="12" y="48" width="40" height="24" rx="12" /><rect x="68" y="48" width="40" height="24" rx="12" />
           <circle cx="60" cy="60" r="7" class="logo__dot" />
         </svg>
-        <span class="logo__text">Центр<br />здоровья</span>
+        <span class="logo__text">Физиотера<small>Уфа</small></span>
       </a>
-      <p class="footer__cities">Салават</p>
-      <p class="footer__legal">Имеются противопоказания. Необходима консультация специалиста.<br />© <span id="year">2026</span> Центр здоровья</p>
+      <p class="footer__cities">Уфа, ул. Энтузиастов, 16</p>
+      <p class="footer__legal">Имеются противопоказания. Необходима консультация специалиста.<br />© <span id="year">2026</span> Физиотера · <a href="politika.html">Политика конфиденциальности</a></p>
     </div>
   </footer>
 
@@ -514,7 +523,7 @@
         <label class="field"><span>Телефон</span><input name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="+7 (___) ___-__-__" required /></label>
         <label class="field"><span>Что вас интересует</span><select name="service" data-service-select></select></label>
         <label class="field field--hp" aria-hidden="true">Не заполняйте<input name="website" type="text" tabindex="-1" autocomplete="off" /></label>
-        <label class="check"><input type="checkbox" name="consent" required /><span>Согласен(на) на&nbsp;обработку персональных данных</span></label>
+        <label class="check"><input type="checkbox" name="consent" required /><span>Согласен(на) на&nbsp;обработку персональных данных согласно <a href="politika.html" target="_blank" rel="noopener">политике конфиденциальности</a></span></label>
         <button class="btn btn--accent btn--lg lead-form__submit" type="submit">Отправить заявку <span class="btn__arrow" aria-hidden="true">→</span></button>
         <p class="lead-form__status" role="status" aria-live="polite"></p>
       </form>

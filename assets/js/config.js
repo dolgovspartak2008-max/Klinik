@@ -1,26 +1,35 @@
 /*
- * Контакты сайта (Центр здоровья, Салават). Чтобы поменять телефон или ссылку — правьте только этот файл.
+ * Контакты сайта (Физиотера, Уфа). Чтобы поменять телефон или ссылку — правьте только этот файл.
  * Пустая строка = кнопка показывает подсказку «контакт скоро появится»
  * и никуда не ведёт (чтобы не отправлять пациентов на чужие страницы).
  *
  * Формат:
  *   telegram:  "https://t.me/username"
  *   max:       ссылка на профиль/канал в MAX
- *   salavatMap: ссылка на Яндекс Карты или 2ГИС
+ *   map:       ссылка на Яндекс Карты или 2ГИС
  */
 window.SITE_CONTACTS = {
-  phone: "+79930440619",            // номер для записи — на всех кнопках «Позвонить»
-  phoneLabel: "8 (993) 044-06-19",
-  phoneDoctor: "+79173816478",      // номер врача
-  phoneDoctorLabel: "8 (917) 381-64-78",
-  whatsapp: "https://api.whatsapp.com/send?phone=79173816478",
+  phone: "+79876000037",            // номер для записи — на всех кнопках «Позвонить»
+  phoneLabel: "+7 (987) 600-00-37",
+  whatsapp: "https://api.whatsapp.com/send?phone=79876000037",
   telegram: "https://t.me/DrGorshechnikov",
   vk: "https://vk.ru/id26910903",
   instagram: "https://www.instagram.com/fiziotera.ufa/",          // Instagram клиники
   instagramDoctor: "https://www.instagram.com/dr.gorshechnikov/", // Instagram врача
   max: "https://max.ru/u/f9LHodD0cOJ5qM7mAcu-cj0ZwwqdU4QYS6IZzzRQHWl3sGrnLaILVVGCSmU",
-  salavatAddress: "",
-  salavatMap: ""
+  address: "Уфа, ул. Энтузиастов, 16",
+  map: "https://yandex.ru/maps/?text=%D0%A3%D1%84%D0%B0%2C%20%D1%83%D0%BB%D0%B8%D1%86%D0%B0%20%D0%AD%D0%BD%D1%82%D1%83%D0%B7%D0%B8%D0%B0%D1%81%D1%82%D0%BE%D0%B2%2C%2016"
+};
+
+/*
+ * Реквизиты для страницы «Политика конфиденциальности» (politika.html).
+ * Заполните, когда клиника пришлёт данные. Пустые строки на странице не показываются.
+ */
+window.SITE_LEGAL = {
+  name: "",      // напр.: ООО «Физиотера» или ИП Иванов Иван Иванович
+  inn: "",
+  ogrn: "",      // ОГРН или ОГРНИП
+  email: ""      // почта для запросов по персональным данным
 };
 
 /*
@@ -32,5 +41,5 @@ window.SITE_CONTACTS = {
  */
 window.SITE_LEADS = {
   endpoint: "/api/lead",
-  whatsapp: "79173816478"
+  whatsapp: "79876000037"
 };
