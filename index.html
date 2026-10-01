@@ -137,13 +137,24 @@
           </div>
 
           <div class="hero__visual" data-hero-visual>
-            <div class="hero__photo">
+            <div class="hero__blob" id="heroBlob">
               <img src="assets/img/hero.jpg" alt="Врач-физиотерапевт клиники Физиотера в кабинете" width="1100" height="1166" fetchpriority="high" />
+              <div class="hero__blob-shade" aria-hidden="true"></div>
             </div>
-            <div class="hero__badge" aria-hidden="true">
-              <img src="assets/img/logo.png" alt="" width="48" height="48" />
-              <span><b>Первичный приём</b><small>консультация и процедура — 0&nbsp;₽</small></span>
+
+            <div class="float-card float-card--a" aria-hidden="true">
+              <span class="float-card__ico float-card__ico--gift">
+                <svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="5" rx="1"/><path d="M5 13v7h14v-7M12 8v12M12 8c-1.5-3-5-4-5-1.5S10 8 12 8Zm0 0c1.5-3 5-4 5-1.5S14 8 12 8Z"/></svg>
+              </span>
+              <span><b>0&nbsp;₽</b><small>консультация + процедура</small></span>
             </div>
+            <div class="float-card float-card--b" aria-hidden="true">
+              <span class="float-card__ico">
+                <svg viewBox="0 0 24 24"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg>
+              </span>
+              <span><b>Без боли</b><small>в&nbsp;спине и&nbsp;суставах</small></span>
+            </div>
+            <svg class="hero__orbit" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="96"/></svg>
           </div>
         </div>
 
