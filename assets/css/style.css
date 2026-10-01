@@ -556,7 +556,6 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .social--ig .social__ico { background: linear-gradient(45deg, #f7b53a, #e1306c 50%, #7a3cf0); }
 .social--max { --c: #5b4dff; }
 .social--max .social__ico, .social__ico.social--max { background: linear-gradient(135deg, #3aa4ff, #7a3cf0); }
-.contacts__note { margin-top: 36px; font-size: 12.5px; color: var(--ink-soft); opacity: .8; }
 .contacts__side { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
 .contacts__side > *, .socials > * { min-width: 0; }
 .phone-card {
@@ -593,7 +592,8 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .footer__warn { font-size: 14px; font-weight: 700; color: rgba(255,255,255,.85); text-transform: uppercase; letter-spacing: .03em; }
 
 /* ================= Modal / Toast ================= */
-.modal { position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; padding: 16px; }
+.modal { position: fixed; inset: -120px 0; z-index: 90; display: grid; place-items: center; padding: 136px 16px; overscroll-behavior: contain; }
+.modal__card { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
 .modal[hidden] { display: none; }
 .modal__backdrop { position: absolute; inset: 0; background: rgba(5,11,36,.55); backdrop-filter: blur(6px); animation: fade .3s ease both; }
 .modal__card {
@@ -842,4 +842,82 @@ html.menu-lock, html.menu-lock body { overflow: hidden; height: 100%; }
 @media (max-width: 620px) {
   .svc-modal__body { padding: 22px 20px 24px; }
   .svc-modal__media { aspect-ratio: 16 / 10; }
+}
+
+/* ================= Абонементы / Emsella / Массаж ================= */
+.price-card__abon { font-size: 13.5px; font-weight: 600; color: var(--ink-soft); padding-left: 2px; }
+.price-card__media--plain { display: grid; place-items: center; background: radial-gradient(80% 80% at 50% 30%, var(--indigo-700), var(--indigo-950)); }
+.price-card__media--plain img { width: 34%; height: auto; object-fit: contain; border-radius: 50%; }
+.price-card__plain-name { position: absolute; bottom: 18px; left: 0; right: 0; text-align: center; color: #fff; font-weight: 800; letter-spacing: .3em; font-size: 15px; opacity: .85; }
+.mass { margin-top: 30px; padding: 30px 34px; border-radius: var(--radius-lg); background: #fff; border: 1.5px solid var(--indigo-100); }
+.mass__head { display: grid; grid-template-columns: minmax(0, .7fr) minmax(0, 1.3fr); gap: 24px; align-items: end; margin-bottom: 20px; }
+.mass__head .eyebrow { margin-bottom: 6px; }
+.mass__head h3 { font-size: 28px; font-weight: 800; color: var(--indigo-900); }
+.mass__head p { color: var(--ink-soft); }
+.mass__list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 24px; }
+.mass__row { display: flex; align-items: center; gap: 16px; padding: 16px 4px; border-bottom: 1px solid var(--indigo-100); transition: color .2s; }
+.mass__name { flex: 1; min-width: 0; font-weight: 700; color: var(--indigo-900); }
+.mass__name small { display: block; font-size: 13px; font-weight: 600; color: var(--ink-soft); }
+.mass__row b { white-space: nowrap; font-size: 17px; color: var(--indigo-900); }
+.mass__arrow { width: 36px; height: 36px; flex: none; border-radius: 50%; display: grid; place-items: center; background: var(--indigo-50); color: var(--indigo-900); transition: transform .3s var(--ease-out), background .2s; }
+.mass__row:hover .mass__arrow { transform: translateX(4px); background: var(--teal-soft); }
+.extra__list a { display: inline-block; padding: 10px 16px; border-radius: 999px; background: var(--indigo-50); box-shadow: inset 0 0 0 1px var(--indigo-100); font-weight: 700; color: var(--indigo-900); font-size: 14.5px; transition: background .2s, box-shadow .2s; }
+.extra__list a:hover { background: #fff; box-shadow: inset 0 0 0 1.5px var(--teal); }
+@media (max-width: 920px) { .mass__head { grid-template-columns: 1fr; gap: 8px; } .mass__list { grid-template-columns: 1fr; } }
+@media (max-width: 620px) { .mass { padding: 22px 18px; } .tabs { flex-wrap: wrap; border-radius: 22px; } .tabs__btn { flex: 1 1 40%; } }
+
+/* ================= Страница услуги ================= */
+.svc-page { background: var(--indigo-50); }
+.svc-top { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.92); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 1px 0 var(--indigo-100); }
+.svc-top__bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 68px; color: var(--indigo-900); }
+.svc-back { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px 9px 10px; border-radius: 999px; background: var(--indigo-50); font-weight: 700; font-size: 14.5px; }
+.svc-back svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.svc-top .logo { font-size: 15px; }
+.svc-top .logo__mark { width: 38px; height: 38px; }
+.svc-hero { background: linear-gradient(160deg, var(--indigo-800), var(--indigo-950)); color: #fff; padding: 40px 0 56px; border-radius: 0 0 var(--radius-xl) var(--radius-xl); }
+.svc-hero__inner { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: center; }
+.svc-hero__kind { position: static; display: inline-block; background: rgba(60,201,187,.18); color: #8fe6dc; margin-bottom: 16px; }
+.svc-hero h1 { font-size: clamp(32px, 4.6vw, 54px); font-weight: 800; letter-spacing: -.03em; }
+.svc-hero__lead { margin-top: 16px; font-size: clamp(16px, 1.5vw, 18.5px); color: rgba(255,255,255,.8); }
+.svc-hero__media { aspect-ratio: 4 / 3; border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 30px 60px -30px rgba(0,0,0,.6); }
+.svc-hero__media img { width: 100%; height: 100%; object-fit: cover; }
+.svc-hero__media--plain { display: grid; place-items: center; background: radial-gradient(80% 80% at 50% 30%, var(--indigo-700), var(--indigo-950)); }
+.svc-hero__media--plain img { width: 40%; height: auto; border-radius: 50%; }
+.svc-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, .9fr); gap: 40px; align-items: start; padding-top: 44px; padding-bottom: 20px; }
+.svc-content section + section { margin-top: 30px; }
+.svc-content h2, .svc-price-card h2 { font-size: 13px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+.svc-content p, .svc-content li { font-size: 16.5px; }
+.svc-content .svc-modal__methods { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.svc-content .svc-modal__methods li { background: #fff; }
+.svc-price-card { position: sticky; top: 88px; padding: 26px; border-radius: var(--radius-lg); background: #fff; border: 1.5px solid var(--indigo-100); box-shadow: 0 24px 44px -30px rgba(11,23,66,.45); }
+.svc-abon__title { margin: 18px 0 8px; font-size: 14px; font-weight: 800; color: var(--indigo-900); }
+.svc-old { margin-right: 4px; font-size: 14px; color: var(--ink-soft); }
+.svc-price-card .price-card__gift { margin-top: 14px; }
+.svc-cta { width: 100%; margin-top: 12px; }
+.svc-cta:first-of-type { margin-top: 18px; }
+.svc-more { padding: 40px 0 70px; }
+.svc-more h2 { font-size: 24px; font-weight: 800; color: var(--indigo-900); margin-bottom: 16px; }
+.svc-more__list { display: flex; flex-wrap: wrap; gap: 10px; }
+.svc-more__item { padding: 10px 16px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1px var(--indigo-100); font-weight: 700; font-size: 14.5px; color: var(--indigo-900); transition: box-shadow .2s; }
+.svc-more__item:hover { box-shadow: inset 0 0 0 1.5px var(--teal); }
+.footer--slim { padding: 30px 0; }
+.footer--slim .footer__bottom { margin-top: 0; border-top: 0; padding-top: 0; }
+@media (max-width: 920px) {
+  .svc-hero__inner, .svc-grid { grid-template-columns: minmax(0, 1fr); }
+  .svc-hero__media { order: -1; }
+  .svc-price-card { position: static; }
+  .svc-grid { gap: 28px; padding-top: 28px; }
+  .svc-side { order: -1; }
+}
+@media (max-width: 620px) {
+  .svc-hero { padding: 20px 0 34px; }
+  .svc-top .logo__text small { display: none; }
+  .svc-content .svc-modal__methods { grid-template-columns: minmax(0, 1fr); }
+  .svc-price-card { padding: 20px 16px; }
+}
+html:has(body.svc-page) { scroll-behavior: auto; }
+.svc-modal__price > span:first-child { white-space: nowrap; }
+@media (max-width: 620px) {
+  .svc-modal__price-val { flex-direction: column; align-items: flex-end; gap: 0; }
+  .svc-modal__price-val .time { font-size: 12.5px; }
 }

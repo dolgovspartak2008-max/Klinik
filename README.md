@@ -14,6 +14,7 @@
 ```
 index.html            — вся страница
 politika.html         — политика конфиденциальности (152-ФЗ)
+usluga.html           — страница услуги (?s=id), тексты и цены из assets/js/services-info.js
 assets/css/style.css  — стили (белый + индиго, акцент — бирюзовый из логотипа)
 assets/js/config.js   — КОНТАКТЫ и настройки заявок
 assets/js/main.js     — интро, меню, фильтр услуг, окна записи, «Подробнее» и Instagram, отправка формы

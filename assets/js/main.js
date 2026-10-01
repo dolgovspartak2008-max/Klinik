@@ -52,8 +52,18 @@
   try { seen = sessionStorage.getItem("introSeen") === "1"; } catch (e) {}
   var introDone = false;
 
+  var qs = new URLSearchParams(location.search);
+  var bookParam = qs.get("book"), toParam = qs.get("to");
+  if (bookParam || toParam) history.replaceState(null, "", location.pathname);
   function startPage() {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    setTimeout(function () {
+      if (toParam && doc.getElementById(toParam)) {
+        var t = doc.getElementById(toParam);
+        window.scrollTo({ top: t.getBoundingClientRect().top + window.scrollY - 70, behavior: "instant" });
+      }
+      if (bookParam && window.__openBooking) window.__openBooking(bookParam);
+    }, 50);
     body.classList.remove("is-loading");
     body.classList.add("is-ready");
   }
@@ -157,6 +167,11 @@
         c.hidden = !(f === "all" || c.getAttribute("data-kind") === f);
         c.classList.add("is-in");
       });
+      grid.hidden = f === "massage";
+      doc.querySelectorAll("[data-kind-block]").forEach(function (blk) {
+        blk.hidden = !(f === "all" || blk.getAttribute("data-kind-block") === f);
+        blk.classList.add("is-in");
+      });
     });
   });
 
@@ -182,6 +197,7 @@
     openedModal = m;
     m.hidden = false;
     body.style.overflow = "hidden";
+    doc.documentElement.classList.add("menu-lock");
     var first = m.querySelector("input[name=name]") || m.querySelector(".ig-choice__opt, .modal__opt");
     if (first) setTimeout(function () { first.focus(); }, 60);
   }
@@ -190,6 +206,7 @@
     openedModal.hidden = true;
     openedModal = null;
     body.style.overflow = "";
+    doc.documentElement.classList.remove("menu-lock");
     if (lastFocus && lastFocus.focus) lastFocus.focus();
   }
   doc.querySelectorAll("[data-close-modal]").forEach(function (b) { b.addEventListener("click", closeModal); });
@@ -214,59 +231,18 @@
   });
   igModal.querySelectorAll("a").forEach(function (a) { a.addEventListener("click", function () { if (a.target === "_blank") closeModal(); }); });
 
-  /* ---------- Подробнее об услуге ---------- */
-  var INFO = window.SERVICES_INFO || {}, METHODS = window.SERVICE_METHODS || {};
-  var svcModal = doc.getElementById("svcModal");
-  function el(tag, cls, text) { var e = doc.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
-  function openInfo(id) {
-    var d = INFO[id]; if (!d || !svcModal) return;
-    var img = doc.getElementById("svcImg"); img.src = d.img; img.alt = d.title;
-    doc.getElementById("svcKind").textContent = d.kind;
-    doc.getElementById("svcTitle").textContent = d.title;
-    doc.getElementById("svcLead").textContent = d.lead;
-    var pr = doc.getElementById("svcPrices"); pr.innerHTML = "";
-    (d.prices || []).forEach(function (p) {
-      var row = el("div", "svc-modal__price");
-      row.appendChild(el("span", null, p[0]));
-      var right = el("span", "svc-modal__price-val"); right.appendChild(el("b", null, p[1]));
-      if (p[2]) right.appendChild(el("small", "time", p[2]));
-      row.appendChild(right); pr.appendChild(row);
-    });
-    pr.hidden = !(d.prices && d.prices.length);
-    var gift = doc.getElementById("svcGift"); gift.textContent = d.gift || ""; gift.hidden = !d.gift;
-    var ul = doc.getElementById("svcFor"); ul.innerHTML = "";
-    (d.forWhat || []).forEach(function (t) { ul.appendChild(el("li", null, t)); });
-    doc.getElementById("svcHow").textContent = d.how;
-    var mw = doc.getElementById("svcMethodsWrap"), ml = doc.getElementById("svcMethods");
-    ml.innerHTML = "";
-    if (d.methods) {
-      doc.getElementById("svcMethodsNote").textContent = d.methodsNote || "";
-      d.methods.forEach(function (k) {
-        var m = METHODS[k]; if (!m) return;
-        var li = el("li"); li.appendChild(el("b", null, m[0])); li.appendChild(el("span", null, m[1])); ml.appendChild(li);
-      });
-    }
-    mw.hidden = !d.methods;
-    doc.getElementById("svcCta").setAttribute("data-service", d.service || "promo");
-    svcModal.querySelector(".modal__card").scrollTop = 0;
-    openModal(svcModal);
-  }
+  /* ---------- Подробнее об услуге — отдельная страница ---------- */
   doc.querySelectorAll(".price-card[data-info]").forEach(function (card) {
-    var id = card.getAttribute("data-info");
+    var url = "usluga.html?s=" + card.getAttribute("data-info");
     var cta = card.querySelector(".price-card__cta");
-    var row = el("div", "price-card__actions");
-    var more = el("button", "btn btn--outline price-card__more", "Подробнее");
-    more.type = "button";
+    var row = doc.createElement("div"); row.className = "price-card__actions";
+    var more = doc.createElement("a"); more.className = "btn btn--outline price-card__more"; more.href = url; more.textContent = "Подробнее";
     cta.parentNode.insertBefore(row, cta);
     row.appendChild(more); row.appendChild(cta);
-    more.addEventListener("click", function () { openInfo(id); });
     card.addEventListener("click", function (e) {
       if (e.target.closest("button, a")) return;
-      openInfo(id);
+      location.href = url;
     });
-  });
-  doc.querySelectorAll("[data-info-open]").forEach(function (b) {
-    b.addEventListener("click", function () { openInfo(b.getAttribute("data-info-open")); });
   });
 
   /* ---------- Заявки ---------- */
@@ -279,9 +255,18 @@
     { v: "Резорбция грыжи", name: "Резорбция грыжи", price: "5 300 ₽" },
     { v: "Ударно-волновая терапия", name: "Ударно-волновая терапия", price: "от 1 500 ₽", group: "Процедуры" },
     { v: "Магнит высокой интенсивности", name: "Магнит высокой интенсивности", price: "от 1 800 ₽" },
-    { v: "Вакуумно-градиентная терапия", name: "Вакуумно-градиентная терапия", price: "от 2 000 ₽" },
+    { v: "Лазер высокой интенсивности", name: "Лазер высокой интенсивности", price: "от 2 000 ₽" },
+    { v: "Вакуумно-градиентная терапия", name: "Вакуумно-градиентная терапия", price: "от 1 500 ₽" },
+    { v: "Кресло Emsella", name: "Кресло Emsella", price: "от 1 500 ₽" },
     { v: "Хиджама", name: "Хиджама", price: "от 2 000 ₽" },
     { v: "Иглоукалывание", name: "Иглоукалывание", price: "от 2 000 ₽" },
+    { v: "Массаж всего тела", name: "Массаж всего тела", price: "от 2 950 ₽", group: "Массаж" },
+    { v: "Массаж спины", name: "Массаж спины", price: "2 500 ₽" },
+    { v: "Массаж шейно-воротниковой зоны", name: "Массаж шейно-воротниковой зоны", price: "2 000 ₽" },
+    { v: "Массаж ног", name: "Массаж ног", price: "2 000 ₽" },
+    { v: "Массаж для беременных", name: "Массаж для беременных", price: "3 500 ₽" },
+    { v: "Антицеллюлитный массаж", name: "Антицеллюлитный массаж", price: "3 000 ₽" },
+    { v: "Спортивный массаж", name: "Спортивный массаж", price: "3 290 ₽" },
     { v: "Консультация по методикам", name: "Другое — подберёт врач", price: "", group: "Другое" }
   ];
   function findService(v) {
@@ -381,6 +366,7 @@
 
   var booking = doc.getElementById("booking");
   var bookingDD = dds.filter(function (d) { return booking.contains(d.root); })[0];
+  window.__openBooking = function (svc) { if (bookingDD) bookingDD.set(svc); openModal(booking); };
   doc.querySelectorAll("[data-open-booking]").forEach(function (b) {
     b.addEventListener("click", function () {
       var s = b.getAttribute("data-service");
