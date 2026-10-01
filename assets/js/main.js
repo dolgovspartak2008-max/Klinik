@@ -4,7 +4,6 @@
   var doc = document;
   var body = doc.body;
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
   var C = window.SITE_CONTACTS || {};
 
   /* ---------- Toast ---------- */
@@ -104,6 +103,9 @@
     burger.setAttribute("aria-expanded", String(open));
     burger.setAttribute("aria-label", open ? "Закрыть меню" : "Открыть меню");
     body.style.overflow = open ? "hidden" : "";
+    doc.documentElement.classList.toggle("menu-lock", open);
+    var tc = doc.querySelector('meta[name="theme-color"]');
+    if (tc) tc.setAttribute("content", open ? "#06134f" : "#0b1f7a");
   }
   burger.addEventListener("click", function () { setMenu(!nav.classList.contains("is-open")); });
   nav.querySelectorAll("a, button").forEach(function (el) {
@@ -170,41 +172,10 @@
     vids.forEach(function (v) { vio.observe(v); });
   }
 
-  /* ---------- Hero: свечение за курсором и параллакс ---------- */
-  if (finePointer && !reduceMotion) {
-    var panel = doc.querySelector(".hero__panel");
-    var spot = doc.getElementById("heroSpot");
-    var heroImg = doc.querySelector(".hero__blob img");
-    var raf = 0, mx = 0, my = 0;
-    panel.addEventListener("mousemove", function (e) {
-      var r = panel.getBoundingClientRect();
-      mx = e.clientX - r.left; my = e.clientY - r.top;
-      if (raf) return;
-      raf = requestAnimationFrame(function () {
-        raf = 0;
-        spot.style.left = mx + "px";
-        spot.style.top = my + "px";
-        var dx = (mx / r.width - 0.5) * 2, dy = (my / r.height - 0.5) * 2;
-        heroImg.style.transform = "scale(1.12) translate(" + (dx * -12) + "px," + (dy * -10) + "px)";
-      });
-    });
-
-    // «Магнитные» кнопки
-    doc.querySelectorAll(".magnetic").forEach(function (btn) {
-      btn.addEventListener("mousemove", function (e) {
-        var r = btn.getBoundingClientRect();
-        var x = (e.clientX - r.left - r.width / 2) * 0.18;
-        var y = (e.clientY - r.top - r.height / 2) * 0.3;
-        btn.style.transform = "translate(" + x + "px," + y + "px)";
-      });
-      btn.addEventListener("mouseleave", function () { btn.style.transform = ""; });
-    });
-  }
-
   /* ---------- Модальные окна (запись, выбор Instagram) ---------- */
   var openedModal = null;
   var lastFocus = null;
-  function focusables(m) { return m.querySelectorAll("a[href], button:not([disabled]), input:not([tabindex='-1']), select"); }
+  function focusables(m) { return m.querySelectorAll("a[href], button:not([disabled]), input:not([tabindex='-1']):not([type=hidden])"); }
   function openModal(m) {
     if (openedModal) closeModal();
     lastFocus = doc.activeElement;
@@ -246,36 +217,119 @@
   /* ---------- Заявки ---------- */
   var L = window.SITE_LEADS || {};
   var SERVICES = [
-    ["promo", "Бесплатная консультация + процедура (акция)"],
-    ["Здоровая спина 3.0", "Здоровая спина 3.0 — 4 600 ₽"],
-    ["Здоровая спина 5.0 / 7.0", "Здоровая спина 5.0 / 7.0 — от 5 900 ₽"],
-    ["Здоровые суставы", "Здоровые суставы — 4 600 ₽"],
-    ["Резорбция грыжи", "Резорбция грыжи — 5 300 ₽"],
-    ["Ударно-волновая терапия", "Ударно-волновая терапия — от 1 500 ₽"],
-    ["Магнит высокой интенсивности", "Магнит высокой интенсивности — от 1 800 ₽"],
-    ["Вакуумно-градиентная терапия", "Вакуумно-градиентная терапия — от 2 000 ₽"],
-    ["Хиджама", "Хиджама — от 2 000 ₽"],
-    ["Иглоукалывание", "Иглоукалывание — от 2 000 ₽"],
-    ["Консультация по методикам", "Другое / нужна консультация"]
+    { v: "promo", name: "Бесплатная консультация и процедура", price: "0 ₽", group: "Акция" },
+    { v: "Здоровая спина 3.0", name: "Здоровая спина 3.0", price: "4 600 ₽", group: "Комплексные программы" },
+    { v: "Здоровая спина 5.0 / 7.0", name: "Здоровая спина 5.0 / 7.0", price: "от 5 900 ₽" },
+    { v: "Здоровые суставы", name: "Здоровые суставы", price: "4 600 ₽" },
+    { v: "Резорбция грыжи", name: "Резорбция грыжи", price: "5 300 ₽" },
+    { v: "Ударно-волновая терапия", name: "Ударно-волновая терапия", price: "от 1 500 ₽", group: "Процедуры" },
+    { v: "Магнит высокой интенсивности", name: "Магнит высокой интенсивности", price: "от 1 800 ₽" },
+    { v: "Вакуумно-градиентная терапия", name: "Вакуумно-градиентная терапия", price: "от 2 000 ₽" },
+    { v: "Хиджама", name: "Хиджама", price: "от 2 000 ₽" },
+    { v: "Иглоукалывание", name: "Иглоукалывание", price: "от 2 000 ₽" },
+    { v: "Консультация по методикам", name: "Другое — подберёт врач", price: "", group: "Другое" }
   ];
-  function serviceLabel(v) {
-    for (var i = 0; i < SERVICES.length; i++) if (SERVICES[i][0] === v) return SERVICES[i][1];
-    return v;
+  function findService(v) {
+    for (var i = 0; i < SERVICES.length; i++) if (SERVICES[i].v === v) return SERVICES[i];
+    return null;
   }
-  doc.querySelectorAll("[data-service-select]").forEach(function (sel) {
-    SERVICES.forEach(function (s) {
-      var o = doc.createElement("option");
-      o.value = s[0]; o.textContent = s[1];
-      sel.appendChild(o);
+  function serviceLabel(v) {
+    var s = findService(v);
+    return s ? s.name + (s.price ? " (" + s.price + ")" : "") : v;
+  }
+
+  /* Собственный выпадающий список услуг (одинаково выглядит на всех устройствах) */
+  var dds = [];
+  function makeDD(root) {
+    var btn = root.querySelector(".dd__btn");
+    var val = root.querySelector(".dd__val");
+    var list = root.querySelector(".dd__list");
+    var input = root.querySelector("input[type=hidden]");
+    var uid = "dd" + dds.length;
+    var items = [];
+    SERVICES.forEach(function (s, i) {
+      if (s.group) {
+        var g = doc.createElement("li");
+        g.className = "dd__group"; g.setAttribute("role", "presentation"); g.textContent = s.group;
+        list.appendChild(g);
+      }
+      var li = doc.createElement("li");
+      li.className = "dd__opt"; li.id = uid + "-" + i;
+      li.setAttribute("role", "option"); li.setAttribute("data-v", s.v);
+      li.innerHTML = '<span class="dd__name"></span><span class="dd__price"></span>';
+      li.firstChild.textContent = s.name; li.lastChild.textContent = s.price;
+      li.addEventListener("click", function () { set(s.v); close(true); });
+      li.addEventListener("mousemove", function () { highlight(i); });
+      list.appendChild(li);
+      items.push(li);
     });
-  });
+    btn.id = uid + "-btn";
+    list.setAttribute("aria-labelledby", btn.id);
+    var active = 0;
+    function highlight(i) {
+      active = Math.max(0, Math.min(items.length - 1, i));
+      items.forEach(function (el, k) { el.classList.toggle("is-active", k === active); });
+      list.setAttribute("aria-activedescendant", items[active].id);
+      var el = items[active], top = el.offsetTop, bottom = top + el.offsetHeight;
+      if (top < list.scrollTop) list.scrollTop = top - 30;
+      else if (bottom > list.scrollTop + list.clientHeight) list.scrollTop = bottom - list.clientHeight;
+    }
+    function set(v) {
+      var s = findService(v) || SERVICES[0];
+      input.value = s.v;
+      val.innerHTML = '<span></span>' + (s.price ? '<small></small>' : "");
+      val.firstChild.textContent = s.name;
+      if (s.price) val.lastChild.textContent = s.price;
+      items.forEach(function (el) { el.setAttribute("aria-selected", String(el.getAttribute("data-v") === s.v)); });
+    }
+    function open() {
+      dds.forEach(function (d) { if (d !== api) d.close(); });
+      root.classList.add("is-open");
+      btn.setAttribute("aria-expanded", "true");
+      var r = btn.getBoundingClientRect();
+      root.classList.toggle("dd--up", window.innerHeight - r.bottom < 300 && r.top > window.innerHeight - r.bottom);
+      var cur = 0;
+      items.forEach(function (el, k) { if (el.getAttribute("data-v") === input.value) cur = k; });
+      list.scrollTop = 0;
+      highlight(cur);
+      requestAnimationFrame(function () { list.focus({ preventScroll: true }); });
+    }
+    function close(focusBtn) {
+      if (!root.classList.contains("is-open")) return;
+      root.classList.remove("is-open");
+      btn.setAttribute("aria-expanded", "false");
+      if (focusBtn) btn.focus({ preventScroll: true });
+    }
+    btn.addEventListener("click", function () { root.classList.contains("is-open") ? close(true) : open(); });
+    btn.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault();
+        if (!root.classList.contains("is-open")) open(); else { highlight(active + (e.key === "ArrowDown" ? 1 : -1)); list.focus({ preventScroll: true }); }
+      }
+    });
+    list.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowDown") { e.preventDefault(); highlight(active + 1); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); highlight(active - 1); }
+      else if (e.key === "Home") { e.preventDefault(); highlight(0); }
+      else if (e.key === "End") { e.preventDefault(); highlight(items.length - 1); }
+      else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); set(items[active].getAttribute("data-v")); close(true); }
+      else if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); close(true); }
+      else if (e.key === "Tab") { close(false); }
+    });
+    doc.addEventListener("click", function (e) { if (!root.contains(e.target)) close(false); });
+    var api = { root: root, set: set, close: close };
+    set(input.value || "promo");
+    dds.push(api);
+    return api;
+  }
+  doc.querySelectorAll("[data-dd]").forEach(makeDD);
 
   var booking = doc.getElementById("booking");
-  var bookingSelect = booking.querySelector("[data-service-select]");
+  var bookingDD = dds.filter(function (d) { return booking.contains(d.root); })[0];
   doc.querySelectorAll("[data-open-booking]").forEach(function (b) {
     b.addEventListener("click", function () {
       var s = b.getAttribute("data-service");
-      if (s) bookingSelect.value = s;
+      if (s && bookingDD) bookingDD.set(s);
       openModal(booking);
     });
   });
@@ -341,6 +395,7 @@
         form.classList.add("is-sent");
         setStatus("<b>Спасибо, " + data.name.replace(/[<>&"]/g, "") + "!</b> Заявка принята — администратор скоро перезвонит.", "ok");
         form.reset();
+        dds.forEach(function (d) { if (form.contains(d.root)) d.set("promo"); });
         if (typeof window.ym === "function") try { window.ym("reachGoal", "lead"); } catch (err) {}
       }
       function viaWhatsApp(openNow) {
@@ -367,19 +422,6 @@
         .then(function () { clearTimeout(timer); submit.disabled = false; });
     });
   });
-
-  /* ---------- Липкая кнопка акции ---------- */
-  var sticky = doc.getElementById("stickyCta");
-  var promoSec = doc.getElementById("promo");
-  function onStick() {
-    var y = window.scrollY;
-    var r = promoSec.getBoundingClientRect();
-    var inPromo = r.top < window.innerHeight && r.bottom > 0;
-    var nearEnd = window.innerHeight + y > doc.documentElement.scrollHeight - 200;
-    sticky.classList.toggle("is-shown", y > window.innerHeight * 0.8 && !inPromo && !nearEnd);
-  }
-  window.addEventListener("scroll", onStick, { passive: true });
-  onStick();
 
   /* ---------- Год в подвале ---------- */
   var y = doc.getElementById("year");

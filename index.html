@@ -15,7 +15,7 @@
   <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Marck+Script&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/style.css" />
   <style>
     /* Критичные стили: пока идёт заставка, сайт под ней не виден (важно для телефонов) */
@@ -49,7 +49,6 @@
       <svg class="intro__pulse" viewBox="0 0 600 80" preserveAspectRatio="none">
         <path d="M0 40 H244 L262 40 L278 10 L296 70 L314 22 L330 48 L340 40 H600" />
       </svg>
-      <p class="intro__script">Уфа · Здоровье · Движение</p>
     </div>
     <div class="intro__curtain"></div>
   </div>
@@ -89,7 +88,7 @@
         </div>
       </nav>
 
-      <button class="btn btn--light header__cta magnetic" data-open-booking data-service="promo" type="button">
+      <button class="btn btn--light header__cta" data-open-booking data-service="promo" type="button">
         Записаться <span class="btn__arrow" aria-hidden="true">→</span>
       </button>
 
@@ -104,13 +103,11 @@
     <section class="hero" id="top">
       <div class="hero__panel">
         <div class="hero__noise" aria-hidden="true"></div>
-        <div class="hero__spot" id="heroSpot" aria-hidden="true"></div>
 
         <div class="container hero__grid">
           <div class="hero__content">
             <div class="chips" data-hero-item>
               <a href="#promo" class="chip chip--promo">
-                <span class="chip__pulse" aria-hidden="true"></span>
                 <span><b>Акция для новых пациентов</b><small>Физиотера · Уфа, Энтузиастов 16</small></span>
               </a>
             </div>
@@ -118,60 +115,46 @@
             <h1 class="hero__title">
               <span class="line"><span class="word">Бесплатная</span></span>
               <span class="line"><span class="word">консультация</span></span>
-              <span class="line line--light"><span class="word">и&nbsp;<em>процедура!</em></span></span>
+              <span class="line line--light"><span class="word">и&nbsp;<em>процедура</em></span></span>
             </h1>
 
             <p class="hero__lead" data-hero-item>
-              Врач-физиотерапевт разберётся в&nbsp;причине боли, посмотрит ваши снимки и&nbsp;проведёт первую процедуру — <b>0&nbsp;₽</b>. Запишитесь сейчас, пока есть свободные места.
+              Врач-физиотерапевт разберётся в&nbsp;причине боли, посмотрит ваши снимки и&nbsp;проведёт первую процедуру — <b>бесплатно</b>. Запишитесь на&nbsp;удобное время.
             </p>
 
             <div class="hero__actions" data-hero-item>
-              <button class="btn btn--accent btn--lg magnetic" data-open-booking data-service="promo" type="button">
+              <button class="btn btn--light btn--lg" data-open-booking data-service="promo" type="button">
                 Записаться сейчас <span class="btn__arrow" aria-hidden="true">→</span>
               </button>
               <a class="btn btn--ghost btn--lg" href="#promo">Подробнее об акции</a>
             </div>
 
             <ul class="hero__facts" data-hero-item>
-              <li><span class="hero__fact-ico">✦</span>Первичный приём — 0&nbsp;₽</li>
-              <li><span class="hero__fact-ico">✦</span>Процедура в&nbsp;подарок</li>
-              <li><span class="hero__fact-ico">✦</span>Для взрослых и&nbsp;детей</li>
+              <li>Первичный приём — 0&nbsp;₽</li>
+              <li>Процедура в&nbsp;подарок</li>
+              <li>Для взрослых и&nbsp;детей</li>
             </ul>
           </div>
 
           <div class="hero__visual" data-hero-visual>
-            <div class="hero__blob" id="heroBlob">
+            <div class="hero__photo">
               <img src="assets/img/hero.jpg" alt="Врач-физиотерапевт клиники Физиотера в кабинете" width="1100" height="1166" fetchpriority="high" />
-              <div class="hero__blob-shade" aria-hidden="true"></div>
             </div>
-
-            <div class="float-card float-card--a" aria-hidden="true">
-              <span class="float-card__ico float-card__ico--gift">
-                <svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="5" rx="1"/><path d="M5 13v7h14v-7M12 8v12M12 8c-1.5-3-5-4-5-1.5S10 8 12 8Zm0 0c1.5-3 5-4 5-1.5S14 8 12 8Z"/></svg>
-              </span>
-              <span><b>0&nbsp;₽</b><small>консультация + процедура</small></span>
+            <div class="hero__badge" aria-hidden="true">
+              <img src="assets/img/logo.png" alt="" width="48" height="48" />
+              <span><b>Первичный приём</b><small>консультация и процедура — 0&nbsp;₽</small></span>
             </div>
-            <div class="float-card float-card--b" aria-hidden="true">
-              <span class="float-card__ico">
-                <svg viewBox="0 0 24 24"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg>
-              </span>
-              <span><b>Без боли</b><small>в&nbsp;спине и&nbsp;суставах</small></span>
-            </div>
-            <svg class="hero__orbit" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="96"/></svg>
           </div>
         </div>
 
-        <svg class="hero__ecg" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M0 55 H560 L585 55 L600 20 L620 82 L640 30 L656 60 L668 55 H1440" />
-        </svg>
       </div>
     </section>
 
     <!-- ===== Бегущая строка ===== -->
     <div class="marquee" aria-hidden="true">
       <div class="marquee__track">
-        <span>Здоровая спина</span><i>✦</i><span>Здоровые суставы</span><i>✦</i><span>Резорбция грыжи</span><i>✦</i><span>Ударно-волновая терапия</span><i>✦</i><span>Магнит высокой интенсивности</span><i>✦</i><span>Хиджама</span><i>✦</i><span>Иглоукалывание</span><i>✦</i>
-        <span>Здоровая спина</span><i>✦</i><span>Здоровые суставы</span><i>✦</i><span>Резорбция грыжи</span><i>✦</i><span>Ударно-волновая терапия</span><i>✦</i><span>Магнит высокой интенсивности</span><i>✦</i><span>Хиджама</span><i>✦</i><span>Иглоукалывание</span><i>✦</i>
+        <span>Здоровая спина</span><i></i><span>Здоровые суставы</span><i></i><span>Резорбция грыжи</span><i></i><span>Ударно-волновая терапия</span><i></i><span>Магнит высокой интенсивности</span><i></i><span>Хиджама</span><i></i><span>Иглоукалывание</span><i></i>
+        <span>Здоровая спина</span><i></i><span>Здоровые суставы</span><i></i><span>Резорбция грыжи</span><i></i><span>Ударно-волновая терапия</span><i></i><span>Магнит высокой интенсивности</span><i></i><span>Хиджама</span><i></i><span>Иглоукалывание</span><i></i>
       </div>
     </div>
 
@@ -186,7 +169,7 @@
 
             <div class="promo__photo">
               <img src="assets/img/promo.jpg" alt="Врач изучает рентгеновский снимок пациента" loading="lazy" width="1400" height="931" />
-              <span class="promo__sticker" aria-hidden="true">0&nbsp;₽</span>
+              <span class="promo__sticker" aria-hidden="true">Первый визит · 0&nbsp;₽</span>
             </div>
 
             <ol class="promo__list">
@@ -199,13 +182,19 @@
           </div>
 
           <div class="lead-card" data-reveal id="lead">
-            <span class="lead-card__badge">Свободные места есть</span>
+            <span class="lead-card__badge">Онлайн-запись</span>
             <h3 class="lead-card__title">Запишитесь сейчас</h3>
             <p class="lead-card__sub">Оставьте телефон — администратор перезвонит и&nbsp;подберёт удобное время.</p>
             <form class="lead-form" novalidate data-lead-form>
               <label class="field"><span>Ваше имя</span><input name="name" type="text" autocomplete="name" maxlength="60" placeholder="Например, Анна" required /></label>
               <label class="field"><span>Телефон</span><input name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="+7 (___) ___-__-__" required /></label>
-              <label class="field"><span>Что вас интересует</span><select name="service" data-service-select></select></label>
+              <div class="field"><span>Что вас интересует</span>
+                <div class="dd" data-dd>
+                  <button class="dd__btn" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="dd__val"></span><svg class="dd__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+                  <ul class="dd__list" role="listbox" tabindex="-1"></ul>
+                  <input type="hidden" name="service" value="promo" />
+                </div>
+              </div>
               <label class="field field--hp" aria-hidden="true">Не заполняйте<input name="website" type="text" tabindex="-1" autocomplete="off" /></label>
               <label class="check"><input type="checkbox" name="consent" required /><span>Согласен(на) на&nbsp;обработку персональных данных согласно <a href="politika.html" target="_blank" rel="noopener">политике конфиденциальности</a></span></label>
               <button class="btn btn--accent btn--lg lead-form__submit" type="submit">Записаться бесплатно <span class="btn__arrow" aria-hidden="true">→</span></button>
@@ -246,7 +235,7 @@
           </article>
 
           <article class="price-card price-card--hit" data-kind="complex" data-reveal>
-            <div class="price-card__media"><img src="assets/img/svc-spina57.jpg" alt="Вакуумно-градиентная терапия и магнит на спине" loading="lazy" width="900" height="675" /><span class="price-card__badge">Хит</span></div>
+            <div class="price-card__media"><img src="assets/img/svc-spina57.jpg" alt="Вакуумно-градиентная терапия и магнит на спине" loading="lazy" width="900" height="675" /><span class="price-card__badge">Популярное</span></div>
             <div class="price-card__body">
               <h3>Здоровая спина 5.0 / 7.0</h3>
               <p class="price-card__desc">5 или 7 методик за&nbsp;один визит — максимальный комплекс для спины.</p>
@@ -465,7 +454,6 @@
           <span class="eyebrow">Контакты</span>
           <h2 class="section__title">Свяжитесь с&nbsp;нами удобным способом</h2>
           <p class="section__lead">Напишите в&nbsp;удобный мессенджер или позвоните — ответим и&nbsp;поможем записаться на&nbsp;бесплатный приём.</p>
-          <p class="contacts__script" aria-hidden="true">Мы всегда на&nbsp;связи!</p>
         </div>
 
         <div class="contacts__side">
@@ -532,10 +520,6 @@
     </div>
   </footer>
 
-  <!-- Липкая кнопка акции (мобильные) -->
-  <div class="sticky-cta" id="stickyCta">
-    <button class="btn btn--accent" data-open-booking data-service="promo" type="button">Записаться бесплатно <span class="btn__arrow" aria-hidden="true">→</span></button>
-  </div>
 
   <!-- ===== Окно записи ===== -->
   <div class="modal" id="booking" role="dialog" aria-modal="true" aria-labelledby="bookingTitle" hidden>
@@ -548,7 +532,13 @@
       <form class="lead-form lead-form--modal" novalidate data-lead-form>
         <label class="field"><span>Ваше имя</span><input name="name" type="text" autocomplete="name" maxlength="60" placeholder="Например, Анна" required /></label>
         <label class="field"><span>Телефон</span><input name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="+7 (___) ___-__-__" required /></label>
-        <label class="field"><span>Что вас интересует</span><select name="service" data-service-select></select></label>
+        <div class="field"><span>Что вас интересует</span>
+                <div class="dd" data-dd>
+                  <button class="dd__btn" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="dd__val"></span><svg class="dd__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+                  <ul class="dd__list" role="listbox" tabindex="-1"></ul>
+                  <input type="hidden" name="service" value="promo" />
+                </div>
+              </div>
         <label class="field field--hp" aria-hidden="true">Не заполняйте<input name="website" type="text" tabindex="-1" autocomplete="off" /></label>
         <label class="check"><input type="checkbox" name="consent" required /><span>Согласен(на) на&nbsp;обработку персональных данных согласно <a href="politika.html" target="_blank" rel="noopener">политике конфиденциальности</a></span></label>
         <button class="btn btn--accent btn--lg lead-form__submit" type="submit">Отправить заявку <span class="btn__arrow" aria-hidden="true">→</span></button>

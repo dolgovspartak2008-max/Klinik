@@ -14,7 +14,7 @@
 ```
 index.html            — вся страница
 politika.html         — политика конфиденциальности (152-ФЗ)
-assets/css/style.css  — стили (белый + индиго, акцент — коралловый для акции)
+assets/css/style.css  — стили (белый + индиго, акцент — бирюзовый из логотипа)
 assets/js/config.js   — КОНТАКТЫ и настройки заявок
 assets/js/main.js     — интро, меню, фильтр услуг, окна записи и Instagram, отправка формы
 assets/img/           — логотип (logo.png, favicon.png, apple-touch-icon.png) и фото (hero, promo, svc-*, case-*, center)
