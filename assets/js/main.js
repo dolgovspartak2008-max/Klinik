@@ -19,7 +19,7 @@
   }
 
   /* ---------- Контакты из config.js ---------- */
-  var mapKeys = { salavatMap: true, ufaMap: true };
+  var mapKeys = { salavatMap: true };
   doc.querySelectorAll("[data-contact]").forEach(function (a) {
     var key = a.getAttribute("data-contact");
     var val = (C[key] || "").trim();
@@ -144,33 +144,30 @@
     revealEls.forEach(function (el) { el.classList.add("is-in"); });
   }
 
-  /* ---------- Слайдер услуг ---------- */
-  var track = doc.getElementById("svcTrack");
-  var prev = doc.getElementById("svcPrev");
-  var next = doc.getElementById("svcNext");
-  var bar = doc.getElementById("svcBar");
-  function step() {
-    var card = track.querySelector(".svc-card");
-    return card ? card.getBoundingClientRect().width + 24 : 300;
-  }
-  function updateSlider() {
-    var max = track.scrollWidth - track.clientWidth;
-    var ratio = max > 0 ? track.scrollLeft / max : 0;
-    var visible = track.scrollWidth ? track.clientWidth / track.scrollWidth : 1;
-    bar.style.width = Math.max(visible * 100, 12) + "%";
-    bar.style.transform = "translateX(" + (ratio * (100 / Math.max(visible, 0.12) - 100)) + "%)";
-    prev.disabled = track.scrollLeft < 4;
-    next.disabled = track.scrollLeft > max - 4;
-  }
-  prev.addEventListener("click", function () { track.scrollBy({ left: -step(), behavior: "smooth" }); });
-  next.addEventListener("click", function () { track.scrollBy({ left: step(), behavior: "smooth" }); });
-  track.addEventListener("scroll", updateSlider, { passive: true });
-  window.addEventListener("resize", updateSlider);
-  track.addEventListener("keydown", function (e) {
-    if (e.key === "ArrowRight") { e.preventDefault(); next.click(); }
-    if (e.key === "ArrowLeft") { e.preventDefault(); prev.click(); }
+  /* ---------- Услуги: фильтр Комплексы / Процедуры ---------- */
+  var grid = doc.getElementById("priceGrid");
+  doc.querySelectorAll(".tabs__btn").forEach(function (btn, _, all) {
+    btn.addEventListener("click", function () {
+      var f = btn.getAttribute("data-filter");
+      all.forEach(function (b) { var on = b === btn; b.classList.toggle("is-active", on); b.setAttribute("aria-selected", String(on)); });
+      grid.querySelectorAll(".price-card").forEach(function (c) {
+        c.hidden = !(f === "all" || c.getAttribute("data-kind") === f);
+        c.classList.add("is-in");
+      });
+    });
   });
-  updateSlider();
+
+  // Видео в карточке играет только когда видно
+  var vids = doc.querySelectorAll("video[data-autoplay]");
+  if ("IntersectionObserver" in window && !reduceMotion) {
+    var vio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        var v = en.target;
+        if (en.isIntersecting) { var pr = v.play(); if (pr && pr.catch) pr.catch(function () {}); } else v.pause();
+      });
+    }, { threshold: 0.35 });
+    vids.forEach(function (v) { vio.observe(v); });
+  }
 
   /* ---------- Hero: свечение за курсором и параллакс ---------- */
   if (finePointer && !reduceMotion) {
@@ -203,33 +200,185 @@
     });
   }
 
-  /* ---------- Окно записи ---------- */
-  var modal = doc.getElementById("booking");
+  /* ---------- Модальные окна (запись, выбор Instagram) ---------- */
+  var openedModal = null;
   var lastFocus = null;
-  function openModal() {
+  function focusables(m) { return m.querySelectorAll("a[href], button:not([disabled]), input:not([tabindex='-1']), select"); }
+  function openModal(m) {
+    if (openedModal) closeModal();
     lastFocus = doc.activeElement;
-    modal.hidden = false;
+    openedModal = m;
+    m.hidden = false;
     body.style.overflow = "hidden";
-    var first = modal.querySelector(".modal__opt");
-    if (first) first.focus();
+    var first = m.querySelector("input[name=name]") || m.querySelector(".ig-choice__opt, .modal__opt");
+    if (first) setTimeout(function () { first.focus(); }, 60);
   }
   function closeModal() {
-    modal.hidden = true;
+    if (!openedModal) return;
+    openedModal.hidden = true;
+    openedModal = null;
     body.style.overflow = "";
     if (lastFocus && lastFocus.focus) lastFocus.focus();
   }
-  doc.querySelectorAll("[data-open-booking]").forEach(function (b) { b.addEventListener("click", openModal); });
-  modal.querySelectorAll("[data-close-booking]").forEach(function (b) { b.addEventListener("click", closeModal); });
+  doc.querySelectorAll("[data-close-modal]").forEach(function (b) { b.addEventListener("click", closeModal); });
   doc.addEventListener("keydown", function (e) {
-    if (modal.hidden) return;
+    if (!openedModal) return;
     if (e.key === "Escape") closeModal();
     if (e.key === "Tab") {
-      var f = modal.querySelectorAll("a, button");
+      var f = focusables(openedModal);
       var firstEl = f[0], lastEl = f[f.length - 1];
       if (e.shiftKey && doc.activeElement === firstEl) { e.preventDefault(); lastEl.focus(); }
       else if (!e.shiftKey && doc.activeElement === lastEl) { e.preventDefault(); firstEl.focus(); }
     }
   });
+
+  /* ---------- Instagram: выбор клиника / врач ---------- */
+  var igModal = doc.getElementById("igModal");
+  doc.querySelectorAll("[data-open-ig]").forEach(function (b) { b.addEventListener("click", function () { openModal(igModal); }); });
+  doc.querySelectorAll("[data-ig-handle]").forEach(function (el) {
+    var url = (C[el.getAttribute("data-ig-handle")] || "").trim();
+    var m = url.match(/instagram\.com\/([^/?#]+)/i);
+    el.textContent = m ? "@" + m[1] : "скоро появится";
+  });
+  igModal.querySelectorAll("a").forEach(function (a) { a.addEventListener("click", function () { if (a.target === "_blank") closeModal(); }); });
+
+  /* ---------- Заявки ---------- */
+  var L = window.SITE_LEADS || {};
+  var SERVICES = [
+    ["promo", "Бесплатная консультация + процедура (акция)"],
+    ["Здоровая спина 3.0", "Здоровая спина 3.0 — 4 600 ₽"],
+    ["Здоровая спина 5.0 / 7.0", "Здоровая спина 5.0 / 7.0 — от 5 900 ₽"],
+    ["Здоровые суставы", "Здоровые суставы — 4 600 ₽"],
+    ["Резорбция грыжи", "Резорбция грыжи — 5 300 ₽"],
+    ["Ударно-волновая терапия", "Ударно-волновая терапия — от 1 500 ₽"],
+    ["Магнит высокой интенсивности", "Магнит высокой интенсивности — от 1 800 ₽"],
+    ["Вакуумно-градиентная терапия", "Вакуумно-градиентная терапия — от 2 000 ₽"],
+    ["Хиджама", "Хиджама — от 2 000 ₽"],
+    ["Иглоукалывание", "Иглоукалывание — от 2 000 ₽"],
+    ["Консультация по методикам", "Другое / нужна консультация"]
+  ];
+  function serviceLabel(v) {
+    for (var i = 0; i < SERVICES.length; i++) if (SERVICES[i][0] === v) return SERVICES[i][1];
+    return v;
+  }
+  doc.querySelectorAll("[data-service-select]").forEach(function (sel) {
+    SERVICES.forEach(function (s) {
+      var o = doc.createElement("option");
+      o.value = s[0]; o.textContent = s[1];
+      sel.appendChild(o);
+    });
+  });
+
+  var booking = doc.getElementById("booking");
+  var bookingSelect = booking.querySelector("[data-service-select]");
+  doc.querySelectorAll("[data-open-booking]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var s = b.getAttribute("data-service");
+      if (s) bookingSelect.value = s;
+      openModal(booking);
+    });
+  });
+
+  // Проверяем, настроена ли автоотправка (Vercel-функция)
+  var autoSend = false;
+  if (L.endpoint && location.protocol.indexOf("http") === 0) {
+    fetch(L.endpoint, { method: "GET", headers: { Accept: "application/json" } })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) { autoSend = !!(j && j.configured); })
+      .catch(function () {});
+  }
+
+  function normPhone(v) {
+    var d = String(v || "").replace(/\D/g, "");
+    if (d.length === 11 && d.charAt(0) === "8") d = "7" + d.slice(1);
+    if (d.length === 10) d = "7" + d;
+    return d;
+  }
+  function leadText(data) {
+    return "Заявка с сайта — Центр здоровья, Салават\n" +
+      "Имя: " + data.name + "\n" +
+      "Телефон: +" + data.phone + "\n" +
+      "Интересует: " + serviceLabel(data.service);
+  }
+  function waLink(data) {
+    return "https://wa.me/" + String(L.whatsapp || "").replace(/\D/g, "") + "?text=" + encodeURIComponent(leadText(data));
+  }
+
+  doc.querySelectorAll("[data-lead-form]").forEach(function (form) {
+    var status = form.querySelector(".lead-form__status");
+    var submit = form.querySelector(".lead-form__submit");
+    function setStatus(html, kind) {
+      status.innerHTML = html;
+      status.className = "lead-form__status" + (kind ? " is-" + kind : "");
+    }
+    form.querySelectorAll("input, select").forEach(function (el) {
+      el.addEventListener("input", function () { el.closest(".field, .check") && el.closest(".field, .check").classList.remove("is-invalid"); });
+    });
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var f = form.elements;
+      if (f.website.value) return; // бот
+      var data = {
+        name: f.name.value.trim(),
+        phone: normPhone(f.phone.value),
+        service: f.service.value,
+        page: location.href.split("#")[0]
+      };
+      var bad = [];
+      if (data.name.length < 2) bad.push(f.name);
+      if (data.phone.length !== 11) bad.push(f.phone);
+      if (!f.consent.checked) bad.push(f.consent);
+      bad.forEach(function (el) { el.closest(".field, .check").classList.add("is-invalid"); });
+      if (bad.length) {
+        setStatus(bad[0] === f.phone ? "Проверьте номер телефона" : bad[0] === f.consent ? "Нужно согласие на обработку данных" : "Укажите имя", "error");
+        bad[0].focus();
+        return;
+      }
+
+      function done() {
+        form.classList.add("is-sent");
+        setStatus("<b>Спасибо, " + data.name.replace(/[<>&"]/g, "") + "!</b> Заявка принята — администратор скоро перезвонит.", "ok");
+        form.reset();
+        if (typeof window.ym === "function") try { window.ym("reachGoal", "lead"); } catch (err) {}
+      }
+      function viaWhatsApp(openNow) {
+        var url = waLink(data);
+        if (openNow) window.open(url, "_blank", "noopener");
+        setStatus("Осталось нажать «Отправить» в&nbsp;WhatsApp. <a href=\"" + url + "\" target=\"_blank\" rel=\"noopener\">Открыть WhatsApp →</a>", "ok");
+      }
+
+      if (!autoSend) { viaWhatsApp(true); return; }
+
+      submit.disabled = true;
+      setStatus("Отправляем заявку…");
+      var ctrl = "AbortController" in window ? new AbortController() : null;
+      var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 9000);
+      fetch(L.endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+        signal: ctrl ? ctrl.signal : undefined
+      })
+        .then(function (r) { return r.json().catch(function () { return {}; }); })
+        .then(function (j) { if (j && j.ok) done(); else viaWhatsApp(false); })
+        .catch(function () { viaWhatsApp(false); })
+        .then(function () { clearTimeout(timer); submit.disabled = false; });
+    });
+  });
+
+  /* ---------- Липкая кнопка акции ---------- */
+  var sticky = doc.getElementById("stickyCta");
+  var promoSec = doc.getElementById("promo");
+  function onStick() {
+    var y = window.scrollY;
+    var r = promoSec.getBoundingClientRect();
+    var inPromo = r.top < window.innerHeight && r.bottom > 0;
+    var nearEnd = window.innerHeight + y > doc.documentElement.scrollHeight - 200;
+    sticky.classList.toggle("is-shown", y > window.innerHeight * 0.8 && !inPromo && !nearEnd);
+  }
+  window.addEventListener("scroll", onStick, { passive: true });
+  onStick();
 
   /* ---------- Год в подвале ---------- */
   var y = doc.getElementById("year");

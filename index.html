@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Центр здоровья — лечение и реабилитация в Салавате и Уфе</title>
-  <meta name="description" content="Центр здоровья в Салавате и клиника лечения и реабилитации в Уфе. Консультации, лечение и восстановление для взрослых и детей. Запишитесь на приём удобным способом." />
+  <title>Центр здоровья в Салавате — бесплатная консультация и процедура</title>
+  <meta name="description" content="Центр здоровья в Салавате: лечение боли в спине и суставах, резорбция грыжи, ударно-волновая терапия, магнит, хиджама, иглоукалывание. Бесплатная консультация и процедура для новых пациентов." />
   <meta name="theme-color" content="#0b1f7a" />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="ru_RU" />
-  <meta property="og:title" content="Центр здоровья — лечение и реабилитация" />
-  <meta property="og:description" content="Салават и Уфа. Современные подходы к лечению и восстановлению для взрослых и детей." />
+  <meta property="og:title" content="Центр здоровья, Салават — консультация и процедура бесплатно" />
+  <meta property="og:description" content="Врач-физиотерапевт, современное оборудование, комплексные программы для спины и суставов. Запишитесь на бесплатный первичный приём." />
   <meta property="og:image" content="assets/img/hero.jpg" />
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -41,7 +41,7 @@
       <svg class="intro__pulse" viewBox="0 0 600 80" preserveAspectRatio="none">
         <path d="M0 40 H210 L232 40 L248 12 L266 70 L284 22 L300 48 L312 40 H600" />
       </svg>
-      <p class="intro__script">Здоровье · Движение · Качество жизни</p>
+      <p class="intro__script">Салават · Здоровье · Движение</p>
     </div>
     <div class="intro__curtain"></div>
   </div>
@@ -62,15 +62,16 @@
 
       <nav class="nav" id="nav" aria-label="Основная навигация">
         <a href="#top" class="nav__link is-active">Главная</a>
-        <a href="#services" class="nav__link">Услуги</a>
-        <a href="#cases" class="nav__link">Примеры лечения</a>
-        <a href="#centers" class="nav__link">О центре</a>
+        <a href="#promo" class="nav__link nav__link--hot">Акция</a>
+        <a href="#services" class="nav__link">Услуги и цены</a>
+        <a href="#cases" class="nav__link">С чем помогаем</a>
+        <a href="#center" class="nav__link">О центре</a>
         <a href="#contacts" class="nav__link">Контакты</a>
-        <button class="btn btn--primary nav__cta-mobile" data-open-booking type="button">Записаться на приём</button>
+        <button class="btn btn--primary nav__cta-mobile" data-open-booking data-service="promo" type="button">Записаться бесплатно</button>
       </nav>
 
-      <button class="btn btn--light header__cta magnetic" data-open-booking type="button">
-        Записаться на приём <span class="btn__arrow" aria-hidden="true">→</span>
+      <button class="btn btn--light header__cta magnetic" data-open-booking data-service="promo" type="button">
+        Записаться <span class="btn__arrow" aria-hidden="true">→</span>
       </button>
 
       <button class="burger" id="burger" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="nav">
@@ -80,7 +81,7 @@
   </header>
 
   <main id="main">
-    <!-- ===== Hero ===== -->
+    <!-- ===== Hero: акция ===== -->
     <section class="hero" id="top">
       <div class="hero__panel">
         <div class="hero__noise" aria-hidden="true"></div>
@@ -89,62 +90,53 @@
         <div class="container hero__grid">
           <div class="hero__content">
             <div class="chips" data-hero-item>
-              <a href="#centers" class="chip">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12Z"/><circle cx="12" cy="10" r="2.6"/></svg>
-                <span><b>Салават</b><small>Центр здоровья</small></span>
-              </a>
-              <a href="#centers" class="chip">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12Z"/><circle cx="12" cy="10" r="2.6"/></svg>
-                <span><b>Уфа</b><small>Клиника лечения и реабилитации</small></span>
+              <a href="#promo" class="chip chip--promo">
+                <span class="chip__pulse" aria-hidden="true"></span>
+                <span><b>Акция для новых пациентов</b><small>Центр здоровья · Салават</small></span>
               </a>
             </div>
 
             <h1 class="hero__title">
-              <span class="line"><span class="word">Лечение</span></span>
-              <span class="line"><span class="word">и&nbsp;реабилитация</span></span>
-              <span class="line line--light"><span class="word">с&nbsp;заботой о&nbsp;главном&nbsp;—</span></span>
-              <span class="line line--light"><span class="word">о&nbsp;вашей <em>активности</em></span></span>
+              <span class="line"><span class="word">Бесплатная</span></span>
+              <span class="line"><span class="word">консультация</span></span>
+              <span class="line line--light"><span class="word">и&nbsp;<em>процедура!</em></span></span>
             </h1>
 
             <p class="hero__lead" data-hero-item>
-              Современные подходы к&nbsp;лечению и&nbsp;восстановлению для&nbsp;взрослых и&nbsp;детей. Составим персональный план и&nbsp;будем рядом на&nbsp;каждом этапе.
+              Врач-физиотерапевт разберётся в&nbsp;причине боли, посмотрит ваши снимки и&nbsp;проведёт первую процедуру — <b>0&nbsp;₽</b>. Запишитесь сейчас, пока есть свободные места.
             </p>
 
             <div class="hero__actions" data-hero-item>
-              <button class="btn btn--light btn--lg magnetic" data-open-booking type="button">
-                Записаться на приём <span class="btn__arrow" aria-hidden="true">→</span>
+              <button class="btn btn--accent btn--lg magnetic" data-open-booking data-service="promo" type="button">
+                Записаться сейчас <span class="btn__arrow" aria-hidden="true">→</span>
               </button>
-              <a class="btn btn--ghost btn--lg" data-contact="phone" href="#contacts">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h3.2l1.6 4-2 1.3a11 11 0 0 0 5 5l1.3-2 4 1.6V17a2 2 0 0 1-2 2A15 15 0 0 1 3 6a2 2 0 0 1 2-2Z"/></svg>
-                Позвонить
-              </a>
+              <a class="btn btn--ghost btn--lg" href="#promo">Подробнее об акции</a>
             </div>
 
             <ul class="hero__facts" data-hero-item>
+              <li><span class="hero__fact-ico">✦</span>Первичный приём — 0&nbsp;₽</li>
+              <li><span class="hero__fact-ico">✦</span>Процедура в&nbsp;подарок</li>
               <li><span class="hero__fact-ico">✦</span>Для взрослых и&nbsp;детей</li>
-              <li><span class="hero__fact-ico">✦</span>Индивидуальный план</li>
-              <li><span class="hero__fact-ico">✦</span>Два центра</li>
             </ul>
           </div>
 
           <div class="hero__visual" data-hero-visual>
             <div class="hero__blob" id="heroBlob">
-              <img src="assets/img/hero.jpg" alt="Светлый зал реабилитации с процедурными кушетками" width="756" height="846" fetchpriority="high" />
+              <img src="assets/img/hero.jpg" alt="Врач-физиотерапевт Центра здоровья в кабинете" width="1100" height="1166" fetchpriority="high" />
               <div class="hero__blob-shade" aria-hidden="true"></div>
             </div>
-            <p class="hero__script" aria-hidden="true">Здоровье<br />Движение<br />Качество жизни</p>
 
             <div class="float-card float-card--a" aria-hidden="true">
+              <span class="float-card__ico float-card__ico--gift">
+                <svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="5" rx="1"/><path d="M5 13v7h14v-7M12 8v12M12 8c-1.5-3-5-4-5-1.5S10 8 12 8Zm0 0c1.5-3 5-4 5-1.5S14 8 12 8Z"/></svg>
+              </span>
+              <span><b>0&nbsp;₽</b><small>консультация + процедура</small></span>
+            </div>
+            <div class="float-card float-card--b" aria-hidden="true">
               <span class="float-card__ico">
                 <svg viewBox="0 0 24 24"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg>
               </span>
-              <span><b>Восстановление</b><small>после травм и&nbsp;операций</small></span>
-            </div>
-            <div class="float-card float-card--b" aria-hidden="true">
-              <span class="float-card__ico float-card__ico--heart">
-                <svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/></svg>
-              </span>
-              <span><b>Забота</b><small>на каждом этапе</small></span>
+              <span><b>Без боли</b><small>в&nbsp;спине и&nbsp;суставах</small></span>
             </div>
             <svg class="hero__orbit" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="96"/></svg>
           </div>
@@ -159,69 +151,185 @@
     <!-- ===== Бегущая строка ===== -->
     <div class="marquee" aria-hidden="true">
       <div class="marquee__track">
-        <span>Консультация</span><i>✦</i><span>Диагностика</span><i>✦</i><span>Лечение</span><i>✦</i><span>Реабилитация</span><i>✦</i><span>Восстановление после травм</span><i>✦</i><span>Для взрослых и детей</span><i>✦</i>
-        <span>Консультация</span><i>✦</i><span>Диагностика</span><i>✦</i><span>Лечение</span><i>✦</i><span>Реабилитация</span><i>✦</i><span>Восстановление после травм</span><i>✦</i><span>Для взрослых и детей</span><i>✦</i>
+        <span>Здоровая спина</span><i>✦</i><span>Здоровые суставы</span><i>✦</i><span>Резорбция грыжи</span><i>✦</i><span>Ударно-волновая терапия</span><i>✦</i><span>Магнит высокой интенсивности</span><i>✦</i><span>Хиджама</span><i>✦</i><span>Иглоукалывание</span><i>✦</i>
+        <span>Здоровая спина</span><i>✦</i><span>Здоровые суставы</span><i>✦</i><span>Резорбция грыжи</span><i>✦</i><span>Ударно-волновая терапия</span><i>✦</i><span>Магнит высокой интенсивности</span><i>✦</i><span>Хиджама</span><i>✦</i><span>Иглоукалывание</span><i>✦</i>
       </div>
     </div>
 
-    <!-- ===== Услуги ===== -->
+    <!-- ===== Акция: подробности + заявка ===== -->
+    <section class="section promo" id="promo">
+      <div class="container">
+        <div class="promo__grid">
+          <div class="promo__info" data-reveal>
+            <span class="eyebrow">Акция</span>
+            <h2 class="section__title">Консультация и&nbsp;процедура — <span class="promo__zero">бесплатно</span></h2>
+            <p class="section__lead">Приходите познакомиться с&nbsp;врачом и&nbsp;центром. Первый визит ни&nbsp;к&nbsp;чему не&nbsp;обязывает: вы&nbsp;узнаете причину боли, план лечения и&nbsp;стоимость курса заранее.</p>
+
+            <div class="promo__photo">
+              <img src="assets/img/promo.jpg" alt="Врач изучает рентгеновский снимок пациента" loading="lazy" width="1400" height="931" />
+              <span class="promo__sticker" aria-hidden="true">0&nbsp;₽</span>
+            </div>
+
+            <ol class="promo__list">
+              <li><span>1</span><div><b>Осмотр и&nbsp;консультация врача-физиотерапевта</b>Выясняем, откуда боль и&nbsp;что её&nbsp;усиливает.</div></li>
+              <li><span>2</span><div><b>Разбор ваших снимков МРТ и&nbsp;рентгена</b>Если снимки есть — возьмите их&nbsp;с&nbsp;собой.</div></li>
+              <li><span>3</span><div><b>Одна процедура в&nbsp;подарок</b>Подбирается врачом по&nbsp;показаниям.</div></li>
+              <li><span>4</span><div><b>Персональный план лечения</b>С&nbsp;понятным количеством визитов и&nbsp;ценой.</div></li>
+            </ol>
+            <p class="promo__terms">Для новых пациентов, по&nbsp;предварительной записи. Количество мест в&nbsp;день ограничено. Имеются противопоказания, необходима консультация специалиста.</p>
+          </div>
+
+          <div class="lead-card" data-reveal id="lead">
+            <span class="lead-card__badge">Свободные места есть</span>
+            <h3 class="lead-card__title">Запишитесь сейчас</h3>
+            <p class="lead-card__sub">Оставьте телефон — администратор перезвонит и&nbsp;подберёт удобное время.</p>
+            <form class="lead-form" novalidate data-lead-form>
+              <label class="field"><span>Ваше имя</span><input name="name" type="text" autocomplete="name" maxlength="60" placeholder="Например, Анна" required /></label>
+              <label class="field"><span>Телефон</span><input name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="+7 (___) ___-__-__" required /></label>
+              <label class="field"><span>Что вас интересует</span><select name="service" data-service-select></select></label>
+              <label class="field field--hp" aria-hidden="true">Не заполняйте<input name="website" type="text" tabindex="-1" autocomplete="off" /></label>
+              <label class="check"><input type="checkbox" name="consent" required /><span>Согласен(на) на&nbsp;обработку персональных данных</span></label>
+              <button class="btn btn--accent btn--lg lead-form__submit" type="submit">Записаться бесплатно <span class="btn__arrow" aria-hidden="true">→</span></button>
+              <p class="lead-form__status" role="status" aria-live="polite"></p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Услуги и цены ===== -->
     <section class="section services" id="services">
       <div class="container">
         <div class="section__head">
           <div data-reveal>
-            <span class="eyebrow">01 — Услуги</span>
-            <h2 class="section__title">Услуги</h2>
-            <p class="section__lead">Комплексный подход: от&nbsp;консультации до&nbsp;реабилитации. Перечень услуг может быть расширен.</p>
+            <span class="eyebrow">Услуги и цены</span>
+            <h2 class="section__title">Программы лечения</h2>
+            <p class="section__lead">Комплексы для спины и&nbsp;суставов — несколько методик за&nbsp;один визит. Методики подбирает врач-физиотерапевт.</p>
           </div>
-          <div class="slider-nav" data-reveal>
-            <button class="round-btn" id="svcPrev" type="button" aria-label="Предыдущие услуги">←</button>
-            <button class="round-btn round-btn--fill" id="svcNext" type="button" aria-label="Следующие услуги">→</button>
+          <div class="tabs" role="tablist" aria-label="Тип услуг" data-reveal>
+            <button class="tabs__btn is-active" role="tab" aria-selected="true" data-filter="all" type="button">Все</button>
+            <button class="tabs__btn" role="tab" aria-selected="false" data-filter="complex" type="button">Комплексы</button>
+            <button class="tabs__btn" role="tab" aria-selected="false" data-filter="single" type="button">Процедуры</button>
           </div>
         </div>
 
-        <div class="services__track" id="svcTrack" tabindex="0" aria-label="Список услуг">
-          <article class="svc-card" data-reveal>
-            <div class="svc-card__ico">
-              <svg viewBox="0 0 48 48"><circle cx="24" cy="16" r="7"/><path d="M10 40c1.5-8 7-12 14-12s12.5 4 14 12"/><path d="M20 34h8M24 30v8"/></svg>
+        <div class="price-grid" id="priceGrid">
+          <!-- Комплексы -->
+          <article class="price-card" data-kind="complex" data-reveal>
+            <div class="price-card__media"><img src="assets/img/svc-spina3.jpg" alt="Магнитотерапия и тейпирование спины" loading="lazy" width="900" height="675" /><span class="price-card__badge">Комплекс</span></div>
+            <div class="price-card__body">
+              <h3>Здоровая спина 3.0</h3>
+              <p class="price-card__desc">3 методики из&nbsp;перечня по&nbsp;назначению физиотерапевта.</p>
+              <div class="price-card__price"><b>4&nbsp;600&nbsp;₽</b><span class="time">40 минут</span></div>
+              <p class="price-card__gift">Тейпирование в&nbsp;подарок + 2% кешбэк</p>
+              <button class="btn btn--primary price-card__cta" data-open-booking data-service="Здоровая спина 3.0" type="button">Записаться</button>
             </div>
-            <h3>Консультация</h3>
-            <p>Диагностика и&nbsp;персональный план лечения с&nbsp;понятными шагами.</p>
-            <button class="svc-card__go" data-open-booking type="button" aria-label="Записаться на консультацию">→</button>
           </article>
-          <article class="svc-card" data-reveal>
-            <div class="svc-card__ico">
-              <svg viewBox="0 0 48 48"><path d="M14 40c4-10 10-18 22-26"/><path d="M22 28c-6 0-10-4-10-10 6 0 10 4 10 10Z"/><path d="M28 21c0-6 4-10 10-10 0 6-4 10-10 10Z"/><path d="M19 35c-5 1-9-1-11-5 5-1 9 1 11 5Z"/></svg>
+
+          <article class="price-card price-card--hit" data-kind="complex" data-reveal>
+            <div class="price-card__media"><img src="assets/img/svc-spina57.jpg" alt="Вакуумно-градиентная терапия и магнит на спине" loading="lazy" width="900" height="675" /><span class="price-card__badge">Хит</span></div>
+            <div class="price-card__body">
+              <h3>Здоровая спина 5.0 / 7.0</h3>
+              <p class="price-card__desc">5 или 7 методик за&nbsp;один визит — максимальный комплекс для спины.</p>
+              <div class="price-card__split">
+                <div><small>5 методик</small><b>5&nbsp;900&nbsp;₽</b><span class="time">60 минут</span></div>
+                <div><small>7 методик</small><b>7&nbsp;600&nbsp;₽</b><span class="time">80 минут</span></div>
+              </div>
+              <button class="btn btn--primary price-card__cta" data-open-booking data-service="Здоровая спина 5.0 / 7.0" type="button">Записаться</button>
             </div>
-            <h3>Лечение</h3>
-            <p>Современные методы и&nbsp;индивидуальный подход к&nbsp;каждому пациенту.</p>
-            <button class="svc-card__go" data-open-booking type="button" aria-label="Записаться на лечение">→</button>
           </article>
-          <article class="svc-card" data-reveal>
-            <div class="svc-card__ico">
-              <svg viewBox="0 0 48 48"><circle cx="18" cy="14" r="5"/><circle cx="31" cy="14" r="5"/><path d="M8 38c0-7 4-12 10-12 3 0 5 1 6.5 3"/><path d="M40 38c0-7-4-12-9-12-5 0-9 5-9 12"/></svg>
+
+          <article class="price-card" data-kind="complex" data-reveal>
+            <div class="price-card__media">
+              <video src="assets/video/laser.mp4" poster="assets/img/svc-sustavy.jpg" muted loop playsinline preload="none" aria-label="Процедура высокоинтенсивной лазерной терапии" data-autoplay></video>
+              <span class="price-card__badge">Комплекс</span>
             </div>
-            <h3>Реабилитация</h3>
-            <p>Восстановление после травм, операций и&nbsp;при хронических состояниях.</p>
-            <button class="svc-card__go" data-open-booking type="button" aria-label="Записаться на реабилитацию">→</button>
+            <div class="price-card__body">
+              <h3>Здоровые суставы</h3>
+              <p class="price-card__desc">Магнит + лазер + ударно-волновая терапия.</p>
+              <div class="price-card__price"><b>4&nbsp;600&nbsp;₽</b><span class="time">40 минут</span></div>
+              <p class="price-card__gift">Тейпирование в&nbsp;подарок + 2% кешбэк</p>
+              <button class="btn btn--primary price-card__cta" data-open-booking data-service="Здоровые суставы" type="button">Записаться</button>
+            </div>
           </article>
-          <article class="svc-card" data-reveal>
-            <div class="svc-card__ico">
-              <svg viewBox="0 0 48 48"><path d="M6 26h8l4-10 7 20 5-14 3 4h9"/></svg>
+
+          <article class="price-card" data-kind="complex" data-reveal>
+            <div class="price-card__media"><img src="assets/img/svc-gryzha.jpg" alt="Врач изучает МРТ поясничного отдела позвоночника" loading="lazy" width="900" height="675" /><span class="price-card__badge">Комплекс</span></div>
+            <div class="price-card__body">
+              <h3>Резорбция грыжи</h3>
+              <p class="price-card__desc">4 методики по&nbsp;назначению физиотерапевта — после изучения МРТ.</p>
+              <div class="price-card__price"><b>5&nbsp;300&nbsp;₽</b><span class="time">60 минут</span></div>
+              <button class="btn btn--primary price-card__cta" data-open-booking data-service="Резорбция грыжи" type="button">Записаться</button>
             </div>
-            <h3>Лечение боли</h3>
-            <p>Помощь при болях в&nbsp;спине, суставах и&nbsp;мышцах — выясняем причину, а&nbsp;не&nbsp;только снимаем симптом.</p>
-            <button class="svc-card__go" data-open-booking type="button" aria-label="Записаться: лечение боли">→</button>
           </article>
-          <article class="svc-card" data-reveal>
-            <div class="svc-card__ico">
-              <svg viewBox="0 0 48 48"><circle cx="24" cy="13" r="6"/><path d="M14 40l4-14h12l4 14"/><path d="M12 24l6 2M36 24l-6 2"/></svg>
+
+          <!-- Отдельные процедуры -->
+          <article class="price-card" data-kind="single" data-reveal>
+            <div class="price-card__media"><img src="assets/img/svc-uvt.jpg" alt="Ударно-волновая терапия стопы" loading="lazy" width="900" height="675" /><span class="price-card__badge price-card__badge--soft">Процедура</span></div>
+            <div class="price-card__body">
+              <h3>Ударно-волновая терапия</h3>
+              <div class="price-card__price"><small>1 зона</small><b>1&nbsp;500&nbsp;₽</b><span class="time">15 минут</span></div>
+              <ul class="price-card__packs"><li><span>5 процедур</span><b>7&nbsp;000&nbsp;₽</b></li><li><span>10 процедур</span><b>13&nbsp;800&nbsp;₽</b></li></ul>
+              <button class="btn btn--primary price-card__cta" data-open-booking data-service="Ударно-волновая терапия" type="button">Записаться</button>
             </div>
-            <h3>Для детей</h3>
-            <p>Бережные программы восстановления и&nbsp;развития для&nbsp;детей разного возраста.</p>
-            <button class="svc-card__go" data-open-booking type="button" aria-label="Записаться: программы для детей">→</button>
+          </article>
+
+          <article class="price-card" data-kind="single" data-reveal>
+            <div class="price-card__media"><img src="assets/img/svc-magnit.jpg" alt="Магнитотерапия высокой интенсивности" loading="lazy" width="900" height="675" /><span class="price-card__badge price-card__badge--soft">Процедура</span></div>
+            <div class="price-card__body">
+              <h3>Магнит высокой интенсивности</h3>
+              <div class="price-card__price"><small>1 процедура</small><b>1&nbsp;800&nbsp;₽</b><span class="time">20 минут</span></div>
+              <ul class="price-card__packs"><li><span>5 процедур</span><b>8&nbsp;400&nbsp;₽</b></li><li><span>10 процедур</span><b>16&nbsp;500&nbsp;₽</b></li></ul>
+              <button class="btn btn--primary price-card__cta" data-open-booking data-service="Магнит высокой интенсивности" type="button">Записаться</button>
+            </div>
+          </article>
+
+          <article class="price-card" data-kind="single" data-reveal>
+            <div class="price-card__media"><img src="assets/img/svc-vakuum.jpg" alt="Вакуумно-градиентная терапия" loading="lazy" width="900" height="675" /><span class="price-card__badge price-card__badge--soft">Процедура</span></div>
+            <div class="price-card__body">
+              <h3>Вакуумно-градиентная терапия</h3>
+              <div class="price-card__price"><small>1 процедура</small><b>2&nbsp;000&nbsp;₽</b><span class="time">15 минут</span></div>
+              <ul class="price-card__packs"><li><span>5 процедур</span><b>9&nbsp;400&nbsp;₽</b></li><li><span>10 процедур</span><b>18&nbsp;400&nbsp;₽</b></li></ul>
+              <button class="btn btn--primary price-card__cta" data-open-booking data-service="Вакуумно-градиентная терапия" type="button">Записаться</button>
+            </div>
+          </article>
+
+          <article class="price-card" data-kind="single" data-reveal>
+            <div class="price-card__media"><img src="assets/img/svc-hijama.jpg" alt="Хиджама — банки на спине пациента" loading="lazy" width="900" height="675" /><span class="price-card__badge price-card__badge--soft">Процедура</span></div>
+            <div class="price-card__body">
+              <h3>Хиджама</h3>
+              <div class="price-card__price"><small>1 процедура</small><b>2&nbsp;000&nbsp;₽</b><span class="time">15 минут</span></div>
+              <ul class="price-card__packs"><li><span>Абонемент 5</span><b>9&nbsp;400&nbsp;₽</b></li><li><span>Абонемент 10</span><b>18&nbsp;400&nbsp;₽</b></li></ul>
+              <p class="price-card__gift price-card__gift--small">+ 2% кешбэк</p>
+              <button class="btn btn--primary price-card__cta" data-open-booking data-service="Хиджама" type="button">Записаться</button>
+            </div>
+          </article>
+
+          <article class="price-card" data-kind="single" data-reveal>
+            <div class="price-card__media"><img src="assets/img/svc-iglo.jpg" alt="Иглоукалывание спины" loading="lazy" width="900" height="675" /><span class="price-card__badge price-card__badge--soft">Процедура</span></div>
+            <div class="price-card__body">
+              <h3>Иглоукалывание</h3>
+              <div class="price-card__price"><small>1 процедура</small><b>2&nbsp;000&nbsp;₽</b><span class="time">15 минут</span></div>
+              <ul class="price-card__packs"><li><span>5 процедур</span><b>9&nbsp;400&nbsp;₽</b></li><li><span>10 процедур</span><b>18&nbsp;400&nbsp;₽</b></li></ul>
+              <p class="price-card__gift price-card__gift--small">+ 2% кешбэк</p>
+              <button class="btn btn--primary price-card__cta" data-open-booking data-service="Иглоукалывание" type="button">Записаться</button>
+            </div>
           </article>
         </div>
-        <div class="services__progress" aria-hidden="true"><span id="svcBar"></span></div>
+
+        <!-- Дополнительные методы -->
+        <div class="extra" data-reveal>
+          <div class="extra__img"><img src="assets/img/svc-dop.jpg" alt="Мануальная терапия спины" loading="lazy" width="900" height="581" /></div>
+          <div class="extra__body">
+            <span class="eyebrow">Дополнительно</span>
+            <h3>Дополнительные методы</h3>
+            <ul class="extra__list">
+              <li>Мануальная терапия</li><li>Ультразвук</li><li>Перкуссионная терапия</li><li>Тейпирование</li>
+            </ul>
+            <p>Подбор методик осуществляется специалистом.</p>
+            <button class="btn btn--outline" data-open-booking data-service="Консультация по методикам" type="button">Узнать подробнее <span class="btn__arrow" aria-hidden="true">→</span></button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -229,24 +337,24 @@
     <section class="section steps">
       <div class="container">
         <div class="section__head section__head--center" data-reveal>
-          <span class="eyebrow">02 — Путь пациента</span>
+          <span class="eyebrow">Путь пациента</span>
           <h2 class="section__title">Как проходит лечение</h2>
         </div>
         <ol class="steps__list">
           <li class="step" data-reveal>
             <span class="step__num">1</span>
-            <h3>Запись</h3>
-            <p>Напишите или позвоните — подберём удобное время и&nbsp;центр.</p>
+            <h3>Заявка</h3>
+            <p>Оставьте телефон на&nbsp;сайте или напишите в&nbsp;мессенджер.</p>
           </li>
           <li class="step" data-reveal>
             <span class="step__num">2</span>
-            <h3>Консультация</h3>
-            <p>Специалист разберётся в&nbsp;ситуации и&nbsp;проведёт диагностику.</p>
+            <h3>Бесплатный приём</h3>
+            <p>Врач осмотрит, изучит снимки и&nbsp;проведёт первую процедуру.</p>
           </li>
           <li class="step" data-reveal>
             <span class="step__num">3</span>
             <h3>Персональный план</h3>
-            <p>Составляем программу лечения под ваши цели и&nbsp;состояние.</p>
+            <p>Программа лечения под ваши цели и&nbsp;состояние.</p>
           </li>
           <li class="step" data-reveal>
             <span class="step__num">4</span>
@@ -257,21 +365,29 @@
       </div>
     </section>
 
-    <!-- ===== Примеры лечения ===== -->
+    <!-- ===== С чем помогаем ===== -->
     <section class="section cases" id="cases">
       <div class="container">
         <div class="section__head">
           <div data-reveal>
-            <span class="eyebrow">03 — Примеры лечения</span>
-            <h2 class="section__title">Примеры лечения</h2>
-            <p class="section__lead">Направления, с&nbsp;которыми к&nbsp;нам обращаются. Истории пациентов публикуются только с&nbsp;их согласия.</p>
+            <span class="eyebrow">С чем помогаем</span>
+            <h2 class="section__title">С чем к&nbsp;нам обращаются</h2>
+            <p class="section__lead">Направления, с&nbsp;которыми работает центр. Истории пациентов публикуются только с&nbsp;их согласия.</p>
           </div>
-          <a href="#contacts" class="btn btn--outline" data-reveal>Задать вопрос <span class="btn__arrow" aria-hidden="true">→</span></a>
+          <button class="btn btn--outline" data-open-booking data-service="promo" type="button" data-reveal>Задать вопрос врачу <span class="btn__arrow" aria-hidden="true">→</span></button>
         </div>
 
         <div class="cases__grid">
           <article class="case" data-reveal>
-            <div class="case__img"><img src="assets/img/case-trauma.jpg" alt="Специалист проводит занятие по восстановлению" loading="lazy" width="465" height="264" /></div>
+            <div class="case__img"><img src="assets/img/case-pain.jpg" alt="Вакуумная терапия спины" loading="lazy" width="800" height="600" /></div>
+            <div class="case__body">
+              <span class="case__tag">Боль</span>
+              <h3>Боль в&nbsp;спине и&nbsp;шее</h3>
+              <p>Ищем источник боли и&nbsp;подбираем комплексное лечение.</p>
+            </div>
+          </article>
+          <article class="case" data-reveal>
+            <div class="case__img"><img src="assets/img/case-trauma.jpg" alt="Специалист проводит тейпирование плеча" loading="lazy" width="800" height="504" /></div>
             <div class="case__body">
               <span class="case__tag">Травмы</span>
               <h3>Восстановление после травмы</h3>
@@ -279,72 +395,45 @@
             </div>
           </article>
           <article class="case" data-reveal>
-            <div class="case__img"><img src="assets/img/case-pain.jpg" alt="Врач работает с пациентом на кушетке" loading="lazy" width="459" height="264" /></div>
+            <div class="case__img"><img src="assets/img/case-surgery.jpg" alt="Аппарат ударно-волновой терапии" loading="lazy" width="800" height="600" /></div>
             <div class="case__body">
-              <span class="case__tag">Боль</span>
-              <h3>Лечение болевого синдрома</h3>
-              <p>Ищем источник боли и&nbsp;подбираем комплексное лечение.</p>
+              <span class="case__tag">Суставы</span>
+              <h3>Боль в&nbsp;суставах</h3>
+              <p>Аппаратные методики для коленей, плеч, стоп и&nbsp;локтей.</p>
             </div>
           </article>
           <article class="case" data-reveal>
-            <div class="case__img"><img src="assets/img/case-surgery.jpg" alt="Реабилитационный зал" loading="lazy" width="459" height="264" /></div>
+            <div class="case__img"><img src="assets/img/case-complex.jpg" alt="Пациент с болью в шее" loading="lazy" width="800" height="600" /></div>
             <div class="case__body">
-              <span class="case__tag">После операций</span>
-              <h3>Реабилитация после операции</h3>
-              <p>Поэтапная программа, согласованная с&nbsp;рекомендациями хирурга.</p>
-            </div>
-          </article>
-          <article class="case" data-reveal>
-            <div class="case__img"><img src="assets/img/case-complex.jpg" alt="Специалист помогает пожилому пациенту" loading="lazy" width="471" height="264" /></div>
-            <div class="case__body">
-              <span class="case__tag">Комплексно</span>
-              <h3>Комплексное восстановление</h3>
-              <p>Программы при хронических состояниях для&nbsp;взрослых и&nbsp;пожилых.</p>
+              <span class="case__tag">Грыжа</span>
+              <h3>Грыжи и&nbsp;протрузии</h3>
+              <p>Программа резорбции по&nbsp;результатам МРТ.</p>
             </div>
           </article>
         </div>
       </div>
     </section>
 
-    <!-- ===== Наши центры ===== -->
-    <section class="centers" id="centers">
+    <!-- ===== О центре ===== -->
+    <section class="centers" id="center">
       <div class="centers__panel">
         <div class="container">
-          <div class="section__head section__head--light">
-            <div data-reveal>
-              <span class="eyebrow eyebrow--light">04 — О центре</span>
-              <h2 class="section__title">Наши центры</h2>
-              <p class="section__lead">Два адреса — один подход: внимание к&nbsp;человеку и&nbsp;современное оснащение.</p>
-            </div>
-          </div>
-
           <div class="centers__grid">
-            <article class="center-card" data-reveal>
-              <img src="assets/img/center-salavat.jpg" alt="Здание Центра здоровья" loading="lazy" width="447" height="381" />
-              <div class="center-card__shade" aria-hidden="true"></div>
-              <div class="center-card__body">
-                <span class="center-card__city">Салават</span>
-                <h3>Центр здоровья</h3>
-                <p class="center-card__addr" data-contact-text="salavatAddress">Адрес уточняется</p>
-                <div class="center-card__actions">
-                  <a class="btn btn--light btn--sm" data-contact="salavatMap" href="#contacts">Маршрут <span class="btn__arrow" aria-hidden="true">→</span></a>
-                  <a class="btn btn--glass btn--sm" data-contact="phone" href="#contacts">Позвонить</a>
-                </div>
+            <div class="centers__text" data-reveal>
+              <span class="eyebrow eyebrow--light">О центре</span>
+              <h2 class="section__title">Центр здоровья в&nbsp;Салавате</h2>
+              <p class="section__lead">Внимание к&nbsp;человеку и&nbsp;современное оборудование: магнит высокой интенсивности, лазер, ударно-волновая и&nbsp;вакуумно-градиентная терапия.</p>
+              <p class="centers__addr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12Z"/><circle cx="12" cy="10" r="2.6"/></svg><span data-contact-text="salavatAddress">Адрес уточняется</span></p>
+              <div class="center-card__actions">
+                <a class="btn btn--light" data-contact="salavatMap" href="#contacts">Маршрут <span class="btn__arrow" aria-hidden="true">→</span></a>
+                <a class="btn btn--glass" data-contact="phone" href="#contacts">Позвонить</a>
               </div>
-            </article>
-            <article class="center-card" data-reveal>
-              <img src="assets/img/center-ufa.jpg" alt="Зал клиники лечения и реабилитации" loading="lazy" width="489" height="381" />
+            </div>
+            <div class="center-card" data-reveal>
+              <img src="assets/img/center-salavat.jpg" alt="Кабинет Центра здоровья с оборудованием" loading="lazy" width="1400" height="788" />
               <div class="center-card__shade" aria-hidden="true"></div>
-              <div class="center-card__body">
-                <span class="center-card__city">Уфа</span>
-                <h3>Клиника лечения и&nbsp;реабилитации</h3>
-                <p class="center-card__addr" data-contact-text="ufaAddress">Адрес уточняется</p>
-                <div class="center-card__actions">
-                  <a class="btn btn--light btn--sm" data-contact="ufaMap" href="#contacts">Маршрут <span class="btn__arrow" aria-hidden="true">→</span></a>
-                  <a class="btn btn--glass btn--sm" data-contact="phone" href="#contacts">Позвонить</a>
-                </div>
-              </div>
-            </article>
+              <div class="center-card__body"><span class="center-card__city">Салават</span></div>
+            </div>
           </div>
         </div>
       </div>
@@ -354,9 +443,9 @@
     <section class="section contacts" id="contacts">
       <div class="container contacts__inner">
         <div class="contacts__text" data-reveal>
-          <span class="eyebrow">05 — Контакты</span>
+          <span class="eyebrow">Контакты</span>
           <h2 class="section__title">Свяжитесь с&nbsp;нами удобным способом</h2>
-          <p class="section__lead">Напишите нам в&nbsp;удобный мессенджер или позвоните — ответим и&nbsp;поможем записаться.</p>
+          <p class="section__lead">Напишите в&nbsp;удобный мессенджер или позвоните — ответим и&nbsp;поможем записаться на&nbsp;бесплатный приём.</p>
           <p class="contacts__script" aria-hidden="true">Мы всегда на&nbsp;связи!</p>
         </div>
 
@@ -376,18 +465,15 @@
           <li data-reveal><a class="social social--tg" data-contact="telegram" href="#contacts">
             <span class="social__ico"><svg viewBox="0 0 24 24"><path d="M21 4 3 11l6 2 2 6 3-4 5 4Z"/><path d="M9 13l8-6"/></svg></span>
             <span class="social__name">Telegram</span></a></li>
-          <li data-reveal><a class="social social--vk" data-contact="vk" href="#contacts">
-            <span class="social__ico social__ico--text">VK</span>
-            <span class="social__name">ВКонтакте</span></a></li>
-          <li data-reveal><a class="social social--ig" data-contact="instagram" href="#contacts">
-            <span class="social__ico"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.6"/><circle cx="16.6" cy="7.4" r=".9" class="fill"/></svg></span>
-            <span class="social__name">Instagram клиники</span></a></li>
-          <li data-reveal><a class="social social--ig" data-contact="instagramDoctor" href="#contacts">
-            <span class="social__ico"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.6"/><circle cx="16.6" cy="7.4" r=".9" class="fill"/></svg></span>
-            <span class="social__name">Instagram врача</span></a></li>
           <li data-reveal><a class="social social--max" data-contact="max" href="#contacts">
             <span class="social__ico social__ico--text">MAX</span>
             <span class="social__name">MAX</span></a></li>
+          <li data-reveal><a class="social social--vk" data-contact="vk" href="#contacts">
+            <span class="social__ico social__ico--text">VK</span>
+            <span class="social__name">ВКонтакте</span></a></li>
+          <li data-reveal class="socials__wide"><button class="social social--ig" type="button" data-open-ig>
+            <span class="social__ico"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.6"/><circle cx="16.6" cy="7.4" r=".9" class="fill"/></svg></span>
+            <span class="social__name">Instagram</span></button></li>
         </ul>
         </div>
       </div>
@@ -405,24 +491,61 @@
         </svg>
         <span class="logo__text">Центр<br />здоровья</span>
       </a>
-      <p class="footer__cities">Салават · Уфа</p>
+      <p class="footer__cities">Салават</p>
       <p class="footer__legal">Имеются противопоказания. Необходима консультация специалиста.<br />© <span id="year">2026</span> Центр здоровья</p>
     </div>
   </footer>
 
+  <!-- Липкая кнопка акции (мобильные) -->
+  <div class="sticky-cta" id="stickyCta">
+    <button class="btn btn--accent" data-open-booking data-service="promo" type="button">Записаться бесплатно <span class="btn__arrow" aria-hidden="true">→</span></button>
+  </div>
+
   <!-- ===== Окно записи ===== -->
   <div class="modal" id="booking" role="dialog" aria-modal="true" aria-labelledby="bookingTitle" hidden>
-    <div class="modal__backdrop" data-close-booking></div>
+    <div class="modal__backdrop" data-close-modal></div>
     <div class="modal__card">
-      <button class="modal__close" type="button" data-close-booking aria-label="Закрыть">×</button>
+      <button class="modal__close" type="button" data-close-modal aria-label="Закрыть">×</button>
       <span class="eyebrow">Запись на приём</span>
-      <h2 id="bookingTitle">Как вам удобнее связаться?</h2>
-      <p>Выберите способ — администратор подберёт время и&nbsp;центр: Салават или Уфа.</p>
+      <h2 id="bookingTitle">Консультация и&nbsp;процедура бесплатно</h2>
+      <p>Оставьте телефон — администратор перезвонит и&nbsp;подберёт время.</p>
+      <form class="lead-form lead-form--modal" novalidate data-lead-form>
+        <label class="field"><span>Ваше имя</span><input name="name" type="text" autocomplete="name" maxlength="60" placeholder="Например, Анна" required /></label>
+        <label class="field"><span>Телефон</span><input name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="+7 (___) ___-__-__" required /></label>
+        <label class="field"><span>Что вас интересует</span><select name="service" data-service-select></select></label>
+        <label class="field field--hp" aria-hidden="true">Не заполняйте<input name="website" type="text" tabindex="-1" autocomplete="off" /></label>
+        <label class="check"><input type="checkbox" name="consent" required /><span>Согласен(на) на&nbsp;обработку персональных данных</span></label>
+        <button class="btn btn--accent btn--lg lead-form__submit" type="submit">Отправить заявку <span class="btn__arrow" aria-hidden="true">→</span></button>
+        <p class="lead-form__status" role="status" aria-live="polite"></p>
+      </form>
+      <p class="modal__or"><span>или напишите сами</span></p>
       <div class="modal__options">
         <a class="modal__opt" data-contact="phone" href="#contacts"><span class="social__ico social--phone"><svg viewBox="0 0 24 24"><path d="M5 4h3.2l1.6 4-2 1.3a11 11 0 0 0 5 5l1.3-2 4 1.6V17a2 2 0 0 1-2 2A15 15 0 0 1 3 6a2 2 0 0 1 2-2Z"/></svg></span>Позвонить</a>
         <a class="modal__opt" data-contact="whatsapp" href="#contacts"><span class="social__ico social--wa"><svg viewBox="0 0 24 24"><path d="M4 20l1.2-3.6A8 8 0 1 1 8 19Z"/></svg></span>WhatsApp</a>
         <a class="modal__opt" data-contact="telegram" href="#contacts"><span class="social__ico social--tg"><svg viewBox="0 0 24 24"><path d="M21 4 3 11l6 2 2 6 3-4 5 4Z"/></svg></span>Telegram</a>
         <a class="modal__opt" data-contact="max" href="#contacts"><span class="social__ico social__ico--text social--max">MAX</span>MAX</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Выбор Instagram ===== -->
+  <div class="modal" id="igModal" role="dialog" aria-modal="true" aria-labelledby="igTitle" hidden>
+    <div class="modal__backdrop" data-close-modal></div>
+    <div class="modal__card modal__card--sm">
+      <button class="modal__close" type="button" data-close-modal aria-label="Закрыть">×</button>
+      <span class="eyebrow">Instagram</span>
+      <h2 id="igTitle">Чей профиль открыть?</h2>
+      <div class="ig-choice">
+        <a class="ig-choice__opt" data-contact="instagram" href="#contacts">
+          <span class="social__ico"><svg viewBox="0 0 24 24"><path d="M4 21V9l8-5 8 5v12"/><path d="M9 21v-6h6v6"/></svg></span>
+          <span><b>Клиника</b><small data-ig-handle="instagram"></small></span>
+          <span class="ig-choice__arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="ig-choice__opt" data-contact="instagramDoctor" href="#contacts">
+          <span class="social__ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-5 4.5-7 8-7s7 2 8 7"/></svg></span>
+          <span><b>Врач</b><small data-ig-handle="instagramDoctor"></small></span>
+          <span class="ig-choice__arrow" aria-hidden="true">→</span>
+        </a>
       </div>
     </div>
   </div>
