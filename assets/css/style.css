@@ -907,7 +907,7 @@ html:has(body.svc-page) { scroll-behavior: auto; }
 
 /* ================= Специалисты ================= */
 .team { background: linear-gradient(180deg, var(--indigo-50), #fff); }
-.team__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+.team__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; }
 .team-card { display: flex; flex-direction: column; overflow: hidden; border-radius: var(--radius-lg); background: #fff; border: 1.5px solid var(--indigo-100);
   box-shadow: 0 24px 44px -32px rgba(11,23,66,.5); transition: transform .5s var(--ease-out), box-shadow .5s, border-color .4s, opacity .9s var(--ease-out); }
 .team-card:hover { transform: translateY(-6px); border-color: var(--teal); box-shadow: 0 30px 56px -30px rgba(11,23,66,.55); }
@@ -923,7 +923,7 @@ html:has(body.svc-page) { scroll-behavior: auto; }
 .team-card__list li::before { content: ""; position: absolute; left: 0; top: .5em; border: 5px solid transparent; border-left: 6px solid var(--teal); border-right: 0; }
 .team-card__list b { color: var(--indigo-900); }
 .team-card__cta { margin-top: auto; width: 100%; }
-@media (max-width: 860px) { .team__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 1080px) { .team__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 620px) {
   .team__grid { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 82%; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 12px; margin: 0 -16px; padding-inline: 16px; scrollbar-width: none; }
   .team__grid::-webkit-scrollbar { display: none; }
