@@ -14,7 +14,12 @@
 ```
 index.html            — вся страница
 politika.html         — политика конфиденциальности (152-ФЗ)
-usluga.html           — страница услуги (?s=id), тексты и цены из assets/js/services-info.js
+uslugi/<slug>/index.html — страницы услуг (СГЕНЕРИРОВАНЫ, руками не править — см. «SEO» ниже)
+usluga.html           — старый адрес услуги (?s=id): пересылает на uslugi/<slug>/ (генерируется)
+404.html              — страница «не найдено»
+robots.txt, sitemap.xml — для поисковиков (sitemap генерируется)
+vercel.json           — 301-редиректы и заголовки для Vercel (генерируется)
+tools/build-seo.js    — генератор страниц услуг, sitemap.xml, usluga.html и vercel.json
 assets/css/style.css  — стили (белый + индиго, акцент — бирюзовый из логотипа)
 assets/js/config.js   — КОНТАКТЫ и настройки заявок
 assets/js/main.js     — интро, меню, фильтр услуг, окна записи, «Подробнее» и Instagram, отправка формы
@@ -56,6 +61,23 @@ Telegram (можно вместе с WhatsApp — заявка уйдёт в о�
 3. Переменные `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`.
 
 Если автоотправка не сработала, пациенту всё равно предлагается отправить заявку через WhatsApp.
+
+## SEO
+
+Основной домен — **https://fizitera.online** (прописан в canonical, Open Graph, sitemap и в `tools/build-seo.js`).
+Технический адрес `clinic-alpha-one.vercel.app` отдаёт 301 на основной домен (правило в `vercel.json`).
+
+Тексты и цены услуг живут в `assets/js/services-info.js`. После любой правки там выполните:
+
+```
+node tools/build-seo.js
+```
+
+Скрипт пересоздаст `uslugi/*/index.html`, `sitemap.xml`, `usluga.html` и `vercel.json` — закоммитьте их вместе с правкой.
+Цены на карточках главной (`index.html`) по-прежнему правятся вручную.
+
+`slug` услуги — это её адрес (`/uslugi/<slug>/`). Не меняйте его без нужды: если всё же поменяли,
+добавьте 301-редирект со старого адреса в `tools/build-seo.js` (функция `vercelConfig`).
 
 ## Локальный просмотр
 

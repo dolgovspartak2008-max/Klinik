@@ -253,16 +253,13 @@
   }
 
   /* ---------- Подробнее об услуге — отдельная страница ---------- */
+  // Ссылка «Подробнее» стоит прямо в HTML (uslugi/<slug>/) — её видят поисковики. Клик по карточке ведёт туда же.
   doc.querySelectorAll(".price-card[data-info]").forEach(function (card) {
-    var url = "usluga.html?s=" + card.getAttribute("data-info");
-    var cta = card.querySelector(".price-card__cta");
-    var row = doc.createElement("div"); row.className = "price-card__actions";
-    var more = doc.createElement("a"); more.className = "btn btn--outline price-card__more"; more.href = url; more.textContent = "Подробнее";
-    cta.parentNode.insertBefore(row, cta);
-    row.appendChild(more); row.appendChild(cta);
+    var more = card.querySelector(".price-card__more");
+    if (!more) return;
     card.addEventListener("click", function (e) {
       if (e.target.closest("button, a")) return;
-      location.href = url;
+      location.href = more.href;
     });
   });
 

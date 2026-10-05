@@ -1,0 +1,304 @@
+{
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "clinic-alpha-one.vercel.app"
+        }
+      ],
+      "destination": "https://fizitera.online/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/usluga.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "s",
+          "value": "spina3"
+        }
+      ],
+      "destination": "/uslugi/zdorovaya-spina-3/",
+      "permanent": true
+    },
+    {
+      "source": "/usluga.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "s",
+          "value": "spina57"
+        }
+      ],
+      "destination": "/uslugi/zdorovaya-spina-5-7/",
+      "permanent": true
+    },
+    {
+      "source": "/usluga.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "s",
+          "value": "sustavy"
+        }
+      ],
+      "destination": "/uslugi/zdorovye-sustavy/",
+      "permanent": true
+    },
+    {
+      "source": "/usluga.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "s",
+          "value": "gryzha"
+        }
+      ],
+      "destination": "/uslugi/rezorbciya-gryzhi/",
+      "permanent": true
+    },
+    {
+      "source": "/usluga.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "s",
+          "value": "uvt"
+        }
+      ],
+      "destination": "/uslugi/udarno-volnovaya-terapiya/",
+      "permanent": true
+    },
+    {
+      "source": "/usluga.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "s",
+          "value": "magnit"
+        }
+      ],
+      "destination": "/uslugi/magnit-vysokoy-intensivnosti/",
+      "permanent": true
+    },
+    {
+      "source": "/usluga.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "s",
+          "value": "vakuum"
+        }
+      ],
+      "destination": "/uslugi/vakuumno-gradientnaya-terapiya/",
+      "permanent": true
+    },
+    {
+      "source": "/usluga.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "s",
+          "value": "hijama"
+        }
+      ],
+      "destination": "/uslugi/hidzhama/",
+      "permanent": true
+    },
+    {
+      "source": "/usluga.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "s",
+          "value": "iglo"
+        }
+      ],
+      "destination": "/uslugi/igloukalyvanie/",
+      "permanent": true
+    },
+    {
+      "source": "/usluga.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "s",
+          "value": "laser"
+        }
+      ],
+      "destination": "/uslugi/lazer-vysokoy-intensivnosti/",
+      "permanent": true
+    },
+    {
+      "source": "/usluga.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "s",
+          "value": "manual"
+        }
+      ],
+      "destination": "/uslugi/manualnaya-terapiya/",
+      "permanent": true
+    },
+    {
+      "source": "/usluga.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "s",
+          "value": "uzi"
+        }
+      ],
+      "destination": "/uslugi/ultrazvukovaya-terapiya/",
+      "permanent": true
+    },
+    {
+      "source": "/usluga.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "s",
+          "value": "perkussia"
+        }
+      ],
+      "destination": "/uslugi/perkussionnaya-terapiya/",
+      "permanent": true
+    },
+    {
+      "source": "/usluga.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "s",
+          "value": "teip"
+        }
+      ],
+      "destination": "/uslugi/teypirovanie/",
+      "permanent": true
+    },
+    {
+      "source": "/usluga.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "s",
+          "value": "massage_body"
+        }
+      ],
+      "destination": "/uslugi/massazh-vsego-tela/",
+      "permanent": true
+    },
+    {
+      "source": "/usluga.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "s",
+          "value": "massage_back"
+        }
+      ],
+      "destination": "/uslugi/massazh-spiny/",
+      "permanent": true
+    },
+    {
+      "source": "/usluga.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "s",
+          "value": "massage_neck"
+        }
+      ],
+      "destination": "/uslugi/massazh-shei/",
+      "permanent": true
+    },
+    {
+      "source": "/usluga.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "s",
+          "value": "massage_legs"
+        }
+      ],
+      "destination": "/uslugi/massazh-nog/",
+      "permanent": true
+    },
+    {
+      "source": "/usluga.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "s",
+          "value": "massage_pregnant"
+        }
+      ],
+      "destination": "/uslugi/massazh-dlya-beremennyh/",
+      "permanent": true
+    },
+    {
+      "source": "/usluga.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "s",
+          "value": "massage_cellulite"
+        }
+      ],
+      "destination": "/uslugi/anticellyulitnyy-massazh/",
+      "permanent": true
+    },
+    {
+      "source": "/usluga.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "s",
+          "value": "massage_kids"
+        }
+      ],
+      "destination": "/uslugi/detskiy-massazh/",
+      "permanent": true
+    },
+    {
+      "source": "/usluga.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "s",
+          "value": "massage_sport"
+        }
+      ],
+      "destination": "/uslugi/sportivnyy-massazh/",
+      "permanent": true
+    },
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "permanent": true
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(img|video)/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=604800, stale-while-revalidate=86400"
+        }
+      ]
+    }
+  ]
+}
