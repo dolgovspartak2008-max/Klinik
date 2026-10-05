@@ -193,7 +193,8 @@ function servicePage(id) {
 '  <meta name="twitter:title" content="' + esc(d.title + " — " + BRAND + ", " + CITY) + '" />\n' +
 '  <meta name="twitter:description" content="' + esc(description) + '" />\n' +
 '  <meta name="twitter:image" content="' + ogImage + '" />\n' +
-'  <link rel="icon" href="../../assets/img/favicon.png" type="image/png" />\n' +
+'  <link rel="icon" href="/favicon.ico" sizes="48x48" />\n' +
+'  <link rel="icon" href="../../assets/img/favicon.png" type="image/png" sizes="96x96" />\n' +
 '  <link rel="apple-touch-icon" href="../../assets/img/apple-touch-icon.png" />\n' +
 '  <link rel="preconnect" href="https://fonts.googleapis.com" />\n' +
 '  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />\n' +

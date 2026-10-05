@@ -24,7 +24,8 @@ assets/css/style.css  — стили (белый + индиго, акцент �
 assets/js/config.js   — КОНТАКТЫ и настройки заявок
 assets/js/main.js     — интро, меню, фильтр услуг, окна записи, «Подробнее» и Instagram, отправка формы
 assets/js/services-info.js — тексты описаний услуг (окно «Подробнее»)
-assets/img/           — логотип (logo.png, favicon.png, apple-touch-icon.png) и фото (hero, promo, svc-*, case-*, center)
+favicon.ico           — иконка сайта для поисковиков (16–64 px)
+assets/img/           — логотип (logo.png), иконки (favicon.png 96px, apple-touch-icon.png, icon-512.png — бирюзовая «аватарка») и фото (hero, promo, svc-*, case-*, center)
 assets/video/laser.mp4 — видео лазерной процедуры (карточка «Здоровые суставы»)
 assets/video/priem.mp4 — видео «Что взять с собой на приём» (блок после первого экрана)
 assets/img/team/      — фото специалистов; assets/img/logo-mark.svg — логотип (вектор); og.jpg — картинка для превью ссылки
