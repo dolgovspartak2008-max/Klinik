@@ -79,6 +79,7 @@ function imgSize(rel) {
   return null;
 }
 
+var LEGAL = W.SITE_LEGAL || {};
 var phoneHref = "tel:" + String(C.phone || "").replace(/[^\d+]/g, "");
 var address = C.address || "";
 var street = address.replace(/^Уфа,\s*/, "");
@@ -254,6 +255,7 @@ methods +
 '  <footer class="footer footer--slim">\n' +
 '    <div class="container footer__bottom">\n' +
 '      <p class="footer__warn">Имеются противопоказания. Необходима консультация специалиста.</p>\n' +
+(LEGAL.license ? '      <p>' + esc(LEGAL.license) + '</p>\n' : "") +
 '      <p>© <span id="year">2026</span> ООО «ТАБИБ» · ' + BRAND + ', ' + esc(address) + ' · <a href="' + phoneHref + '">' + esc(C.phoneLabel) + '</a> · <a href="../../politika.html">Политика конфиденциальности</a></p>\n' +
 '    </div>\n' +
 '  </footer>\n\n' +
