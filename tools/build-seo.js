@@ -90,6 +90,7 @@ var CLINIC_REF = {
   name: BRAND,
   url: SITE_URL + "/",
   telephone: C.phone,
+  openingHoursSpecification: [{ "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"], opens: "10:00", closes: "21:00" }],
   address: {
     "@type": "PostalAddress",
     streetAddress: street,
@@ -256,7 +257,7 @@ methods +
 '    <div class="container footer__bottom">\n' +
 '      <p class="footer__warn">Имеются противопоказания. Необходима консультация специалиста.</p>\n' +
 (LEGAL.license ? '      <p>' + esc(LEGAL.license) + '</p>\n' : "") +
-'      <p>© <span id="year">2026</span> ООО «ТАБИБ» · ' + BRAND + ', ' + esc(address) + ' · <a href="' + phoneHref + '">' + esc(C.phoneLabel) + '</a> · <a href="../../politika.html">Политика конфиденциальности</a></p>\n' +
+'      <p>© <span id="year">2026</span> ООО «ТАБИБ» · ' + BRAND + ', ' + esc(address) + (C.hours ? ' · ' + esc(C.hours) : "") + ' · <a href="' + phoneHref + '">' + esc(C.phoneLabel) + '</a> · <a href="../../politika.html">Политика конфиденциальности</a></p>\n' +
 '    </div>\n' +
 '  </footer>\n\n' +
 '  <script>\n' +

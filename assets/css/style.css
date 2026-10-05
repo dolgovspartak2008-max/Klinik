@@ -488,6 +488,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .centers__text .section__lead { color: rgba(255,255,255,.78); }
 .centers__addr { display: flex; align-items: center; gap: 10px; margin-top: 22px; color: #fff; font-weight: 600; }
 .centers__addr svg { width: 22px; height: 22px; fill: none; stroke: var(--indigo-200); stroke-width: 1.7; flex: none; }
+.centers__addr + .centers__addr { margin-top: 10px; }
 .center-card {
   position: relative; overflow: hidden; border-radius: var(--radius-lg); min-height: 380px;
   display: flex; align-items: flex-end; color: #fff;
