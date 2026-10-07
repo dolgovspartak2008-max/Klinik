@@ -20,8 +20,8 @@ var path = require("path");
 var vm = require("vm");
 
 /* ---------- Настройки ---------- */
-var SITE_URL = "https://fizitera.online";              // основной домен (без слеша на конце)
-var OLD_HOSTS = ["clinic-alpha-one.vercel.app"];       // технические адреса → 301 на основной домен
+var SITE_URL = "https://www.fiziotera.online";            // основной домен (без слеша на конце)
+var OLD_HOSTS = ["clinic-alpha-one.vercel.app", "fizitera.online", "www.fizitera.online"];    // технические адреса → 301 на основной домен
 var BRAND = "Физиотера";
 var CITY = "Уфа";
 

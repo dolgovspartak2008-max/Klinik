@@ -8,7 +8,29 @@
           "value": "clinic-alpha-one.vercel.app"
         }
       ],
-      "destination": "https://fizitera.online/:path*",
+      "destination": "https://www.fiziotera.online/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "fizitera.online"
+        }
+      ],
+      "destination": "https://www.fiziotera.online/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.fizitera.online"
+        }
+      ],
+      "destination": "https://www.fiziotera.online/:path*",
       "permanent": true
     },
     {

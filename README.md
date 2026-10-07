@@ -65,7 +65,7 @@ Telegram (можно вместе с WhatsApp — заявка уйдёт в о�
 
 ## SEO
 
-Основной домен — **https://fizitera.online** (прописан в canonical, Open Graph, sitemap и в `tools/build-seo.js`).
+Основной домен — **https://www.fiziotera.online** (прописан в canonical, Open Graph, sitemap и в `tools/build-seo.js`).
 Технический адрес `clinic-alpha-one.vercel.app` отдаёт 301 на основной домен (правило в `vercel.json`).
 
 Тексты и цены услуг живут в `assets/js/services-info.js`. После любой правки там выполните:

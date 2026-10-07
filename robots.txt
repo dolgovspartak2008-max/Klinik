@@ -3,4 +3,4 @@ Disallow: /api/
 # Яндекс: параметры ?book= и ?to= только открывают окно записи / прокручивают к разделу
 Clean-param: book&to /
 
-Sitemap: https://fizitera.online/sitemap.xml
+Sitemap: https://www.fiziotera.online/sitemap.xml
