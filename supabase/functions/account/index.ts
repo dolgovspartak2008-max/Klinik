@@ -70,13 +70,15 @@ function json(body: unknown, status: number, origin: string | null) {
 
 // ---------------------------------------------------------------- helpers
 
-let secretCache: Record<string, string | null> = {};
+// Кэш на минуту: новый секрет (например, пароль почты) подхватывается без передеплоя
+const secretCache: Record<string, { v: string | null; at: number }> = {};
 async function secret(name: string): Promise<string | null> {
-  if (name in secretCache) return secretCache[name];
+  const c = secretCache[name];
+  if (c && Date.now() - c.at < 60_000) return c.v;
   const { data, error } = await admin.rpc("svc_secret", { p_name: name });
   if (error) throw error;
-  secretCache[name] = (data as string | null) ?? null;
-  return secretCache[name];
+  secretCache[name] = { v: (data as string | null) ?? null, at: Date.now() };
+  return secretCache[name].v;
 }
 
 function clientIp(req: Request): string {

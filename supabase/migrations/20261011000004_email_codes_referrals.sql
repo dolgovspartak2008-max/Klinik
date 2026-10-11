@@ -172,35 +172,28 @@ language sql security definer set search_path = '' as $$
     attempts = 0, created_at = now(), expires_at = now() + interval '15 minutes'
 $$;
 
--- Не больше 5 попыток на один код; после успеха код удаляется
+-- Не больше 5 попыток на один код; после успеха код гасится (одна строка на пользователя — таблица не растёт)
 create or replace function public.svc_email_change_check(p_user uuid, p_code_hash text) returns jsonb
 language plpgsql security definer set search_path = '' as $$
 declare v app.email_changes;
 begin
   select * into v from app.email_changes where user_id = p_user for update;
-  if not found or v.expires_at < now() then
-    delete from app.email_changes where user_id = p_user;
+  if not found or v.expires_at < now() or v.attempts >= 5 then
     return jsonb_build_object('ok', false, 'error', 'code_expired');
   end if;
-  if v.attempts >= 5 then return jsonb_build_object('ok', false, 'error', 'code_expired'); end if;
   if v.code_hash <> p_code_hash then
     update app.email_changes set attempts = attempts + 1 where user_id = p_user;
     return jsonb_build_object('ok', false, 'error', case when v.attempts + 1 >= 5 then 'code_expired' else 'bad_code' end);
   end if;
-  delete from app.email_changes where user_id = p_user;
+  -- код одноразовый: гасим его
+  update app.email_changes set expires_at = now() - interval '1 second', attempts = 99 where user_id = p_user;
   return jsonb_build_object('ok', true, 'email', v.email);
 end $$;
-
--- Старые незавершённые привязки удаляются по расписанию вместе с истёкшими бонусами
-create or replace function app.cleanup_email_changes() returns void
-language sql set search_path = '' as $$ delete from app.email_changes where expires_at < now() - interval '1 day' $$;
-select cron.schedule('fiziotera-email-changes', '17 * * * *', $$select app.cleanup_email_changes()$$);
 
 revoke all on function public.svc_attach_referral(uuid, text, text) from public, anon, authenticated;
 revoke all on function public.svc_auth_user(text) from public, anon, authenticated;
 revoke all on function public.svc_email_change_start(uuid, text, text) from public, anon, authenticated;
 revoke all on function public.svc_email_change_check(uuid, text) from public, anon, authenticated;
-revoke all on function app.cleanup_email_changes() from public, anon, authenticated;
 grant execute on function public.svc_attach_referral(uuid, text, text) to service_role;
 grant execute on function public.svc_auth_user(text) to service_role;
 grant execute on function public.svc_email_change_start(uuid, text, text) to service_role;
