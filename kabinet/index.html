@@ -171,6 +171,13 @@
                   <button class="btn btn--primary acc-submit" type="submit">Добавить</button>
                   <p class="acc-status" role="status" aria-live="polite"></p>
                 </form>
+                <form class="acc-form" data-email-code-form novalidate hidden>
+                  <p class="cab-muted" data-email-code-lead></p>
+                  <label class="field"><span>Код из письма</span><input name="code" class="acc-otp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" required /></label>
+                  <button class="btn btn--primary acc-submit" type="submit">Подтвердить email</button>
+                  <p class="acc-status" role="status" aria-live="polite"></p>
+                  <button class="acc-link" type="button" data-email-back>← Изменить email</button>
+                </form>
               </details>
             </section>
 

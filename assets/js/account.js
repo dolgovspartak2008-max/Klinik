@@ -72,6 +72,11 @@
       '</div>' +
 
       '<div class="acc-view" data-acc-view="main">' +
+        '<div class="acc-form acc-ref" data-acc-ref-wrap hidden>' +
+          '<label class="field"><span>Промокод друга <small>— если есть. Работает и для Telegram, и для email</small></span>' +
+          '<input name="ref" type="text" data-acc-ref autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="10" placeholder="GIFT-XXXXX" /></label>' +
+          '<p class="acc-status acc-ref-status" data-acc-ref-status role="status" aria-live="polite"></p>' +
+        '</div>' +
         '<button type="button" class="btn btn--tg acc-tg" data-acc-tg>' +
           '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4 3 11l6 2 2 6 3-4 5 4Z"/></svg>' +
           '<span data-acc-tg-label>Войти через Telegram</span></button>' +
@@ -89,7 +94,6 @@
           '<label class="field"><span>Email</span><input name="email" type="email" autocomplete="email" maxlength="254" required /></label>' +
           '<label class="field"><span>Телефон <small>— по нему администратор найдёт вашу скидку</small></span><input name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="+7 (___) ___-__-__" /></label>' +
           '<label class="field"><span>Пароль <small>— от 8 символов, буквы и цифры</small></span><input name="password" type="password" autocomplete="new-password" minlength="8" maxlength="72" required /></label>' +
-          '<label class="field"><span>Промокод друга <small>— если есть</small></span><input name="ref" type="text" autocomplete="off" autocapitalize="characters" maxlength="10" placeholder="GIFT-XXXXX" /></label>' +
           '<label class="field field--hp" aria-hidden="true">Не заполняйте<input name="website" type="text" tabindex="-1" autocomplete="off" /></label>' +
           '<label class="check"><input type="checkbox" name="consent" required /><span>Согласен(на) на&nbsp;обработку персональных данных согласно <a href="/politika.html" target="_blank" rel="noopener">политике конфиденциальности</a></span></label>' +
           '<button class="btn btn--accent btn--lg acc-submit" type="submit">Зарегистрироваться</button>' +
@@ -98,13 +102,37 @@
       '</div>' +
 
       '<div class="acc-view" data-acc-view="reset" hidden>' +
-        '<p class="acc-lead">Укажите email аккаунта. Ссылку для нового пароля пришлём в Telegram, если он привязан к аккаунту.</p>' +
+        '<p class="acc-lead">Укажите email аккаунта — пришлём код для нового пароля на почту (и в Telegram, если он привязан).</p>' +
         '<form class="acc-form" data-acc-form="reset" novalidate>' +
           '<label class="field"><span>Email</span><input name="email" type="email" autocomplete="email" maxlength="254" required /></label>' +
-          '<button class="btn btn--primary btn--lg acc-submit" type="submit">Отправить ссылку</button>' +
+          '<button class="btn btn--primary btn--lg acc-submit" type="submit">Получить код</button>' +
         '</form>' +
         '<p class="acc-status" role="status" aria-live="polite"></p>' +
         '<button class="acc-link" type="button" data-acc-show="main">← Вернуться ко входу</button>' +
+      '</div>' +
+
+      '<div class="acc-view" data-acc-view="newpass" hidden>' +
+        '<p class="acc-lead" data-acc-newpass-lead></p>' +
+        '<form class="acc-form" data-acc-form="newpass" novalidate>' +
+          '<label class="field"><span>Код</span><input name="code" class="acc-otp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="10" required /></label>' +
+          '<label class="field"><span>Новый пароль <small>— от 8 символов, буквы и цифры</small></span><input name="password" type="password" autocomplete="new-password" minlength="8" maxlength="72" required /></label>' +
+          '<button class="btn btn--primary btn--lg acc-submit" type="submit">Сохранить пароль и войти</button>' +
+        '</form>' +
+        '<p class="acc-status" role="status" aria-live="polite"></p>' +
+        '<button class="acc-link" type="button" data-acc-resend="reset">Прислать код ещё раз</button>' +
+        '<button class="acc-link" type="button" data-acc-show="main">← Вернуться ко входу</button>' +
+      '</div>' +
+
+      '<div class="acc-view" data-acc-view="verify" hidden>' +
+        '<p class="acc-lead" data-acc-verify-lead></p>' +
+        '<form class="acc-form" data-acc-form="verify" novalidate>' +
+          '<label class="field"><span>Код из письма</span><input name="code" class="acc-otp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="10" required /></label>' +
+          '<button class="btn btn--accent btn--lg acc-submit" type="submit">Подтвердить</button>' +
+        '</form>' +
+        '<p class="acc-status" role="status" aria-live="polite"></p>' +
+        '<p class="acc-hint">Письма нет? Проверьте папку «Спам» и «Промоакции».</p>' +
+        '<button class="acc-link" type="button" data-acc-resend="signup">Прислать код ещё раз</button>' +
+        '<button class="acc-link" type="button" data-acc-show="main">← Изменить email</button>' +
       '</div>' +
 
       '<div class="acc-view acc-wait" data-acc-view="tg" hidden>' +
@@ -119,6 +147,16 @@
   doc.body.appendChild(modal);
 
   var lastFocus = null;
+  var currentTab = "login";
+  var codeEmail = "";   // адрес, на который отправлен код
+  var refInput = $(modal, "[data-acc-ref]");
+  function refValue() { return String(refInput.value || "").trim().toUpperCase(); }
+  function refStatus(text, ok) {
+    var s = $(modal, "[data-acc-ref-status]");
+    s.textContent = text || "";
+    s.className = "acc-status acc-ref-status" + (text ? (ok ? " is-ok" : " is-error") : "");
+  }
+  refInput.addEventListener("input", function () { refInput.closest(".field").classList.remove("is-invalid"); refStatus(""); });
   var pollTimer = null;
   var linkMode = false;
 
@@ -126,12 +164,17 @@
     modal.querySelectorAll("[data-acc-view]").forEach(function (v) { v.hidden = v.getAttribute("data-acc-view") !== view; });
     $(modal, ".acc-tabs").hidden = view !== "main";
     if (view !== "tg") { stopPoll(); pending = null; savePending(null); }
-    modal.querySelectorAll(".acc-status").forEach(function (s) { if (!s.hasAttribute("data-acc-wait-status")) { s.textContent = ""; s.className = "acc-status"; } });
+    modal.querySelectorAll(".acc-status").forEach(function (s) {
+      if (s.hasAttribute("data-acc-wait-status")) return;
+      s.textContent = ""; s.className = "acc-status" + (s.hasAttribute("data-acc-ref-status") ? " acc-ref-status" : "");
+    });
   }
   function tab(name) {
     modal.querySelectorAll("[data-acc-tab]").forEach(function (b) { b.setAttribute("aria-selected", String(b.getAttribute("data-acc-tab") === name)); });
     $(modal, '[data-acc-form="login"]').hidden = name !== "login";
     $(modal, '[data-acc-form="register"]').hidden = name !== "register";
+    $(modal, "[data-acc-ref-wrap]").hidden = name !== "register";
+    currentTab = name;
     $(modal, "[data-acc-tg-label]").textContent = name === "register" ? "Зарегистрироваться через Telegram" : "Войти через Telegram";
     $(modal, "#authTitle").textContent = name === "register" ? "Регистрация" : "Вход в личный кабинет";
     show("main");
@@ -152,7 +195,6 @@
     linkMode = false;
     lastFocus = doc.activeElement;
     tab(which === "register" ? "register" : "login");
-    var refInput = $(modal, '[data-acc-form="register"] [name="ref"]');
     if (!refInput.value) refInput.value = SB.storedRef();
     programReady.then(renderGift);
     modal.hidden = false;
@@ -168,12 +210,13 @@
   }
 
   modal.addEventListener("click", function (e) {
-    var t = e.target.closest("[data-acc-close],[data-acc-tab],[data-acc-show],[data-acc-tg]");
+    var t = e.target.closest("[data-acc-close],[data-acc-tab],[data-acc-show],[data-acc-tg],[data-acc-resend]");
     if (!t) return;
+    if (t.hasAttribute("data-acc-resend")) { resendCode(t); return; }
     if (t.hasAttribute("data-acc-close")) close();
     else if (t.hasAttribute("data-acc-tab")) tab(t.getAttribute("data-acc-tab"));
     else if (t.hasAttribute("data-acc-show")) show(t.getAttribute("data-acc-show"));
-    else if (t.hasAttribute("data-acc-tg")) startTelegram("login");
+    else if (t.hasAttribute("data-acc-tg")) telegramClicked();
   });
   doc.addEventListener("keydown", function (e) {
     if (modal.hidden) return;
@@ -207,21 +250,72 @@
     else location.href = "/kabinet/";
   }
 
+  // Окно ввода кода: после регистрации, при входе в неподтверждённый аккаунт, при восстановлении пароля
+  function showVerify(email, text) {
+    codeEmail = email;
+    show("verify");
+    $(modal, "#authTitle").textContent = "Подтвердите email";
+    $(modal, "[data-acc-verify-lead]").textContent = text || ("Мы отправили код на " + email + ". Введите его ниже — код действует 1 час.");
+    var f = $(modal, '[data-acc-form="verify"]'); f.reset();
+    setTimeout(function () { f.elements.code.focus(); }, 60);
+  }
+  function showNewPass(email, viaMail) {
+    codeEmail = email;
+    show("newpass");
+    $(modal, "#authTitle").textContent = "Новый пароль";
+    $(modal, "[data-acc-newpass-lead]").textContent = viaMail
+      ? "Если аккаунт " + email + " существует, мы отправили на него код (и в Telegram, если он привязан). Введите код и новый пароль."
+      : "Если к аккаунту " + email + " привязан Telegram, код уже в боте клиники. Нет кода? Позвоните нам: +7 (987) 600-00-37 — поможем.";
+    var f = $(modal, '[data-acc-form="newpass"]'); f.reset();
+    setTimeout(function () { f.elements.code.focus(); }, 60);
+  }
+
+  var resendUntil = 0;
+  function resendCode(btn) {
+    if (!codeEmail) return;
+    var left = Math.ceil((resendUntil - Date.now()) / 1000);
+    var form = btn.parentNode.querySelector("form");
+    if (left > 0) { setStatus(form, "Новый код можно запросить через " + left + " с.", false); return; }
+    btn.disabled = true;
+    SB.account("resend", { email: codeEmail, purpose: btn.getAttribute("data-acc-resend") })
+      .then(function () { resendUntil = Date.now() + 60000; setStatus(form, "Отправили новый код. Предыдущий больше не действует.", true); })
+      .catch(function (err) { setStatus(form, err.message, false); })
+      .then(function () { btn.disabled = false; });
+  }
+
+  function referralToast(r, created) {
+    if (!r) return false;
+    if (r.ok) { toast(r.bonus_issued ? "Промокод друга применён — скидка уже в кабинете 🎁" : "Промокод друга применён 🎁"); return true; }
+    if (r.error && r.error !== "already_referred" && r.error !== "not_first_visit") {
+      toast((created ? "Аккаунт создан, но промокод не применён: " : "Промокод не применён: ") + SB.message(r.error));
+      return true;
+    }
+    return false;
+  }
+
   modal.querySelectorAll("[data-acc-form]").forEach(function (form) {
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       var kind = form.getAttribute("data-acc-form");
       var v = function (n) { var f = form.elements[n]; return f ? String(f.value || "").trim() : ""; };
       var bad = false;
-      bad = invalid(form, "email", !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v("email"))) || bad;
-      if (kind !== "reset") bad = invalid(form, "password", form.elements.password.value.length < (kind === "register" ? 8 : 1)) || bad;
+      if (kind === "verify" || kind === "newpass") {
+        bad = invalid(form, "code", !/^[0-9]{6,10}$/.test(v("code").replace(/\s+/g, ""))) || bad;
+        if (kind === "newpass") {
+          var pw = form.elements.password.value;
+          bad = invalid(form, "password", pw.length < 8 || !/[0-9]/.test(pw) || !/[A-Za-zА-Яа-яЁё]/.test(pw)) || bad;
+        }
+      } else {
+        bad = invalid(form, "email", !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v("email"))) || bad;
+        if (kind !== "reset") bad = invalid(form, "password", form.elements.password.value.length < (kind === "register" ? 8 : 1)) || bad;
+      }
       if (kind === "register") {
         bad = invalid(form, "name", v("name").length < 2) || bad;
         bad = invalid(form, "consent", !form.elements.consent.checked) || bad;
-        var code = v("ref").toUpperCase();
-        bad = invalid(form, "ref", !!code && !CODE_RE.test(code)) || bad;
+        var code = refValue();
+        if (code && !CODE_RE.test(code)) { refInput.closest(".field").classList.add("is-invalid"); refStatus(SB.message("code_not_found"), false); bad = true; }
       }
-      if (bad) { setStatus(form, "Проверьте отмеченные поля.", false); return; }
+      if (bad) { setStatus(form, kind === "newpass" ? SB.message("weak_password") : "Проверьте отмеченные поля.", false); return; }
 
       busy(form, true);
       setStatus(form, "", false);
@@ -229,21 +323,34 @@
       if (kind === "login") req = SB.account("login", { email: v("email"), password: form.elements.password.value });
       else if (kind === "register") req = SB.account("signup", {
         name: v("name"), email: v("email"), phone: v("phone"), password: form.elements.password.value,
-        ref: v("ref").toUpperCase(), consent: true, website: v("website")
+        ref: refValue(), consent: true, website: v("website")
       });
+      else if (kind === "verify") req = SB.account("verify", { email: codeEmail, code: v("code").replace(/\s+/g, "") });
+      else if (kind === "newpass") req = SB.account("reset_confirm", { email: codeEmail, code: v("code").replace(/\s+/g, ""), password: form.elements.password.value });
       else req = SB.account("reset", { email: v("email") });
 
-      req.then(function () {
-        if (kind === "reset") {
-          setStatus(form, "Если аккаунт с этим email существует и к нему привязан Telegram, ссылка уже в Telegram. " +
-            "Telegram не привязан? Позвоните нам: +7 (987) 600-00-37 — поможем восстановить доступ.", true);
-          busy(form, false);
+      req.then(function (res) {
+        busy(form, false);
+        if (kind === "reset") { resendUntil = Date.now() + 60000; showNewPass(v("email").toLowerCase(), !!(res && res.mail)); return; }
+        if (kind === "register" && res && res.status === "verify") {
+          resendUntil = Date.now() + 60000;
+          showVerify(res.email || v("email").toLowerCase());
           return;
         }
-        if (kind === "register") toast("Аккаунт создан. Добро пожаловать! 🎁");
+        if (kind === "newpass") toast("Пароль обновлён. Вы вошли в кабинет");
+        else if (kind === "register" || kind === "verify") {
+          var r = res && res.onboarding && res.onboarding.referral;
+          if (!referralToast(r, true)) toast("Аккаунт создан. Добро пожаловать! 🎁");
+        }
         done();
       }).catch(function (err) {
         busy(form, false);
+        if (kind === "login" && err.code === "email_not_verified") {
+          resendUntil = Date.now() + 60000;
+          showVerify(v("email").toLowerCase(), "Email ещё не подтверждён. Мы отправили код на " + v("email").toLowerCase() + " — введите его, и вы войдёте в кабинет.");
+          return;
+        }
+        if (kind === "register" && err.code === "code_not_found") refStatus(err.message, false);
         setStatus(form, err.message || SB.message("server_error"), false);
       });
     });
@@ -267,15 +374,27 @@
 
   function waitStatus(text) { var s = $(modal, "[data-acc-wait-status]"); if (s) s.textContent = text; }
 
+  // Одновременно идёт только одна проверка. Раньше при возврате из Telegram срабатывали сразу
+  // focus, visibilitychange и pageshow: первая проверка входила, а вторая получала «уже использован»
+  // и показывала «Вход не подтверждён», хотя вход прошёл.
+  var polling = false;
   function pollOnce() {
-    if (!pending) return;
+    if (!pending || polling) return;
     stopPoll();
     var p = pending;
+    polling = true;
     SB.account("tg_poll", { id: p.id, secret: p.secret }).then(function (res) {
+      polling = false;
       if (pending !== p) return;
       if (res.status === "ok") {
         pending = null; savePending(null);
-        toast(res.created ? "Аккаунт создан. Добро пожаловать! 🎁" : "Вы вошли через Telegram");
+        if (!referralToast(res.referral, res.created)) toast(res.created ? "Аккаунт создан. Добро пожаловать! 🎁" : "Вы вошли через Telegram");
+        done(); return;
+      }
+      // Запрос уже использован, а сессия есть — значит, вход завершился в другой вкладке/проверке
+      if (res.status === "consumed" && p.mode !== "link" && SB.isSignedIn()) {
+        pending = null; savePending(null);
+        toast("Вы вошли через Telegram");
         done(); return;
       }
       if (res.status === "linked") {
@@ -289,6 +408,8 @@
       }
       pollTimer = setTimeout(pollOnce, 2000);
     }).catch(function (err) {
+      polling = false;
+      if (pending !== p) return;
       if (err.code === "network" || err.code === "rate_limited") { pollTimer = setTimeout(pollOnce, 3000); return; }
       pending = null; savePending(null);
       waitStatus(err.message);
@@ -300,14 +421,28 @@
   window.addEventListener("focus", function () { if (pending) pollOnce(); });
   window.addEventListener("pageshow", function () { if (pending) pollOnce(); });
 
-  function startTelegram(mode) {
+  function telegramClicked() {
+    var code = currentTab === "register" ? refValue() : "";
+    if (!code) { startTelegram("login"); return; }
+    if (!CODE_RE.test(code)) { refInput.closest(".field").classList.add("is-invalid"); refStatus(SB.message("code_not_found"), false); refInput.focus(); return; }
+    var btn = $(modal, "[data-acc-tg]");
+    btn.disabled = true;
+    SB.account("check_code", { code: code }).then(function (r) {
+      btn.disabled = false;
+      if (r && r.valid === false) { refInput.closest(".field").classList.add("is-invalid"); refStatus(SB.message("code_not_found"), false); refInput.focus(); return; }
+      SB.storeRef(code);
+      startTelegram("login", code);
+    }).catch(function () { btn.disabled = false; startTelegram("login", code); });
+  }
+
+  function startTelegram(mode, refCode) {
     linkMode = mode === "link";
     // Новый вход всегда начинается «с чистого листа»: сессия прошлого аккаунта
     // в этом браузере сбрасывается, чтобы не показать чужие данные.
     if (!linkMode && SB.isSignedIn()) SB.signOut();
     var btn = $(modal, "[data-acc-tg]");
     btn.disabled = true;
-    SB.account("tg_start", { mode: mode, ref: SB.storedRef() || ($(modal, '[name="ref"]').value || "").toUpperCase() })
+    SB.account("tg_start", { mode: mode, ref: mode === "link" ? "" : (refCode || SB.storedRef()) })
       .then(function (r) {
         btn.disabled = false;
         if (modal.hidden) { lastFocus = doc.activeElement; modal.hidden = false; doc.body.classList.add("has-modal"); }

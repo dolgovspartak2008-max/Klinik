@@ -397,3 +397,10 @@ body.has-modal { overflow: hidden; }
 .cab-hero__who { margin-top: 6px; color: rgba(200,208,232,.85); font-size: 14.5px; }
 .cab-hero__who b { color: #fff; }
 .cab-hero__switch { color: var(--teal); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; font-size: 14.5px; }
+
+/* ---------- Промокод друга над кнопкой Telegram и ввод кода из письма ---------- */
+.acc-ref { margin-bottom: 14px; }
+.acc-ref .acc-status { margin-top: 0; }
+.acc-otp { font-size: 22px !important; letter-spacing: .28em; font-variant-numeric: tabular-nums; text-align: center; }
+.acc-hint { margin-top: 10px; font-size: 13px; color: var(--ink-soft); }
+[data-acc-view="verify"] .acc-link, [data-acc-view="newpass"] .acc-link { display: block; margin-top: 6px; }

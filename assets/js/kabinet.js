@@ -232,6 +232,25 @@
       e.preventDefault();
       busy(form, true);
       SB.account("set_email", { email: form.elements.email.value.trim(), password: form.elements.password.value })
+        .then(function (r) {
+          busy(form, false);
+          if (r && r.status === "verify") {
+            // email привяжется после ввода кода из письма
+            var cf = $("[data-email-code-form]");
+            form.hidden = true; cf.hidden = false; cf.reset();
+            $("[data-email-code-lead]").textContent = "Мы отправили 6-значный код на " + r.email + ". Введите его — и можно будет входить по email и паролю.";
+            cf.elements.code.focus();
+            return;
+          }
+          toast("Готово: теперь можно входить и по email"); return load();
+        })
+        .catch(function (err) { busy(form, false); formStatus(form, err.message, false); });
+    } else if (form.hasAttribute("data-email-code-form")) {
+      e.preventDefault();
+      var ec = form.elements.code.value.replace(/\s+/g, "");
+      if (!/^[0-9]{6}$/.test(ec)) { formStatus(form, SB.message("bad_code"), false); return; }
+      busy(form, true);
+      SB.account("set_email_confirm", { code: ec })
         .then(function () { toast("Готово: теперь можно входить и по email"); return load(); })
         .catch(function (err) { busy(form, false); formStatus(form, err.message, false); });
     } else if (form.hasAttribute("data-reset-form")) {
@@ -247,6 +266,8 @@
   });
 
   doc.addEventListener("click", function (e) {
+    var back = e.target.closest("[data-email-back]");
+    if (back) { $("[data-email-code-form]").hidden = true; $("[data-email-form]").hidden = false; return; }
     var t = e.target.closest("[data-switch],[data-copy-code],[data-copy-link],[data-share],[data-cancel-req],[data-signout],[data-delete],[data-link-tg],[data-open-auth],[data-reload]");
     if (!t) return;
     if (t.hasAttribute("data-switch")) {
