@@ -36,6 +36,15 @@
     system_error: "Ошибка системы"
   };
 
+  // подписи столбцов для карточного вида таблиц на телефоне
+  function labelTables(root) {
+    $$("table.adm-table", root).forEach(function (t) {
+      var heads = $$("thead th", t).map(function (th) { return th.textContent; });
+      $$("tbody tr", t).forEach(function (tr) {
+        Array.prototype.forEach.call(tr.children, function (td, i) { td.setAttribute("data-label", heads[i] || ""); });
+      });
+    });
+  }
   function fail(err) { toast(err && err.message ? err.message : "Ошибка"); }
 
   // ---------------------------------------------------------------- вкладки
@@ -116,6 +125,7 @@
             '<td><span class="chip-status is-' + esc(r.status) + '">' + esc(R_STATUS[r.status]) + "</span>" + (r.note ? '<br><small class="cab-muted">' + esc(r.note) + "</small>" : "") + "</td>" +
             '<td class="adm-actions">' + act + "</td></tr>";
         }).join("") + "</tbody></table></div>";
+      labelTables(box);
     }).catch(fail);
   }
   $("[data-req-filter]").addEventListener("change", loadRequests);
@@ -148,7 +158,7 @@
     return SB.rpc("admin_users", { p_q: q || "", p_limit: 50, p_offset: 0 }).then(function (r) {
       if (!r.items.length) { box.innerHTML = '<p class="cab-empty">Никого не нашлось. Проверьте написание или ищите по номеру телефона.</p>'; return; }
       box.innerHTML = '<p class="cab-muted">Найдено: ' + r.total + (r.total > r.items.length ? " (показаны последние " + r.items.length + ")" : "") + "</p>" +
-        '<div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>Клиент</th><th>Телефон</th><th>Email / Telegram</th><th>Промокод</th><th>Пригласил</th><th>Регистрация</th><th>Статус</th></tr></thead><tbody>' +
+        '<div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>Клиент</th><th>Телефон</th><th>Email / Telegram</th><th>Промокод</th><th>Пригласил друзей</th><th>Регистрация</th><th>Статус</th></tr></thead><tbody>' +
         r.items.map(function (u) {
           return '<tr><td><button class="acc-link" data-user="' + esc(u.id) + '">' + who(u) + "</button>" + (u.is_admin ? ' <span class="chip-status is-used">админ</span>' : "") + "</td>" +
             "<td>" + esc(u.phone || "—") + "</td><td>" + esc(u.email || "—") + (u.telegram && u.telegram.username ? "<br>@" + esc(u.telegram.username) : "") + "</td>" +
@@ -156,6 +166,7 @@
             "<td>" + esc(d(u.created_at)) + "</td>" +
             '<td><span class="chip-status ' + (u.status === "active" ? "is-available" : "is-muted") + '">' + esc(U_STATUS[u.status]) + "</span></td></tr>";
         }).join("") + "</tbody></table></div>";
+      labelTables(box);
     }).catch(fail);
   }
   $("[data-user-search]").addEventListener("submit", function (e) { e.preventDefault(); loadUsers(e.target.elements.q.value); });
@@ -235,36 +246,46 @@
       if (!list.length) { box.innerHTML = '<p class="cab-empty">Приглашений пока нет.</p>'; return; }
       box.innerHTML = '<div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>Пригласил</th><th>Промокод</th><th>Приглашённый</th><th>Дата</th><th>Статус</th></tr></thead><tbody>' +
         list.map(function (r) {
-          return '<tr><td><button class="acc-link" data-user="' + esc(r.referrer.id) + '">' + who(r.referrer) + "</button></td><td>" + esc(r.code) + "</td>" +
+          return '<tr><td><button class="acc-link" data-user="' + esc(r.referrer.id) + '">' + who(r.referrer) + "</button></td><td><span class=\"adm-code\">" + esc(r.code) + "</span></td>" +
             '<td><button class="acc-link" data-user="' + esc(r.invitee.id) + '">' + who(r.invitee) + "</button>" + (r.same_network ? '<br><small class="cab-muted">⚠️ та же сеть, что у пригласившего</small>' : "") + "</td>" +
             "<td>" + esc(d(r.created_at)) + "</td><td>" + esc(REF_STATUS[r.status]) + (r.qualified_at ? "<br><small>" + esc(d(r.qualified_at)) + "</small>" : "") + "</td></tr>";
         }).join("") + "</tbody></table></div>";
+      labelTables(box);
     }).catch(fail);
   }
   $("[data-ref-search]").addEventListener("submit", function (e) { e.preventDefault(); loadReferrals(e.target.elements.q.value); });
 
   // ---------------------------------------------------------------- условия
-  var RULE_HELP = {
-    welcome: "Выдаётся один раз каждому новому клиенту сразу после регистрации.",
-    referral_invitee: "Выдаётся клиенту, который зарегистрировался по промокоду друга (до первой услуги).",
-    referrer_reward: "Начисляется пригласившему, когда приглашённый получил услугу со скидкой. По умолчанию выключено."
+  var RULE_INFO = {
+    welcome: ["Подарок за регистрацию", "Каждый новый клиент сразу после регистрации получает эту скидку на первую услугу."],
+    referral_invitee: ["Скидка другу по промокоду", "Клиент, который зарегистрировался с промокодом друга, получает эту скидку на первую услугу."],
+    referrer_reward: ["Бонус тому, кто пригласил", "Когда приглашённый друг получил услугу, пригласившему начисляется эта скидка. Можно не включать."]
   };
   function loadRules() {
-    var p = loadOverview().then(function () {
+    return loadOverview().then(function () {
       var o = overview;
       var panel = $('[data-panel="rules"]');
       panel.innerHTML =
-        '<div class="cab-block adm-switches"><h2>Программа</h2>' +
-          switchRow("referral_enabled", "Реферальная программа", "Промокоды друзей, скидка приглашённым и награды пригласившим.", o.settings.referral_enabled) +
-          switchRow("diagnostics", "Расширенная диагностика в Telegram", "Присылать в бот все события, включая обычные входы и ошибки ввода. Включайте ненадолго.", o.settings.diagnostics) +
+        '<div class="adm-explain"><h2>Как настроить</h2><ol>' +
+          "<li>Включите «Реферальную программу» — тогда у клиентов заработают промокоды для друзей.</li>" +
+          "<li>У нужной скидки укажите размер и срок, включите переключатель и нажмите «Сохранить».</li>" +
+          "<li>Всё остальное можно не трогать — оно спрятано в «Дополнительно».</li>" +
+        "</ol></div>" +
+        '<div class="cab-block adm-switches">' +
+          switchRow("referral_enabled", "Реферальная программа", "Промокоды для друзей и скидки по ним. Если выключить — работает только подарок за регистрацию.", o.settings.referral_enabled) +
         "</div>" +
         ["welcome", "referral_invitee", "referrer_reward"].map(function (k) { return ruleForm(o.rules[k], o.services); }).join("") +
-        '<div class="cab-block"><h2>Услуги в программе</h2><p class="cab-muted">Выключенные услуги нельзя выбрать при использовании скидки.</p><div class="adm-services">' +
+        '<details class="cab-block adm-more"><summary>Для опытных: услуги и диагностика</summary>' +
+          '<h3>Какие услуги можно выбрать при использовании скидки</h3>' +
+          '<p class="cab-muted">Снимите галочку, если на услугу скидки не действуют вообще.</p><div class="adm-services">' +
           o.services.map(function (s) {
             return '<label class="check"><input type="checkbox" data-service-toggle="' + esc(s.id) + '"' + (s.active ? " checked" : "") + " /><span>" + esc(s.title) + "</span></label>";
-          }).join("") + "</div></div>";
+          }).join("") + "</div>" +
+          '<div class="adm-switches adm-switches--gap">' +
+            switchRow("diagnostics", "Подробные уведомления в Telegram", "Бот будет присылать вообще все события, включая обычные входы. Нужно только для проверки — потом выключите.", o.settings.diagnostics) +
+          "</div>" +
+        "</details>";
     });
-    return p;
   }
   function switchRow(key, title, hint, on) {
     return '<label class="adm-switch"><input type="checkbox" data-setting="' + key + '"' + (on ? " checked" : "") + ' /><span class="adm-switch__ui" aria-hidden="true"></span>' +
@@ -272,29 +293,32 @@
   }
   function ruleForm(r, services) {
     var ids = r.service_ids || [];
-    return '<form class="cab-block adm-rule" data-rule="' + esc(r.kind) + '" novalidate>' +
-      '<div class="adm-rule__head"><h2>' + esc(r.title) + "</h2>" +
-      '<label class="adm-switch adm-switch--sm"><input type="checkbox" name="enabled"' + (r.enabled ? " checked" : "") + ' /><span class="adm-switch__ui" aria-hidden="true"></span><span>' + (r.enabled ? "включено" : "выключено") + "</span></label></div>" +
-      '<p class="cab-muted">' + esc(RULE_HELP[r.kind]) + "</p>" +
-      '<div class="adm-rule__grid">' +
-        '<label class="field"><span>Название для клиента</span><input name="title" maxlength="80" value="' + esc(r.title) + '" /></label>' +
-        '<label class="field"><span>Тип скидки</span><select name="discount_type"><option value="">— не задан —</option>' +
-          '<option value="percent"' + (r.discount_type === "percent" ? " selected" : "") + ">Процент от стоимости</option>" +
-          '<option value="fixed"' + (r.discount_type === "fixed" ? " selected" : "") + ">Фиксированная сумма, ₽</option></select></label>" +
-        '<label class="field"><span>Размер</span><input name="amount" type="number" min="1" step="0.01" inputmode="decimal" value="' + esc(r.amount == null ? "" : r.amount) + '" /></label>' +
-        '<label class="field"><span>Срок действия, дней</span><input name="valid_days" type="number" min="1" max="3650" value="' + esc(r.valid_days == null ? "" : r.valid_days) + '" /></label>' +
-        '<label class="field"><span>Сколько раз можно использовать</span><input name="max_uses" type="number" min="1" max="100" value="' + esc(r.max_uses) + '" /></label>' +
-        '<label class="check"><input type="checkbox" name="stackable"' + (r.stackable ? " checked" : "") + " /><span>Можно совмещать с другими акциями</span></label>" +
+    var info = RULE_INFO[r.kind];
+    return '<form class="cab-block adm-rule' + (r.enabled ? " is-on" : "") + '" data-rule="' + esc(r.kind) + '" novalidate>' +
+      '<div class="adm-rule__head"><div><h2>' + esc(info[0]) + '</h2><p class="cab-muted">' + esc(info[1]) + "</p></div>" +
+      '<label class="adm-switch adm-switch--sm"><input type="checkbox" name="enabled"' + (r.enabled ? " checked" : "") + ' /><span class="adm-switch__ui" aria-hidden="true"></span><span data-on-label>' + (r.enabled ? "Включено" : "Выключено") + "</span></label></div>" +
+      '<div class="adm-rule__main">' +
+        '<label class="field"><span>Размер скидки</span><span class="adm-amount">' +
+          '<input name="amount" type="number" min="1" step="1" inputmode="decimal" placeholder="10" value="' + esc(r.amount == null ? "" : Number(r.amount)) + '" />' +
+          '<select name="discount_type" aria-label="Проценты или рубли">' +
+            '<option value="percent"' + (r.discount_type !== "fixed" ? " selected" : "") + ">%</option>" +
+            '<option value="fixed"' + (r.discount_type === "fixed" ? " selected" : "") + ">₽</option></select></span></label>" +
+        '<label class="field"><span>Сколько дней действует</span><input name="valid_days" type="number" min="1" max="3650" placeholder="30" value="' + esc(r.valid_days == null ? "" : r.valid_days) + '" /></label>' +
       "</div>" +
-      '<label class="field"><span>Описание</span><input name="description" maxlength="500" value="' + esc(r.description) + '" /></label>' +
-      '<fieldset class="adm-svc"><legend>На какие услуги действует</legend>' +
-        '<label class="check"><input type="checkbox" name="all_services"' + (r.all_services ? " checked" : "") + " /><span>На все услуги</span></label>" +
+      '<details class="adm-rule__more"><summary>Дополнительно</summary>' +
+        '<label class="field"><span>Как скидка называется у клиента в кабинете</span><input name="title" maxlength="80" value="' + esc(r.title) + '" /></label>' +
+        '<label class="field"><span>Сколько раз можно использовать</span><input name="max_uses" type="number" min="1" max="100" value="' + esc(r.max_uses) + '" /></label>' +
+        '<label class="check"><input type="checkbox" name="stackable"' + (r.stackable ? " checked" : "") + " /><span>Можно использовать вместе с другими скидками</span></label>" +
+        '<label class="check"><input type="checkbox" name="all_services"' + (r.all_services ? " checked" : "") + " /><span>Действует на все услуги</span></label>" +
         '<div class="adm-services" data-svc-list' + (r.all_services ? " hidden" : "") + ">" +
           services.map(function (s) {
             return '<label class="check"><input type="checkbox" name="svc" value="' + esc(s.id) + '"' + (ids.indexOf(s.id) >= 0 ? " checked" : "") + " /><span>" + esc(s.title) + "</span></label>";
-          }).join("") + "</div></fieldset>" +
-      '<p class="cab-muted cab-small">Новые условия действуют для бонусов, выданных после сохранения. Уже выданные бонусы сохраняют свои условия.</p>' +
-      '<button class="btn btn--primary acc-submit" type="submit">Сохранить условия</button><p class="acc-status" role="status" aria-live="polite"></p></form>';
+          }).join("") + "</div>" +
+        '<input type="hidden" name="description" value="' + esc(r.description) + '" />' +
+      "</details>" +
+      '<div class="adm-rule__foot"><button class="btn btn--primary acc-submit" type="submit">Сохранить</button>' +
+      '<p class="acc-status" role="status" aria-live="polite"></p></div>' +
+      '<p class="cab-muted cab-small">Изменения касаются новых скидок. Уже выданные клиентам скидки остаются на прежних условиях.</p></form>';
   }
 
   doc.addEventListener("change", function (e) {
@@ -305,6 +329,8 @@
     } else if (t.matches("[data-service-toggle]")) {
       SB.rpc("admin_update_service", { p_id: t.getAttribute("data-service-toggle"), p_active: t.checked })
         .then(function () { toast("Сохранено"); }).catch(function (err) { t.checked = !t.checked; fail(err); });
+    } else if (t.name === "enabled" && t.form && t.form.hasAttribute("data-rule")) {
+      $("[data-on-label]", t.form).textContent = t.checked ? "Включено" : "Выключено";
     } else if (t.name === "all_services" && t.form && t.form.hasAttribute("data-rule")) {
       $("[data-svc-list]", t.form).hidden = t.checked;
     }
@@ -322,20 +348,36 @@
       service_ids: $$('input[name="svc"]:checked', f).map(function (x) { return x.value; })
     };
     var st = $(".acc-status", f);
-    if (rule.discount_type === "percent" && Number(rule.amount) > 100) { st.textContent = "Процент не может быть больше 100."; st.className = "acc-status is-error"; return; }
-    if (rule.enabled && !confirm("Сохранить и применять эти условия ко всем новым бонусам?")) return;
+    var problem = rule.discount_type === "percent" && Number(rule.amount) > 100 ? "Процент не может быть больше 100."
+      : rule.enabled && !(Number(rule.amount) > 0) ? "Укажите размер скидки."
+      : rule.enabled && !(Number(rule.valid_days) > 0) ? "Укажите, сколько дней действует скидка."
+      : rule.enabled && !rule.all_services && !rule.service_ids.length ? "Отметьте хотя бы одну услугу в «Дополнительно» или включите «Действует на все услуги»." : "";
+    if (problem) { st.textContent = problem; st.className = "acc-status is-error"; return; }
     var btn = $(".acc-submit", f); btn.disabled = true;
     SB.rpc("admin_update_rule", { p_kind: f.getAttribute("data-rule"), p_rule: rule })
-      .then(function () { st.textContent = "Сохранено"; st.className = "acc-status is-ok"; btn.disabled = false; loaded.rules = false; loadRules(); })
+      .then(function () { toast("Сохранено"); btn.disabled = false; loadRules(); })
       .catch(function (err) { btn.disabled = false; st.textContent = err.message; st.className = "acc-status is-error"; });
   });
 
   // ---------------------------------------------------------------- журнал
   var lastEv = null;
+  var EV_KEYS = {
+    code: "промокод", ref_code: "промокод", invited_with: "пришёл по коду", method: "способ",
+    service: "услуга", bonus: "скидка", phone: "телефон", note: "комментарий", reason: "причина",
+    referrer_no: "пригласил №", invitee_no: "приглашённый №", other_client_no: "телефон уже у клиента №",
+    count_24h: "за сутки", tg_username: "Telegram", email_hint: "email", where: "где", message: "текст",
+    title: "условия", source: "откуда"
+  };
+  var EV_VALUES = { telegram: "Telegram", email: "Email", signup: "при регистрации", later: "в кабинете", available: "выдана", not_issued: "не выдана" };
   function eventRow(e) {
     var data = e.data || {};
-    var details = Object.keys(data).filter(function (k) { return ["redemption_id", "bonus_id", "before", "after", "invite_result"].indexOf(k) < 0; })
-      .slice(0, 6).map(function (k) { var v = data[k]; return esc(k) + ": " + esc(typeof v === "object" ? JSON.stringify(v) : v); }).join(" · ");
+    var details = Object.keys(EV_KEYS).filter(function (k) { return data[k] != null && data[k] !== "" && typeof data[k] !== "object"; })
+      .slice(0, 5).map(function (k) {
+        var v = data[k]; v = EV_VALUES[v] || v;
+        if (k === "tg_username") v = "@" + v;
+        return esc(EV_KEYS[k]) + ": " + esc(v);
+      }).join(" · ");
+    if (data.discount_type && data.amount) details = (details ? details + " · " : "") + "размер: " + esc(F.discount(data));
     return '<li class="adm-ev adm-ev--' + esc(e.severity) + '"><time>' + esc(dt(e.created_at)) + "</time>" +
       "<b>" + esc(EV[e.type] || e.type) + "</b>" +
       (e.user ? ' <button class="acc-link" data-user="' + esc(e.user.id) + '">' + who(e.user) + "</button>" : "") +

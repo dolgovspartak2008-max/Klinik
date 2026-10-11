@@ -43,16 +43,25 @@
       <div data-state="app" hidden>
         <div class="adm-tabs" role="tablist" aria-label="Разделы">
           <button role="tab" type="button" class="adm-tab" data-tab="overview" aria-selected="true">Обзор</button>
-          <button role="tab" type="button" class="adm-tab" data-tab="requests" aria-selected="false">Запросы на скидку <span class="adm-badge" data-pending-badge hidden></span></button>
+          <button role="tab" type="button" class="adm-tab" data-tab="requests" aria-selected="false">Скидки на приёме <span class="adm-badge" data-pending-badge hidden></span></button>
           <button role="tab" type="button" class="adm-tab" data-tab="users" aria-selected="false">Клиенты</button>
           <button role="tab" type="button" class="adm-tab" data-tab="referrals" aria-selected="false">Приглашения</button>
-          <button role="tab" type="button" class="adm-tab" data-tab="rules" aria-selected="false">Условия</button>
-          <button role="tab" type="button" class="adm-tab" data-tab="events" aria-selected="false">Журнал</button>
+          <button role="tab" type="button" class="adm-tab" data-tab="rules" aria-selected="false">Настройка скидок</button>
+          <button role="tab" type="button" class="adm-tab" data-tab="events" aria-selected="false">Журнал событий</button>
         </div>
 
         <section class="adm-panel" data-panel="overview" aria-label="Обзор"></section>
 
-        <section class="adm-panel" data-panel="requests" hidden aria-label="Запросы на скидку">
+        <section class="adm-panel" data-panel="requests" hidden aria-label="Скидки на приёме">
+          <div class="adm-explain">
+            <h2>Что это за раздел</h2>
+            <p>Когда клиент в личном кабинете нажимает «Использовать скидку», запрос появляется здесь. На приёме найдите клиента по имени или телефону:</p>
+            <ul>
+              <li><b>«Услуга оказана»</b> — клиент пришёл и получил услугу со скидкой. Скидка засчитывается и больше не повторится.</li>
+              <li><b>«Не состоялась»</b> — клиент не пришёл. Скидка возвращается клиенту, он сможет использовать её позже.</li>
+            </ul>
+            <p class="cab-muted">Эти же кнопки приходят администраторам в Telegram-бот.</p>
+          </div>
           <div class="adm-toolbar">
             <label class="field field--inline"><span>Показать</span>
               <select data-req-filter>
@@ -91,7 +100,7 @@
             <label class="field field--inline"><span>Важность</span>
               <select data-ev-sev>
                 <option value="">Все события</option>
-                <option value="suspicious">Подозрительные</option>
+                <option value="suspicious">Только подозрительные</option>
                 <option value="alert">Тревога</option>
                 <option value="error">Ошибки</option>
               </select></label>
