@@ -695,6 +695,7 @@ begin
     referral_enabled = coalesce((p ->> 'referral_enabled')::boolean, referral_enabled),
     diagnostics      = coalesce((p ->> 'diagnostics')::boolean, diagnostics),
     updated_at = now(), updated_by = p_actor
+  where id
   returning * into v_new;
   perform app.log_event('settings_changed', 'info', p_actor, jsonb_build_object(
     'referral_enabled', jsonb_build_array(v_old.referral_enabled, v_new.referral_enabled),
@@ -1028,7 +1029,7 @@ $$;
 
 create or replace function public.svc_set_bot_username(p_username text) returns void
 language sql security definer set search_path = '' as $$
-  update app.settings set bot_username = nullif(btrim(p_username), '')
+  update app.settings set bot_username = nullif(btrim(p_username), '') where id
 $$;
 
 -- Секреты (токен бота и т.п.) лежат в Supabase Vault в зашифрованном виде
