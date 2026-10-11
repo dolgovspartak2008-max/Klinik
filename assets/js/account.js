@@ -125,7 +125,7 @@
   function show(view) {
     modal.querySelectorAll("[data-acc-view]").forEach(function (v) { v.hidden = v.getAttribute("data-acc-view") !== view; });
     $(modal, ".acc-tabs").hidden = view !== "main";
-    if (view !== "tg") stopPoll();
+    if (view !== "tg") { stopPoll(); pending = null; savePending(null); }
     modal.querySelectorAll(".acc-status").forEach(function (s) { if (!s.hasAttribute("data-acc-wait-status")) { s.textContent = ""; s.className = "acc-status"; } });
   }
   function tab(name) {
@@ -161,6 +161,7 @@
   }
   function close() {
     stopPoll();
+    pending = null; savePending(null);
     modal.hidden = true;
     doc.body.classList.remove("has-modal");
     if (lastFocus && lastFocus.focus) lastFocus.focus();
@@ -255,8 +256,55 @@
   // ------------------------------------------------ вход через Telegram-бота
   function stopPoll() { if (pollTimer) { clearTimeout(pollTimer); pollTimer = null; } }
 
+  // Незавершённый вход храним в sessionStorage: если телефон «усыпил» вкладку
+  // или страница перезагрузилась, пока человек был в Telegram, вход всё равно завершится.
+  var PENDING = "fz.tgpending";
+  var pending = null;
+  function savePending(p) { try { if (p) sessionStorage.setItem(PENDING, JSON.stringify(p)); else sessionStorage.removeItem(PENDING); } catch (e) {} }
+  function loadPending() {
+    try { var p = JSON.parse(sessionStorage.getItem(PENDING) || "null"); return p && p.until > Date.now() ? p : null; } catch (e) { return null; }
+  }
+
+  function waitStatus(text) { var s = $(modal, "[data-acc-wait-status]"); if (s) s.textContent = text; }
+
+  function pollOnce() {
+    if (!pending) return;
+    stopPoll();
+    var p = pending;
+    SB.account("tg_poll", { id: p.id, secret: p.secret }).then(function (res) {
+      if (pending !== p) return;
+      if (res.status === "ok") {
+        pending = null; savePending(null);
+        toast(res.created ? "Аккаунт создан. Добро пожаловать! 🎁" : "Вы вошли через Telegram");
+        done(); return;
+      }
+      if (res.status === "linked") {
+        pending = null; savePending(null);
+        toast("Telegram привязан к аккаунту"); close(); if (window.FZOnLinked) window.FZOnLinked(); return;
+      }
+      if (res.status === "rejected" || res.status === "expired" || res.status === "not_found" || res.status === "consumed" || Date.now() > p.until) {
+        pending = null; savePending(null);
+        waitStatus("Вход не подтверждён. Нажмите «Другой способ входа» и попробуйте ещё раз.");
+        return;
+      }
+      pollTimer = setTimeout(pollOnce, 2000);
+    }).catch(function (err) {
+      if (err.code === "network" || err.code === "rate_limited") { pollTimer = setTimeout(pollOnce, 3000); return; }
+      pending = null; savePending(null);
+      waitStatus(err.message);
+    });
+  }
+
+  // Вернулись из Telegram — проверяем сразу, не дожидаясь таймера
+  doc.addEventListener("visibilitychange", function () { if (!doc.hidden && pending) pollOnce(); });
+  window.addEventListener("focus", function () { if (pending) pollOnce(); });
+  window.addEventListener("pageshow", function () { if (pending) pollOnce(); });
+
   function startTelegram(mode) {
     linkMode = mode === "link";
+    // Новый вход всегда начинается «с чистого листа»: сессия прошлого аккаунта
+    // в этом браузере сбрасывается, чтобы не показать чужие данные.
+    if (!linkMode && SB.isSignedIn()) SB.signOut();
     var btn = $(modal, "[data-acc-tg]");
     btn.disabled = true;
     SB.account("tg_start", { mode: mode, ref: SB.storedRef() || ($(modal, '[name="ref"]').value || "").toUpperCase() })
@@ -268,33 +316,34 @@
         $(modal, "[data-acc-code]").textContent = r.code;
         var a = $(modal, "[data-acc-tg-open]");
         a.href = r.url;
-        $(modal, "[data-acc-wait-status]").textContent = "Ждём подтверждения в Telegram…";
-        // на телефоне сразу открываем Telegram
+        waitStatus("Ждём подтверждения в Telegram… После подтверждения вернитесь на эту страницу.");
+        pending = { id: r.id, secret: r.secret, code: r.code, url: r.url, mode: mode, until: Date.now() + 10 * 60 * 1000 };
+        savePending(pending);
         if (window.matchMedia("(max-width: 760px)").matches) { try { window.open(r.url, "_blank", "noopener"); } catch (e) {} }
         a.focus();
-        var deadline = Date.now() + 10 * 60 * 1000;
-        (function poll() {
-          pollTimer = setTimeout(function () {
-            SB.account("tg_poll", { id: r.id, secret: r.secret }).then(function (p) {
-              if (p.status === "ok") { toast(p.created ? "Аккаунт создан. Добро пожаловать! 🎁" : "Вы вошли через Telegram"); done(); return; }
-              if (p.status === "linked") { toast("Telegram привязан к аккаунту"); close(); if (window.FZOnLinked) window.FZOnLinked(); return; }
-              if (p.status === "rejected" || p.status === "expired" || Date.now() > deadline) {
-                $(modal, "[data-acc-wait-status]").textContent = "Вход не подтверждён. Нажмите «Другой способ входа» и попробуйте ещё раз.";
-                return;
-              }
-              poll();
-            }).catch(function (err) {
-              if (err.code === "network" || err.code === "rate_limited") return poll();
-              $(modal, "[data-acc-wait-status]").textContent = err.message;
-            });
-          }, 2000);
-        })();
+        pollTimer = setTimeout(pollOnce, 2000);
       })
       .catch(function (err) {
         btn.disabled = false;
         if (modal.hidden) toast(err.message); else setStatus($(modal, '[data-acc-form="login"]'), err.message, false);
       });
   }
+
+  // Страница перезагрузилась во время входа — продолжаем ждать подтверждения
+  (function resumePending() {
+    var p = loadPending();
+    if (!p) return;
+    pending = p;
+    lastFocus = doc.activeElement;
+    linkMode = p.mode === "link";
+    modal.hidden = false; doc.body.classList.add("has-modal");
+    $(modal, "#authTitle").textContent = linkMode ? "Привязка Telegram" : "Вход через Telegram";
+    show("tg");
+    $(modal, "[data-acc-code]").textContent = p.code;
+    $(modal, "[data-acc-tg-open]").href = p.url;
+    waitStatus("Проверяем подтверждение в Telegram…");
+    pollOnce();
+  })();
 
   window.FZAuth = {
     open: open,

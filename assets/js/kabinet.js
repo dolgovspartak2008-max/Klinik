@@ -62,6 +62,10 @@
 
     $("[data-hello]").textContent = p.name ? "Здравствуйте, " + p.name.split(" ")[0] + "!" : "Здравствуйте!";
     $("[data-meta]").textContent = "Клиент № " + p.client_no + " · с нами с " + date(p.created_at);
+    var via = p.telegram ? "Telegram" + (p.telegram.username ? " @" + p.telegram.username : "") : (p.email || "");
+    $("[data-who]").innerHTML = "Вы вошли как <b></b>" + (via ? " (" + esc(via) + ")" : "") +
+      ' · <button type="button" class="cab-hero__switch" data-switch>Не вы? Сменить аккаунт</button>';
+    $("[data-who] b").textContent = p.name || ("клиент № " + p.client_no);
     $("[data-admin-link]").hidden = !p.is_admin;
 
     var welcome = d.bonuses.filter(function (b) { return b.kind === "welcome" && b.status === "available"; })[0];
@@ -243,8 +247,13 @@
   });
 
   doc.addEventListener("click", function (e) {
-    var t = e.target.closest("[data-copy-code],[data-copy-link],[data-share],[data-cancel-req],[data-signout],[data-delete],[data-link-tg],[data-open-auth],[data-reload]");
+    var t = e.target.closest("[data-switch],[data-copy-code],[data-copy-link],[data-share],[data-cancel-req],[data-signout],[data-delete],[data-link-tg],[data-open-auth],[data-reload]");
     if (!t) return;
+    if (t.hasAttribute("data-switch")) {
+      SB.signOut(); data = null; state("guest");
+      if (window.FZAuth) window.FZAuth.open("login");
+      return;
+    }
     if (t.hasAttribute("data-copy-code")) copy(data.profile.ref_code, "Промокод скопирован");
     else if (t.hasAttribute("data-copy-link")) copy($("[data-ref-link]").value, "Ссылка скопирована");
     else if (t.hasAttribute("data-share")) {

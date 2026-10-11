@@ -394,3 +394,6 @@ body.has-modal { overflow: hidden; }
 .cab-header__link { white-space: nowrap; }
 @media (max-width: 420px) { .cab-header .logo__text { display: none; } }
 .adm-code { white-space: nowrap; font-weight: 700; }
+.cab-hero__who { margin-top: 6px; color: rgba(200,208,232,.85); font-size: 14.5px; }
+.cab-hero__who b { color: #fff; }
+.cab-hero__switch { color: var(--teal); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; font-size: 14.5px; }
