@@ -53,7 +53,20 @@ async function sendTelegram(text) {
   if (!r.ok) throw new Error("telegram " + r.status);
 }
 
+// Простое ограничение частоты: не больше 5 заявок с одного IP за 10 минут
+// (в пределах одного экземпляра функции — защита от спама и случайных повторов).
+var hits = new Map();
+function tooMany(ip) {
+  var now = Date.now(), win = 10 * 60 * 1000;
+  var list = (hits.get(ip) || []).filter(function (t) { return now - t < win; });
+  list.push(now);
+  hits.set(ip, list);
+  if (hits.size > 5000) hits.clear();
+  return list.length > 5;
+}
+
 module.exports = async function handler(req, res) {
+  res.setHeader("X-Content-Type-Options", "nosniff");
   var ch = channels();
   var configured = ch.whatsapp || ch.telegram;
 
@@ -66,6 +79,11 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ ok: false });
   }
 
+  var ip = String(req.headers["x-forwarded-for"] || "").split(",")[0].trim() || "unknown";
+  if (tooMany(ip)) return res.status(429).json({ ok: false, error: "rate_limited" });
+  var len = Number(req.headers["content-length"] || 0);
+  if (len > 4000) return res.status(413).json({ ok: false, error: "too_large" });
+
   var b = req.body || {};
   if (typeof b === "string") { try { b = JSON.parse(b); } catch (e) { b = {}; } }
   if (b.website) return res.status(200).json({ ok: true }); // бот заполнил скрытое поле
@@ -73,6 +91,8 @@ module.exports = async function handler(req, res) {
   var name = clean(b.name, 60);
   var phone = clean(b.phone, 20).replace(/\D/g, "");
   var service = clean(b.service, 120);
+  var promo = clean(b.promo, 12).toUpperCase();
+  if (!/^GIFT-[A-Z0-9]{5}$/.test(promo)) promo = "";
   if (service === "promo") service = "Бесплатная консультация + процедура (акция)";
   if (name.length < 2 || phone.length < 10 || phone.length > 12) {
     return res.status(400).json({ ok: false, error: "bad_input" });
@@ -85,6 +105,7 @@ module.exports = async function handler(req, res) {
     "Имя: " + name + "\n" +
     "Телефон: +" + phone + "\n" +
     "Интересует: " + (service || "—") + "\n" +
+    (promo ? "Промокод друга: " + promo + "\n" : "") +
     "Время: " + time;
 
   var jobs = [];

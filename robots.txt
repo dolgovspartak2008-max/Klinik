@@ -1,5 +1,8 @@
 User-agent: *
 Disallow: /api/
+Disallow: /sb/
+Disallow: /kabinet/
+Disallow: /admin/
 # Яндекс: параметры ?book= и ?to= только открывают окно записи / прокручивают к разделу
 Clean-param: book&to /
 

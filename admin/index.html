@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Админ-панель — Физиотера</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#0b1742" />
+  <meta name="referrer" content="no-referrer" />
+  <link rel="icon" href="/favicon.ico" sizes="48x48" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/account.css" />
+</head>
+<body class="cab-page adm-page">
+  <a class="skip-link" href="#main">Перейти к содержимому</a>
+
+  <header class="header is-scrolled cab-header">
+    <div class="container header__inner">
+      <a href="/" class="logo" aria-label="Физиотера — на главную">
+        <img class="logo__mark" src="/assets/img/logo-mark.svg" alt="" width="44" height="44" />
+        <span class="logo__text">Физиотера<small>Админ-панель</small></span>
+      </a>
+      <nav class="cab-header__nav" aria-label="Админ-панель">
+        <a class="cab-header__link" href="/kabinet/">Мой кабинет</a>
+        <button class="cab-header__link" type="button" data-signout>Выйти</button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="cab adm">
+    <div class="container">
+      <div class="cab-state" data-state="loading"><span class="cab-spinner" aria-hidden="true"></span><p>Проверяем доступ…</p></div>
+      <section class="cab-state cab-guest" data-state="denied" hidden>
+        <h1>Нет доступа</h1>
+        <p data-denied-text>Админ-панель открывается после входа через Telegram с аккаунта администратора.</p>
+        <div class="cab-guest__actions"><button class="btn btn--tg btn--lg" type="button" data-open-auth>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4 3 11l6 2 2 6 3-4 5 4Z"/></svg>Войти через Telegram</button></div>
+      </section>
+
+      <div data-state="app" hidden>
+        <div class="adm-tabs" role="tablist" aria-label="Разделы">
+          <button role="tab" type="button" class="adm-tab" data-tab="overview" aria-selected="true">Обзор</button>
+          <button role="tab" type="button" class="adm-tab" data-tab="requests" aria-selected="false">Запросы на скидку <span class="adm-badge" data-pending-badge hidden></span></button>
+          <button role="tab" type="button" class="adm-tab" data-tab="users" aria-selected="false">Клиенты</button>
+          <button role="tab" type="button" class="adm-tab" data-tab="referrals" aria-selected="false">Приглашения</button>
+          <button role="tab" type="button" class="adm-tab" data-tab="rules" aria-selected="false">Условия</button>
+          <button role="tab" type="button" class="adm-tab" data-tab="events" aria-selected="false">Журнал</button>
+        </div>
+
+        <section class="adm-panel" data-panel="overview" aria-label="Обзор"></section>
+
+        <section class="adm-panel" data-panel="requests" hidden aria-label="Запросы на скидку">
+          <div class="adm-toolbar">
+            <label class="field field--inline"><span>Показать</span>
+              <select data-req-filter>
+                <option value="pending">Ожидают подтверждения</option>
+                <option value="confirmed">Подтверждённые</option>
+                <option value="cancelled">Отменённые</option>
+                <option value="refunded">Возвраты</option>
+                <option value="">Все</option>
+              </select></label>
+          </div>
+          <div data-req-list></div>
+        </section>
+
+        <section class="adm-panel" data-panel="users" hidden aria-label="Клиенты">
+          <form class="adm-toolbar" data-user-search role="search">
+            <label class="field field--grow"><span class="sr-only">Поиск</span>
+              <input name="q" type="search" placeholder="Имя, телефон, email, промокод, № клиента или @telegram" /></label>
+            <button class="btn btn--primary" type="submit">Найти</button>
+          </form>
+          <div data-user-list></div>
+        </section>
+
+        <section class="adm-panel" data-panel="referrals" hidden aria-label="Приглашения">
+          <form class="adm-toolbar" data-ref-search role="search">
+            <label class="field field--grow"><span class="sr-only">Поиск</span>
+              <input name="q" type="search" placeholder="Промокод, имя или № клиента" /></label>
+            <button class="btn btn--primary" type="submit">Найти</button>
+          </form>
+          <div data-ref-list></div>
+        </section>
+
+        <section class="adm-panel" data-panel="rules" hidden aria-label="Условия"></section>
+
+        <section class="adm-panel" data-panel="events" hidden aria-label="Журнал">
+          <div class="adm-toolbar">
+            <label class="field field--inline"><span>Важность</span>
+              <select data-ev-sev>
+                <option value="">Все события</option>
+                <option value="suspicious">Подозрительные</option>
+                <option value="alert">Тревога</option>
+                <option value="error">Ошибки</option>
+              </select></label>
+          </div>
+          <ol class="adm-events" data-ev-list></ol>
+          <button class="btn btn--outline" type="button" data-ev-more hidden>Показать ещё</button>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <div class="modal" id="userModal" role="dialog" aria-modal="true" aria-labelledby="userModalTitle" hidden>
+    <div class="modal__backdrop" data-close-user></div>
+    <div class="modal__card adm-drawer">
+      <button class="modal__close" type="button" data-close-user aria-label="Закрыть">×</button>
+      <div data-user-detail></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="/assets/js/config.js"></script>
+  <script src="/assets/js/sb.js"></script>
+  <script src="/assets/js/account.js"></script>
+  <script src="/assets/js/admin.js"></script>
+</body>
+</html>

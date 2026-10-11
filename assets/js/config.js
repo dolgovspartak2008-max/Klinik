@@ -49,3 +49,14 @@ window.SITE_LEADS = {
   endpoint: "/api/lead",
   whatsapp: "79876000037"
 };
+
+/*
+ * Личный кабинет и реферальная программа (Supabase).
+ *   supabaseUrl — адрес проксирования на этом же домене (правило /sb/ в vercel.json).
+ *   anonKey     — публичный (anon) ключ проекта Supabase. Он НЕ секретный: доступ к данным
+ *                 ограничен серверными проверками. Пока пусто — кнопки входа скрыты.
+ */
+window.SITE_ACCOUNT = {
+  supabaseUrl: "/sb",
+  anonKey: ""
+};

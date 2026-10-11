@@ -412,7 +412,8 @@
     return "Заявка с сайта — Физиотера, Уфа\n" +
       "Имя: " + data.name + "\n" +
       "Телефон: +" + data.phone + "\n" +
-      "Интересует: " + serviceLabel(data.service);
+      "Интересует: " + serviceLabel(data.service) +
+      (data.promo ? "\nПромокод друга: " + data.promo : "");
   }
   function waLink(data) {
     return "https://wa.me/" + String(L.whatsapp || "").replace(/\D/g, "") + "?text=" + encodeURIComponent(leadText(data));
@@ -437,6 +438,7 @@
         name: f.name.value.trim(),
         phone: normPhone(f.phone.value),
         service: f.service.value,
+        promo: (window.SB && window.SB.storedRef && window.SB.storedRef()) || "",
         page: location.href.split("#")[0]
       };
       var bad = [];

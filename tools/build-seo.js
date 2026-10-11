@@ -22,6 +22,9 @@ var vm = require("vm");
 /* ---------- Настройки ---------- */
 var SITE_URL = "https://www.fiziotera.online";            // основной домен (без слеша на конце)
 var OLD_HOSTS = ["clinic-alpha-one.vercel.app", "fizitera.online", "www.fizitera.online"];    // технические адреса → 301 на основной домен
+// Ref проекта Supabase (часть адреса https://<ref>.supabase.co). Не секрет.
+// Запросы личного кабинета идут на /sb/… этого же домена, Vercel проксирует их в Supabase.
+var SUPABASE_REF = "";
 var BRAND = "Физиотера";
 var CITY = "Уфа";
 
@@ -303,6 +306,57 @@ function sitemap() {
 }
 
 /* ---------- vercel.json ---------- */
+/* ---------- Безопасность: CSP с хешами встроенных скриптов ---------- */
+var crypto = require("crypto");
+function htmlFiles(dir) {
+  var out = [];
+  fs.readdirSync(path.join(ROOT, dir), { withFileTypes: true }).forEach(function (e) {
+    var rel = path.join(dir, e.name);
+    if (e.isDirectory()) { if (!/^(\.|node_modules|supabase|tools|api|assets)/.test(e.name)) out = out.concat(htmlFiles(rel)); }
+    else if (/\.html$/.test(e.name)) out.push(rel);
+  });
+  return out;
+}
+function inlineScriptHashes() {
+  var hashes = {};
+  htmlFiles(".").forEach(function (f) {
+    var html = read(f);
+    var re = /<script(\s[^>]*)?>([\s\S]*?)<\/script>/gi, m;
+    while ((m = re.exec(html))) {
+      var attrs = m[1] || "";
+      if (/\ssrc=/i.test(attrs) || /type=["']application\/ld\+json["']/i.test(attrs) || !m[2].trim()) continue;
+      hashes["'sha256-" + crypto.createHash("sha256").update(m[2], "utf8").digest("base64") + "'"] = 1;
+    }
+  });
+  return Object.keys(hashes).sort();
+}
+function securityHeaders() {
+  var csp = [
+    "default-src 'self'",
+    "script-src 'self' " + inlineScriptHashes().join(" "),
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "font-src 'self' https://fonts.gstatic.com",
+    "img-src 'self' data:",
+    "media-src 'self'",
+    "connect-src 'self'",
+    "frame-src 'none'",
+    "frame-ancestors 'none'",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "upgrade-insecure-requests"
+  ].join("; ");
+  return [
+    { key: "Content-Security-Policy", value: csp },
+    { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains" },
+    { key: "X-Content-Type-Options", value: "nosniff" },
+    { key: "X-Frame-Options", value: "DENY" },
+    { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+    { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()" },
+    { key: "Cross-Origin-Opener-Policy", value: "same-origin" }
+  ];
+}
+
 function vercelConfig() {
   var redirects = [];
   OLD_HOSTS.forEach(function (h) {
@@ -312,13 +366,19 @@ function vercelConfig() {
     redirects.push({ source: "/usluga.html", has: [{ type: "query", key: "s", value: id }], destination: "/uslugi/" + INFO[id].slug + "/", permanent: true });
   });
   redirects.push({ source: "/index.html", destination: "/", permanent: true });
-  return JSON.stringify({
-    redirects: redirects,
+  var conf = { redirects: redirects };
+  if (SUPABASE_REF) {
+    conf.rewrites = [{ source: "/sb/:path*", destination: "https://" + SUPABASE_REF + ".supabase.co/:path*" }];
+  }
+  return JSON.stringify(Object.assign(conf, {
     headers: [
+      { source: "/(.*)", headers: securityHeaders() },
+      { source: "/(kabinet|admin)(.*)", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }, { key: "Cache-Control", value: "no-store" }] },
+      { source: "/sb/(.*)", headers: [{ key: "X-Robots-Tag", value: "noindex" }, { key: "Cache-Control", value: "no-store" }] },
       { source: "/api/(.*)", headers: [{ key: "X-Robots-Tag", value: "noindex" }] },
       { source: "/assets/(img|video)/(.*)", headers: [{ key: "Cache-Control", value: "public, max-age=604800, stale-while-revalidate=86400" }] }
     ]
-  }, null, 2) + "\n";
+  }), null, 2) + "\n";
 }
 
 /* ---------- Запись ---------- */
