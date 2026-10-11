@@ -76,8 +76,10 @@ declare
   v_window timestamptz := to_timestamp(floor(extract(epoch from now()) / p_window_seconds) * p_window_seconds);
   v_hits int;
 begin
-  insert into app.rate_limits (key, window_start, hits) values (p_key, v_window, 1)
-  on conflict (key, window_start) do update set hits = app.rate_limits.hits + 1
+  insert into app.rate_counters as c (key, window_start, hits) values (p_key, v_window, 1)
+  on conflict (key) do update set
+    hits = case when c.window_start = excluded.window_start then c.hits + 1 else 1 end,
+    window_start = excluded.window_start
   returning hits into v_hits;
   return v_hits <= p_max;
 end $$;
@@ -163,7 +165,6 @@ begin
   return new;
 end $$;
 
-drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created after insert on auth.users
   for each row execute function app.handle_new_user();
 
@@ -220,10 +221,8 @@ begin
   update app.bonuses b set status = 'expired', updated_at = now()
   where b.status = 'available' and b.expires_at < now();
   get diagnostics n = row_count;
-  delete from app.rate_limits where window_start < now() - interval '2 days';
   update app.tg_login_requests set status = 'rejected'
   where status in ('pending', 'confirmed') and expires_at < now();
-  delete from app.tg_login_requests where created_at < now() - interval '7 days';
   return n;
 end $$;
 
@@ -895,10 +894,10 @@ begin
   where user_id = v.id and status = 'pending';
   update app.bonuses set status = 'cancelled', cancel_reason = 'Аккаунт удалён', updated_at = now()
   where user_id = v.id and status in ('available', 'pending');
-  -- право на подарок НЕ возвращается: записи в bonus_claims и referrals остаются
+  -- право на подарок НЕ возвращается: записи в bonus_claims и referrals остаются,
+  -- привязанный Telegram остаётся за удалённым аккаунтом (повторный бонус через него невозможен)
   update app.profiles set status = 'deleted', display_name = null, phone = null, email = null,
     status_reason = 'Удалён пользователем', updated_at = now() where id = v.id;
-  delete from app.telegram_identities where user_id = v.id;
   update auth.users set banned_until = now() + interval '100 years' where id = v.id;
   perform app.log_event('user_deleted', 'warn', v.id, jsonb_build_object('client_no', v.client_no), true);
   return jsonb_build_object('ok', true);

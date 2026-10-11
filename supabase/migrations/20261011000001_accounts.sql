@@ -246,6 +246,13 @@ create table app.rate_limits (
   primary key (key, window_start)
 );
 
+-- Счётчики лимитов: одна строка на ключ, окно перезаписывается (таблица не растёт)
+create table app.rate_counters (
+  key          text primary key,
+  window_start timestamptz not null,
+  hits         int not null default 0
+);
+
 -- Вход через Telegram-бота (одноразовые запросы)
 create table app.tg_login_requests (
   id            uuid primary key default gen_random_uuid(),
@@ -277,6 +284,7 @@ alter table app.redemptions         enable row level security;
 alter table app.bonus_claims        enable row level security;
 alter table app.events              enable row level security;
 alter table app.rate_limits         enable row level security;
+alter table app.rate_counters       enable row level security;
 alter table app.tg_login_requests   enable row level security;
 
 revoke all on all tables in schema app from public, anon, authenticated;

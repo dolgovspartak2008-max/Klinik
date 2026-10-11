@@ -58,5 +58,5 @@ window.SITE_LEADS = {
  */
 window.SITE_ACCOUNT = {
   supabaseUrl: "/sb",
-  anonKey: ""
+  anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwdWpzd3FvdmhlbWJzaHZheGZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE3MjIwNTksImV4cCI6MjEwNzI5ODA1OX0.7ptbrwm-pSPn8UunJ4_s8-4i8QVKZFOCUICM35MKXTI"
 };

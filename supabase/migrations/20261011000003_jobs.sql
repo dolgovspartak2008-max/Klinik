@@ -40,7 +40,6 @@ begin
   return null;
 end $$;
 
-drop trigger if exists events_notify on app.events;
 create trigger events_notify after insert on app.events
   referencing new table as new_rows
   for each statement execute function app.events_notify_trigger();

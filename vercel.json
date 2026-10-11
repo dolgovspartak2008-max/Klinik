@@ -303,6 +303,12 @@
       "permanent": true
     }
   ],
+  "rewrites": [
+    {
+      "source": "/sb/:path*",
+      "destination": "https://ppujswqovhembshvaxff.supabase.co/:path*"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",

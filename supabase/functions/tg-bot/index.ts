@@ -243,10 +243,12 @@ async function setup() {
     ["codes", "Лучшие пригласившие"], ["suspicious", "Подозрительные действия"],
     ["rules", "Условия скидок"], ["program", "Программа: /program on|off"], ["diag", "Диагностика: /diag on|off"],
   ].map(([command, description]) => ({ command, description }));
+  const scoped: Record<string, unknown> = {};
   for (const chat of (chatsData || []) as number[]) {
-    await tg("setMyCommands", { commands: adminCommands, scope: { type: "chat", chat_id: chat } });
+    const r = await tg("setMyCommands", { commands: adminCommands, scope: { type: "chat", chat_id: chat } });
+    scoped[String(chat)] = r.ok ? "ok" : r.description;
   }
-  return { ok: wh.ok, bot: me.result?.username, webhook: wh.description };
+  return { ok: wh.ok, bot: me.result?.username, webhook: wh.description, admin_commands: scoped };
 }
 
 // ------------------------------------------------------------------ Команды

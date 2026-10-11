@@ -24,7 +24,7 @@ var SITE_URL = "https://www.fiziotera.online";            // основной д
 var OLD_HOSTS = ["clinic-alpha-one.vercel.app", "fizitera.online", "www.fizitera.online"];    // технические адреса → 301 на основной домен
 // Ref проекта Supabase (часть адреса https://<ref>.supabase.co). Не секрет.
 // Запросы личного кабинета идут на /sb/… этого же домена, Vercel проксирует их в Supabase.
-var SUPABASE_REF = "";
+var SUPABASE_REF = "ppujswqovhembshvaxff";
 var BRAND = "Физиотера";
 var CITY = "Уфа";
 
