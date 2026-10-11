@@ -11,6 +11,7 @@
 //   set_email_confirm — подтвердить привязку email кодом
 //   reset      — «Забыли пароль?»: код на почту и в Telegram (если привязан)
 //   reset_confirm — новый пароль по коду
+//   lead       — заявка с сайта: уходит только администраторам в Telegram-бот
 //   ref_click  — отметить переход по реферальной ссылке
 //   check_code — проверить промокод друга
 //
@@ -630,6 +631,43 @@ async function resetConfirm({ body, ipHash }: Ctx) {
   return { ok: true, session: publicSession(d.session!) };
 }
 
+// Заявка с формы «Записаться»: только администраторам из app.admin_telegram_ids
+async function lead({ body, ipHash }: Ctx) {
+  if (str(body.website, 100)) return { ok: true }; // ловушка для ботов
+  await limit(`lead:ip:${ipHash}`, 5, 600);
+  const name = str(body.name, 60).replace(/[\u0000-\u001f]/g, " ");
+  let phone = str(body.phone, 20).replace(/\D/g, "");
+  if (phone.length === 11 && phone[0] === "8") phone = "7" + phone.slice(1);
+  if (phone.length === 10) phone = "7" + phone;
+  if (name.length < 2) throw new HttpError(400, "bad_name");
+  if (!/^[0-9]{11,12}$/.test(phone)) throw new HttpError(400, "bad_phone");
+  await limit(`lead:ph:${await sha256Hex(phone)}`, 3, 3600);
+  let service = str(body.service, 120).replace(/[\u0000-\u001f]/g, " ");
+  if (service === "promo") service = "Бесплатная консультация + процедура (акция)";
+  const promo = normCode(body.promo);
+
+  const token = await secret("telegram_bot_token");
+  const { data: chats } = await admin.rpc("svc_admin_chats");
+  const ids = ((chats as number[] | null) || []).map(Number).filter(Boolean);
+  if (!token || !ids.length) throw new HttpError(503, "lead_not_configured");
+
+  const time = new Date().toLocaleString("ru-RU", { timeZone: "Asia/Yekaterinburg" });
+  const text =
+    "🆕 <b>Заявка с сайта</b>\n\n" +
+    `👤 ${escHtml(name)}\n` +
+    `📞 <a href="tel:+${phone}">+${phone}</a>\n` +
+    `🩺 ${escHtml(service || "—")}\n` +
+    (promo ? `🎁 Промокод друга: <code>${promo}</code>\n` : "") +
+    `🕒 ${time}\n\n` +
+    `Написать клиенту в WhatsApp: https://wa.me/${phone}`;
+  const results = await Promise.all(ids.map((id) => sendTelegram(id, text).catch(() => false)));
+  const sent = results.filter(Boolean).length;
+  await logEvent("site_lead", sent ? "info" : "error", null,
+    { name: name.slice(0, 1) + "•••", phone: "+" + phone.slice(0, 4) + "•••" + phone.slice(-2), service: service.slice(0, 80), sent }, null, ipHash);
+  if (!sent) throw new HttpError(502, "lead_failed");
+  return { ok: true };
+}
+
 async function refClick({ body, ipHash }: Ctx) {
   const code = normCode(body.code);
   if (!code) return { ok: true };
@@ -651,7 +689,7 @@ async function checkCode({ body, ipHash }: Ctx) {
 const ACTIONS: Record<string, (c: Ctx) => Promise<unknown>> = {
   signup, verify, resend, login, tg_start: tgStart, tg_poll: tgPoll,
   set_email: setEmail, set_email_confirm: setEmailConfirm, reset, reset_confirm: resetConfirm,
-  ref_click: refClick, check_code: checkCode,
+  lead, ref_click: refClick, check_code: checkCode,
 };
 
 Deno.serve(async (req) => {

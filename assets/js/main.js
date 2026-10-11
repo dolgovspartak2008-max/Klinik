@@ -395,7 +395,7 @@
 
   // Проверяем, настроена ли автоотправка (Vercel-функция)
   var autoSend = false;
-  if (L.endpoint && location.protocol.indexOf("http") === 0) {
+  if (L.endpoint && location.protocol.indexOf("http") === 0 && !(window.SB && window.SB.enabled)) {
     fetch(L.endpoint, { method: "GET", headers: { Accept: "application/json" } })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (j) { autoSend = !!(j && j.configured); })
@@ -463,6 +463,34 @@
         var url = waLink(data);
         if (openNow) window.open(url, "_blank", "noopener");
         setStatus("Осталось нажать «Отправить» в&nbsp;WhatsApp. <a href=\"" + url + "\" target=\"_blank\" rel=\"noopener\">Открыть WhatsApp →</a>", "ok");
+      }
+
+      // Основной путь: заявка уходит администраторам в Telegram-бот клиники,
+      // затем пациента переводит в WhatsApp на номер клиники с готовым текстом.
+      var SB = window.SB;
+      if (SB && SB.enabled) {
+        var url = waLink(data);
+        submit.disabled = true;
+        setStatus("Отправляем заявку…");
+        var finished = false;
+        var go = function (sent) {
+          if (finished) return;
+          finished = true;
+          submit.disabled = false;
+          var name = data.name.replace(/[<>&"]/g, "");
+          setStatus((sent ? "<b>Спасибо, " + name + "!</b> Заявка принята. " : "") +
+            "Открываем WhatsApp клиники… <a href=\"" + url + "\" rel=\"noopener\">Открыть WhatsApp →</a>", "ok");
+          if (sent) {
+            form.classList.add("is-sent");
+            if (typeof window.ym === "function") try { window.ym("reachGoal", "lead"); } catch (err) {}
+          }
+          setTimeout(function () { location.href = url; }, sent ? 1200 : 300);
+        };
+        var guard = setTimeout(function () { go(false); }, 8000); // сервер не ответил — заявка всё равно уйдёт через WhatsApp
+        SB.account("lead", { name: data.name, phone: data.phone, service: serviceLabel(data.service), promo: data.promo, website: f.website.value })
+          .then(function () { clearTimeout(guard); go(true); })
+          .catch(function () { clearTimeout(guard); go(false); });
+        return;
       }
 
       if (!autoSend) { viaWhatsApp(true); return; }
