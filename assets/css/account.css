@@ -162,7 +162,6 @@ body.has-modal { overflow: hidden; }
   margin-top: 6px; font-size: clamp(30px, 3.5vw, 46px); font-weight: 800; letter-spacing: .02em; line-height: 1.05;
   color: var(--indigo-900); font-variant-numeric: tabular-nums; white-space: nowrap;
 }
-.ticket__code::first-letter { color: var(--accent); }
 .ticket__note { margin-top: 14px; font-size: 14.5px; color: var(--ink-soft); line-height: 1.5; max-width: 52ch; }
 .ticket__stub { display: grid; align-content: center; gap: 10px; padding: 24px 22px; border-radius: 0 26px 26px 0; background: var(--teal-soft); }
 .ticket__stub .btn { width: 100%; }
@@ -176,7 +175,6 @@ body.has-modal { overflow: hidden; }
 .ticket__copy svg { width: 18px; height: 18px; fill: none; stroke: var(--indigo-900); stroke-width: 1.8; }
 .ticket__apps { display: flex; gap: 14px; font-size: 13.5px; font-weight: 700; }
 .ticket__apps a { color: var(--accent-dark); text-decoration: underline; text-underline-offset: 3px; }
-.ticket.is-off .ticket__code { color: var(--indigo-400); }
 .ticket.is-off [data-share], .ticket.is-off .ticket__apps { display: none; }
 
 @media (max-width: 1080px) { .cab-hero { grid-template-columns: 1fr; } }
@@ -404,3 +402,17 @@ body.has-modal { overflow: hidden; }
 .acc-otp { font-size: 22px !important; letter-spacing: .28em; font-variant-numeric: tabular-nums; text-align: center; }
 .acc-hint { margin-top: 10px; font-size: 13px; color: var(--ink-soft); }
 [data-acc-view="verify"] .acc-link, [data-acc-view="newpass"] .acc-link { display: block; margin-top: 6px; }
+
+/* ---------- Шапка кабинета на телефоне: ничего не наезжает ---------- */
+.cab-header .logo { flex: none; }
+.cab-header__nav { min-width: 0; }
+@media (max-width: 620px) {
+  .cab-header .header__inner { gap: 10px; }
+  .cab-header .logo__text { display: none; }
+  .cab-header__nav { gap: 2px; }
+  .cab-header__link { padding: 8px 10px; }
+}
+@media (max-width: 370px) {
+  .cab-header__link { padding: 8px 7px; font-size: 13.5px; }
+  .cab-header__nav [data-signout] { display: none; } /* «Выйти» остаётся внизу страницы */
+}

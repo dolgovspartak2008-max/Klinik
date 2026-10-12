@@ -61,7 +61,6 @@
     var programOn = d.program && d.program.referral_enabled;
 
     $("[data-hello]").textContent = p.name ? "Здравствуйте, " + p.name.split(" ")[0] + "!" : "Здравствуйте!";
-    $("[data-meta]").textContent = "Клиент № " + p.client_no + " · с нами с " + date(p.created_at);
     var via = p.telegram ? "Telegram" + (p.telegram.username ? " @" + p.telegram.username : "") : (p.email || "");
     $("[data-who]").innerHTML = "Вы вошли как <b></b>" + (via ? " (" + esc(via) + ")" : "") +
       ' · <button type="button" class="cab-hero__switch" data-switch>Не вы? Сменить аккаунт</button>';
@@ -79,15 +78,15 @@
     $("[data-share-wa]").href = "https://wa.me/?text=" + encodeURIComponent(shareText + " " + link);
     $("[data-ticket]").classList.toggle("is-off", !programOn);
     $("[data-ticket-note]").textContent = programOn
-      ? "Поделитесь этим промокодом с другом! При первом обращении он сможет получить специальную скидку на услугу. Чем больше людей узнает о нашем центре, тем больше приятных предложений мы сможем подготовить!"
-      : "Реферальная программа сейчас на паузе. Промокод сохранится за вами — как только программа заработает, им можно будет поделиться.";
+      ? "Отправьте код другу. При первом визите он получит скидку" + (inv && inv.enabled ? " " + F.discount(inv) : "") + "."
+      : "Скидки по приглашению пока не действуют. Код закреплён за вами и заработает, когда клиника их включит.";
 
     // условия программы
     var terms = [];
     if (programOn && inv && inv.enabled) terms.push("Друг получает скидку " + F.discount(inv) + " " + F.services(inv) + ".");
     if (programOn && rules.referrer_reward && rules.referrer_reward.enabled)
       terms.push("Когда друг получит услугу, вам начислится бонус " + F.discount(rules.referrer_reward) + ".");
-    if (!programOn) terms.push("Реферальная программа сейчас на паузе.");
+    if (!programOn) terms.push("Скидки по приглашению пока не действуют.");
     $("[data-how-terms]").textContent = terms.join(" ");
 
     renderBonuses(d);
@@ -226,7 +225,7 @@
       if (!/^GIFT-[A-Z0-9]{5}$/.test(code)) { formStatus(form, SB.message("code_not_found"), false); return; }
       busy(form, true);
       SB.rpc("apply_ref_code", { p_code: code })
-        .then(function (r) { toast(r.bonus_issued ? "Промокод применён — скидка уже в кабинете 🎁" : "Промокод применён"); return load(); })
+        .then(function (r) { toast(r.bonus_issued ? "Промокод применён, скидка в кабинете" : "Промокод применён"); return load(); })
         .catch(function (err) { busy(form, false); formStatus(form, err.message, false); });
     } else if (form.hasAttribute("data-email-form")) {
       e.preventDefault();

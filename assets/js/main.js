@@ -46,58 +46,15 @@
     if (val) el.textContent = val;
   });
 
-  /* ---------- Intro ---------- */
-  var intro = doc.getElementById("intro");
-  var seen = false;
-  try { seen = sessionStorage.getItem("introSeen") === "1"; } catch (e) {}
-  var introDone = false;
-
+  /* ---------- Старт страницы ---------- */
   var qs = new URLSearchParams(location.search);
   var bookParam = qs.get("book"), toParam = qs.get("to");
-  if (bookParam || toParam) history.replaceState(null, "", location.pathname);
-  function startPage() {
-    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    setTimeout(function () {
-      if (toParam && doc.getElementById(toParam)) {
-        var t = doc.getElementById(toParam);
-        window.scrollTo({ top: t.getBoundingClientRect().top + window.scrollY - 70, behavior: "instant" });
-      }
-      if (bookParam && window.__openBooking) window.__openBooking(bookParam);
-    }, 50);
-    body.classList.remove("is-loading");
-    body.classList.add("is-ready");
+  if (bookParam || toParam) history.replaceState(null, "", location.pathname + location.hash);
+  if (toParam && doc.getElementById(toParam)) {
+    var toEl = doc.getElementById(toParam);
+    window.scrollTo({ top: toEl.getBoundingClientRect().top + window.scrollY - 70, behavior: "instant" });
   }
-  function finishIntro() {
-    if (introDone) return;
-    introDone = true;
-    try { sessionStorage.setItem("introSeen", "1"); } catch (e) {}
-    if (!intro || reduceMotion) { if (intro) intro.classList.add("is-gone"); startPage(); return; }
-    intro.classList.add("is-leaving");
-    setTimeout(startPage, 380);
-    setTimeout(function () { intro.classList.add("is-gone"); }, 1050);
-  }
-
-  if (!intro || reduceMotion) {
-    finishIntro();
-  } else if (seen) {
-    // Повторный заход в этой вкладке — короткая версия
-    intro.classList.add("is-gone");
-    introDone = true;
-    startPage();
-  } else {
-    var minTime = 2350;
-    var t0 = performance.now();
-    var go = function () {
-      var wait = Math.max(0, minTime - (performance.now() - t0));
-      setTimeout(finishIntro, wait);
-    };
-    if (doc.readyState === "complete") go(); else window.addEventListener("load", go);
-    setTimeout(finishIntro, 4500); // страховка при медленной сети
-    intro.addEventListener("click", finishIntro);
-    doc.addEventListener("keydown", function onKey(e) {
-      if (e.key === "Escape" || e.key === "Enter" || e.key === " ") { finishIntro(); doc.removeEventListener("keydown", onKey); }
-    });
-  }
+  if (bookParam) setTimeout(function () { if (window.__openBooking) window.__openBooking(bookParam); }, 50);
 
   /* ---------- Header ---------- */
   var header = doc.getElementById("header");
