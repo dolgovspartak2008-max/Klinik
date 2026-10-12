@@ -78,7 +78,7 @@
     $("[data-share-wa]").href = "https://wa.me/?text=" + encodeURIComponent(shareText + " " + link);
     $("[data-ticket]").classList.toggle("is-off", !programOn);
     $("[data-ticket-note]").textContent = programOn
-      ? "Отправьте код другу. При первом визите он получит скидку" + (inv && inv.enabled ? " " + F.discount(inv) : "") + "."
+      ? "Поделитесь этим промокодом с другом! При первом обращении он сможет получить специальную скидку на услугу. Чем больше людей узнает о нашем центре, тем больше приятных предложений мы сможем подготовить!"
       : "Скидки по приглашению пока не действуют. Код закреплён за вами и заработает, когда клиника их включит.";
 
     // условия программы
@@ -225,7 +225,7 @@
       if (!/^GIFT-[A-Z0-9]{5}$/.test(code)) { formStatus(form, SB.message("code_not_found"), false); return; }
       busy(form, true);
       SB.rpc("apply_ref_code", { p_code: code })
-        .then(function (r) { toast(r.bonus_issued ? "Промокод применён, скидка в кабинете" : "Промокод применён"); return load(); })
+        .then(function (r) { toast(r.bonus_issued ? "Промокод применён — скидка уже в кабинете 🎁" : "Промокод применён"); return load(); })
         .catch(function (err) { busy(form, false); formStatus(form, err.message, false); });
     } else if (form.hasAttribute("data-email-form")) {
       e.preventDefault();

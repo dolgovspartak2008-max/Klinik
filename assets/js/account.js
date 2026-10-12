@@ -188,7 +188,7 @@
     if (w) parts.push("<b>Подарок за регистрацию:</b> скидка " + esc(discountText(w)) + " " + esc(servicesText(w)) + ".");
     if (inv && ref) parts.push("<b>Промокод друга " + esc(ref) + "</b> — ещё скидка " + esc(discountText(inv)) + " на первую услугу.");
     box.hidden = !parts.length;
-    box.innerHTML = parts.length ? '<p>' + parts.join(" ") + "</p>" : "";
+    box.innerHTML = parts.length ? '<span class="acc-gift__ico" aria-hidden="true">🎁</span><p>' + parts.join(" ") + "</p>" : "";
   }
 
   function open(which) {
@@ -285,7 +285,7 @@
 
   function referralToast(r, created) {
     if (!r) return false;
-    if (r.ok) { toast(r.bonus_issued ? "Промокод друга применён, скидка в кабинете" : "Промокод друга применён"); return true; }
+    if (r.ok) { toast(r.bonus_issued ? "Промокод друга применён — скидка уже в кабинете 🎁" : "Промокод друга применён 🎁"); return true; }
     if (r.error && r.error !== "already_referred" && r.error !== "not_first_visit") {
       toast((created ? "Аккаунт создан, но промокод не применён: " : "Промокод не применён: ") + SB.message(r.error));
       return true;
@@ -340,7 +340,7 @@
         if (kind === "newpass") toast("Пароль обновлён. Вы вошли в кабинет");
         else if (kind === "register" || kind === "verify") {
           var r = res && res.onboarding && res.onboarding.referral;
-          if (!referralToast(r, true)) toast("Аккаунт создан");
+          if (!referralToast(r, true)) toast("Аккаунт создан. Добро пожаловать! 🎁");
         }
         done();
       }).catch(function (err) {
@@ -388,7 +388,7 @@
       if (pending !== p) return;
       if (res.status === "ok") {
         pending = null; savePending(null);
-        if (!referralToast(res.referral, res.created)) toast(res.created ? "Аккаунт создан" : "Вы вошли через Telegram");
+        if (!referralToast(res.referral, res.created)) toast(res.created ? "Аккаунт создан. Добро пожаловать! 🎁" : "Вы вошли через Telegram");
         done(); return;
       }
       // Запрос уже использован, а сессия есть — значит, вход завершился в другой вкладке/проверке
@@ -557,7 +557,7 @@
   if (!onCabinet && SB.storedRef() && !SB.isSignedIn()) {
     programReady.then(function (p) {
       if (!p || !p.invitee) return;
-      var chip = el('<button class="ref-chip" type="button"><span>У вас промокод друга <b></b> — получить скидку</span><span class="ref-chip__x" aria-label="Скрыть">×</span></button>');
+      var chip = el('<button class="ref-chip" type="button"><span aria-hidden="true">🎁</span><span>У вас промокод друга <b></b> — получить скидку</span><span class="ref-chip__x" aria-label="Скрыть">×</span></button>');
       $(chip, "b").textContent = SB.storedRef();
       chip.addEventListener("click", function (e) {
         if (e.target.classList.contains("ref-chip__x")) { chip.remove(); return; }

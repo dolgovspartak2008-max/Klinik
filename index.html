@@ -88,10 +88,41 @@
   ]
 }
   </script>
+  <style>
+    /* Критичные стили: пока идёт заставка, сайт под ней не виден (важно для телефонов) */
+    html { background: #050b24; }
+    body.is-loading > :not(.intro) { visibility: hidden; }
+    body.is-loading { background: #050b24; }
+  </style>
+  <noscript><style>body.is-loading > * { visibility: visible !important; } .intro { display: none !important; } body.is-loading { overflow: auto; background: #fff; }</style></noscript>
+  <script>
+    /* Сайт всегда открывается с первого экрана */
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    if (location.hash) history.replaceState(null, "", location.pathname + location.search);
+    window.scrollTo(0, 0);
+  </script>
 </head>
-<body>
+<body class="is-loading">
   <a class="skip-link" href="#main">Перейти к содержимому</a>
 
+  <!-- ===== Вступительная анимация ===== -->
+  <div class="intro" id="intro" aria-hidden="true">
+    <div class="intro__glow"></div>
+    <div class="intro__center">
+      <div class="intro__logo">
+        <svg class="intro__ring-svg" viewBox="0 0 120 120" fill="none" aria-hidden="true"><circle class="intro__ring" cx="60" cy="60" r="57" /></svg>
+        <img class="intro__img" src="assets/img/logo-mark.svg" alt="" width="320" height="320" fetchpriority="high" />
+      </div>
+      <div class="intro__title">
+        <span class="intro__word">Физиотера</span>
+      </div>
+      <p class="intro__sub">Клиника лечения и&nbsp;реабилитации</p>
+      <svg class="intro__pulse" viewBox="0 0 600 80" preserveAspectRatio="none">
+        <path d="M0 40 H244 L262 40 L278 10 L296 70 L314 22 L330 48 L340 40 H600" />
+      </svg>
+    </div>
+    <div class="intro__curtain"></div>
+  </div>
 
   <!-- ===== Шапка ===== -->
   <header class="header" id="header">
@@ -165,7 +196,7 @@
 
             <div class="hero__actions" data-hero-item>
               <button class="btn btn--light btn--lg" data-open-booking data-service="promo" type="button">
-                Записаться <span class="btn__arrow" aria-hidden="true">→</span>
+                Записаться сейчас <span class="btn__arrow" aria-hidden="true">→</span>
               </button>
             </div>
 
@@ -182,6 +213,19 @@
               <div class="hero__blob-shade" aria-hidden="true"></div>
             </div>
 
+            <div class="float-card float-card--a" aria-hidden="true">
+              <span class="float-card__ico float-card__ico--gift">
+                <svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="5" rx="1"/><path d="M5 13v7h14v-7M12 8v12M12 8c-1.5-3-5-4-5-1.5S10 8 12 8Zm0 0c1.5-3 5-4 5-1.5S14 8 12 8Z"/></svg>
+              </span>
+              <span><b>0&nbsp;₽</b><small>консультация + процедура</small></span>
+            </div>
+            <div class="float-card float-card--b" aria-hidden="true">
+              <span class="float-card__ico">
+                <svg viewBox="0 0 24 24"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg>
+              </span>
+              <span><b>Без боли</b><small>в&nbsp;спине и&nbsp;суставах</small></span>
+            </div>
+            <svg class="hero__orbit" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="96"/></svg>
           </div>
         </div>
 
@@ -199,6 +243,7 @@
           </button>
         </div>
         <div class="prep__text" data-reveal>
+          <span class="eyebrow">Рекомендуем посмотреть</span>
           <h2 class="section__title">Что взять с&nbsp;собой на&nbsp;приём</h2>
           <p class="section__lead">Главный врач Андрей Сергеевич за&nbsp;20&nbsp;секунд рассказывает, какие документы помогут разобраться в&nbsp;причине боли уже на&nbsp;первом визите.</p>
           <ol class="prep__list">
@@ -215,13 +260,22 @@
       </div>
     </section>
 
+    <!-- ===== Бегущая строка ===== -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__track">
+        <span>Здоровая спина</span><i></i><span>Здоровые суставы</span><i></i><span>Резорбция грыжи</span><i></i><span>Ударно-волновая терапия</span><i></i><span>Магнит высокой интенсивности</span><i></i><span>Хиджама</span><i></i><span>Иглоукалывание</span><i></i>
+        <span>Здоровая спина</span><i></i><span>Здоровые суставы</span><i></i><span>Резорбция грыжи</span><i></i><span>Ударно-волновая терапия</span><i></i><span>Магнит высокой интенсивности</span><i></i><span>Хиджама</span><i></i><span>Иглоукалывание</span><i></i>
+      </div>
+    </div>
+
     <!-- ===== Акция: подробности + заявка ===== -->
     <section class="section promo" id="promo">
       <div class="container">
         <div class="promo__grid">
           <div class="promo__info" data-reveal>
+            <span class="eyebrow">Акция</span>
             <h2 class="section__title">Консультация и&nbsp;процедура — <span class="promo__zero">бесплатно</span></h2>
-            <p class="section__lead">Первый визит ни&nbsp;к&nbsp;чему не&nbsp;обязывает: вы&nbsp;узнаете причину боли, план лечения и&nbsp;стоимость курса заранее.</p>
+            <p class="section__lead">Приходите познакомиться с&nbsp;врачом и&nbsp;центром. Первый визит ни&nbsp;к&nbsp;чему не&nbsp;обязывает: вы&nbsp;узнаете причину боли, план лечения и&nbsp;стоимость курса заранее.</p>
 
             <div class="promo__photo">
               <img src="assets/img/promo.jpg" alt="Врач изучает рентгеновский снимок пациента" loading="lazy" width="1400" height="931" />
@@ -238,7 +292,8 @@
           </div>
 
           <div class="lead-card" data-reveal id="lead">
-                        <h3 class="lead-card__title">Запись на&nbsp;приём</h3>
+            <span class="lead-card__badge">Онлайн-запись</span>
+            <h3 class="lead-card__title">Запишитесь сейчас</h3>
             <p class="lead-card__sub">Оставьте телефон — администратор перезвонит и&nbsp;подберёт удобное время.</p>
             <form class="lead-form" novalidate data-lead-form>
               <label class="field"><span>Ваше имя</span><input name="name" type="text" autocomplete="name" maxlength="60" placeholder="Например, Анна" required /></label>
@@ -265,6 +320,7 @@
       <div class="container">
         <div class="section__head">
           <div data-reveal>
+            <span class="eyebrow">Услуги и цены</span>
             <h2 class="section__title">Программы лечения</h2>
             <p class="section__lead">Комплексы для спины и&nbsp;суставов — несколько методик за&nbsp;один визит. Методики подбирает врач-физиотерапевт.</p>
           </div>
@@ -294,7 +350,7 @@
             <div class="price-card__media"><img src="assets/img/svc-spina57.jpg" alt="Вакуумно-градиентная терапия и магнит на спине" loading="lazy" width="900" height="675" /><span class="price-card__badge">Популярное</span></div>
             <div class="price-card__body">
               <h3>Здоровая спина 5.0 / 7.0</h3>
-              <p class="price-card__desc">5 или 7 методик за&nbsp;один визит — расширенный комплекс для спины.</p>
+              <p class="price-card__desc">5 или 7 методик за&nbsp;один визит — максимальный комплекс для спины.</p>
               <div class="price-card__split">
                 <div><small>5 методик</small><b>5&nbsp;900&nbsp;₽</b><span class="time">60 минут</span></div>
                 <div><small>7 методик</small><b>7&nbsp;600&nbsp;₽</b><span class="time">80 минут</span></div>
@@ -404,7 +460,7 @@
         <div class="mass" data-kind-block="massage" data-reveal>
           <div class="mass__photo"><img src="assets/img/mass-neck.jpg" alt="Массаж шейно-воротниковой зоны" loading="lazy" width="1000" height="752" /><span class="mass__promo">−20% на&nbsp;массаж у&nbsp;Владислава до&nbsp;конца октября</span></div>
           <div class="mass__head">
-            <div><h3>Массаж</h3></div>
+            <div><span class="eyebrow">Массаж</span><h3>Массаж</h3></div>
             <p>Классический массаж с&nbsp;элементами фасциального и&nbsp;глубокого, с&nbsp;проработкой триггерных точек. Абонементы на&nbsp;5 и&nbsp;10 процедур — выгода до&nbsp;5&nbsp;385&nbsp;₽, к&nbsp;абонементу на&nbsp;10&nbsp;— вакуумно-градиентная терапия в&nbsp;подарок.</p>
           </div>
           <div class="mass__list">
@@ -423,6 +479,7 @@
         <div class="extra" data-reveal>
           <div class="extra__img"><img src="assets/img/svc-dop.jpg" alt="Мануальная терапия спины" loading="lazy" width="900" height="581" /></div>
           <div class="extra__body">
+            <span class="eyebrow">Дополнительно</span>
             <h3>Дополнительные методы</h3>
             <ul class="extra__list">
               <li><a href="uslugi/manualnaya-terapiya/">Мануальная терапия</a></li><li><a href="uslugi/ultrazvukovaya-terapiya/">Ультразвук</a></li><li><a href="uslugi/perkussionnaya-terapiya/">Перкуссионная терапия</a></li><li><a href="uslugi/teypirovanie/">Тейпирование</a></li>
@@ -439,6 +496,7 @@
       <div class="container">
         <div class="section__head">
           <div data-reveal>
+            <span class="eyebrow">С чем помогаем</span>
             <h2 class="section__title">С чем к&nbsp;нам обращаются</h2>
             <p class="section__lead">Направления, с&nbsp;которыми работает центр. Истории пациентов публикуются только с&nbsp;их согласия.</p>
           </div>
@@ -451,7 +509,7 @@
             <div class="case__body">
               <span class="case__tag">Боль</span>
               <h3>Боль в&nbsp;спине и&nbsp;шее</h3>
-              <p>Ищем причину боли и&nbsp;подбираем процедуры.</p>
+              <p>Ищем источник боли и&nbsp;подбираем комплексное лечение.</p>
             </div>
           </article>
           <article class="case" data-reveal>
@@ -459,7 +517,7 @@
             <div class="case__body">
               <span class="case__tag">Травмы</span>
               <h3>Восстановление после травмы</h3>
-              <p>Восстанавливаем подвижность и&nbsp;силу после травм.</p>
+              <p>Возвращаем подвижность, силу и&nbsp;уверенность в&nbsp;движениях.</p>
             </div>
           </article>
           <article class="case" data-reveal>
@@ -487,6 +545,7 @@
       <div class="container">
         <div class="section__head">
           <div data-reveal>
+            <span class="eyebrow">Специалисты</span>
             <h2 class="section__title">Наши специалисты</h2>
             <p class="section__lead">Врачи-физиотерапевты и&nbsp;массажисты клиники «Физиотера». Первичную консультацию проводит врач — он подберёт методики и&nbsp;специалиста.</p>
           </div>
@@ -497,7 +556,7 @@
             <div class="team-card__body">
               <h3>Андрей Сергеевич</h3>
               <div class="team-card__tags"><span class="team-card__tag team-card__tag--role">Главный врач</span><span class="team-card__tag team-card__tag--role">Физиотерапевт</span><span class="team-card__tag">Стаж более 10 лет</span></div>
-              <ul class="team-card__list"><li>Проводит первичный осмотр и&nbsp;составляет план лечения</li><li><b>Образование:</b> Башкирский государственный медицинский университет — педиатрия, ординатура по&nbsp;детской хирургии; профессиональная подготовка по&nbsp;физиотерапии и&nbsp;мануальной терапии</li></ul>
+              <ul class="team-card__list"><li>Проводит консультации и&nbsp;определяет подходящую тактику лечения</li><li><b>Образование:</b> Башкирский государственный медицинский университет — педиатрия, ординатура по&nbsp;детской хирургии; профессиональная подготовка по&nbsp;физиотерапии и&nbsp;мануальной терапии</li></ul>
               <button class="btn btn--outline team-card__cta" data-open-booking data-service="promo" type="button">Записаться <span class="btn__arrow" aria-hidden="true">→</span></button>
             </div>
           </article>
@@ -506,7 +565,7 @@
             <div class="team-card__body">
               <h3>Владислав Эдуардович</h3>
               <div class="team-card__tags"><span class="team-card__tag team-card__tag--role">Физиотерапевт</span><span class="team-card__tag">Стаж более 6 лет</span></div>
-              <ul class="team-card__list"><li><b>Направление:</b> физиотерапия</li><li>Подбирает процедуры после осмотра</li></ul>
+              <ul class="team-card__list"><li><b>Основное направление:</b> физиотерапевтические методы восстановления и&nbsp;лечения</li><li>Поможет подобрать подходящие методы физиотерапии после оценки вашего состояния</li></ul>
               <button class="btn btn--outline team-card__cta" data-open-booking data-service="promo" type="button">Записаться <span class="btn__arrow" aria-hidden="true">→</span></button>
             </div>
           </article>
@@ -515,7 +574,7 @@
             <div class="team-card__body">
               <h3>Владислав</h3>
               <div class="team-card__tags"><span class="team-card__tag team-card__tag--role">Массажист</span><span class="team-card__tag">Стаж более 5 лет</span></div>
-              <ul class="team-card__list"><li>Массаж при мышечном напряжении</li></ul>
+              <ul class="team-card__list"><li>Массажные техники для работы с&nbsp;мышечным напряжением и&nbsp;дискомфортом</li></ul>
               <button class="btn btn--outline team-card__cta" data-open-booking data-service="Массаж всего тела" type="button">Записаться <span class="btn__arrow" aria-hidden="true">→</span></button>
             </div>
           </article>
@@ -524,7 +583,7 @@
             <div class="team-card__body">
               <h3>Данил</h3>
               <div class="team-card__tags"><span class="team-card__tag team-card__tag--role">Массажист</span><span class="team-card__tag">Стаж более 3 лет</span></div>
-              <ul class="team-card__list"><li>Восстанавливающий и&nbsp;расслабляющий массаж</li></ul>
+              <ul class="team-card__list"><li>Специалист по массажным техникам для восстановления и&nbsp;расслабления</li></ul>
               <button class="btn btn--outline team-card__cta" data-open-booking data-service="Массаж всего тела" type="button">Записаться <span class="btn__arrow" aria-hidden="true">→</span></button>
             </div>
           </article>
@@ -538,8 +597,9 @@
         <div class="container">
           <div class="centers__grid">
             <div class="centers__text" data-reveal>
+              <span class="eyebrow eyebrow--light">О центре</span>
               <h2 class="section__title">Физиотера в&nbsp;Уфе</h2>
-              <p class="section__lead">Оборудование: магнит и&nbsp;лазер высокой интенсивности, ударно-волновая и&nbsp;вакуумно-градиентная терапия.</p>
+              <p class="section__lead">Внимание к&nbsp;человеку и&nbsp;современное оборудование: магнит высокой интенсивности, лазер, ударно-волновая и&nbsp;вакуумно-градиентная терапия.</p>
               <p class="centers__addr"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12Z"/><circle cx="12" cy="10" r="2.6"/></svg><span data-contact-text="address">Уфа, ул. Энтузиастов, 16</span></p>
               <p class="centers__addr"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span data-contact-text="hours">Ежедневно 10:00–21:00</span></p>
               <div class="center-card__actions">
@@ -561,8 +621,9 @@
     <section class="section contacts" id="contacts">
       <div class="container contacts__inner">
         <div class="contacts__text" data-reveal>
-          <h2 class="section__title">Контакты</h2>
-          <p class="section__lead">Напишите в&nbsp;мессенджер или позвоните — запишем на&nbsp;бесплатный приём.</p>
+          <span class="eyebrow">Контакты</span>
+          <h2 class="section__title">Свяжитесь с&nbsp;нами удобным способом</h2>
+          <p class="section__lead">Напишите в&nbsp;удобный мессенджер или позвоните — ответим и&nbsp;поможем записаться на&nbsp;бесплатный приём.</p>
         </div>
 
         <div class="contacts__side">
@@ -601,6 +662,7 @@
             <img class="logo__mark" src="assets/img/logo-mark.svg" alt="" width="44" height="44" />
             <span class="logo__text">Физиотера<small>Клиника лечения и&nbsp;реабилитации</small></span>
           </a>
+          <p class="footer__tagline">Клиника лечения и&nbsp;реабилитации</p>
         </div>
 
         <div class="footer__col">
@@ -636,6 +698,7 @@
     <div class="modal__backdrop" data-close-modal></div>
     <div class="modal__card">
       <button class="modal__close" type="button" data-close-modal aria-label="Закрыть">×</button>
+      <span class="eyebrow">Запись на приём</span>
       <h2 id="bookingTitle">Консультация и&nbsp;процедура бесплатно</h2>
       <p>Оставьте телефон — администратор перезвонит и&nbsp;подберёт время.</p>
       <form class="lead-form lead-form--modal" novalidate data-lead-form>
@@ -668,6 +731,7 @@
     <div class="modal__backdrop" data-close-modal></div>
     <div class="modal__card modal__card--sm">
       <button class="modal__close" type="button" data-close-modal aria-label="Закрыть">×</button>
+      <span class="eyebrow">Instagram</span>
       <h2 id="igTitle">Чей профиль открыть?</h2>
       <div class="ig-choice">
         <a class="ig-choice__opt" data-contact="instagram" href="https://www.instagram.com/fiziotera.ufa/">
