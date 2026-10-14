@@ -392,9 +392,6 @@ body.has-modal { overflow: hidden; }
 .cab-header__link { white-space: nowrap; }
 @media (max-width: 420px) { .cab-header .logo__text { display: none; } }
 .adm-code { white-space: nowrap; font-weight: 700; }
-.cab-hero__who { margin-top: 6px; color: rgba(200,208,232,.85); font-size: 14.5px; }
-.cab-hero__who b { color: #fff; }
-.cab-hero__switch { color: var(--teal); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; font-size: 14.5px; }
 
 /* ---------- Промокод друга над кнопкой Telegram и ввод кода из письма ---------- */
 .acc-ref { margin-bottom: 14px; }
@@ -416,3 +413,27 @@ body.has-modal { overflow: hidden; }
   .cab-header__link { padding: 8px 7px; font-size: 13.5px; }
   .cab-header__nav [data-signout] { display: none; } /* «Выйти» остаётся внизу страницы */
 }
+
+/* ---------- Кабинет: сначала профиль, потом промокод и скидки ---------- */
+.cab-hero--me { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px 32px; }
+.cab-me { display: flex; align-items: center; gap: 18px; flex: 1 1 380px; min-width: 0; }
+.cab-me__text { min-width: 0; }
+.cab-me h1 { overflow-wrap: anywhere; }
+.cab-hero--me .cab-hero__meta { margin-top: 4px; }
+.cab-avatar {
+  flex: none; width: clamp(60px, 7vw, 84px); aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center;
+  background: var(--teal); color: var(--indigo-950, #060d2b); font-size: clamp(26px, 3vw, 36px); font-weight: 800;
+  box-shadow: 0 0 0 4px rgba(60,201,187,.25);
+}
+.cab-since { margin-top: 10px; color: #e6f6f4; font-size: 15px; line-height: 1.45; max-width: 46ch; }
+.cab-hero--me .cab-welcome { flex: 1 1 320px; max-width: 520px; margin-top: 0; }
+
+.cab-profile { margin-top: 20px; }
+.cab-profile__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px clamp(20px, 3vw, 40px); margin-top: 14px; align-items: start; }
+.cab-profile__grid .cab-dl { margin-top: 4px; }
+.cab-profile__actions { display: flex; flex-wrap: wrap; gap: 8px 24px; margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--indigo-100); }
+@media (max-width: 760px) { .cab-profile__grid { grid-template-columns: 1fr; } }
+
+.cab-promo { margin-top: 20px; }
+.cab-promo .ticket { box-shadow: var(--shadow-card); }
+@media (max-width: 620px) { .cab-me { gap: 14px; } .cab-since { font-size: 14px; } }

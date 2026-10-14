@@ -310,19 +310,20 @@
         if (kind !== "reset") bad = invalid(form, "password", form.elements.password.value.length < (kind === "register" ? 8 : 1)) || bad;
       }
       if (kind === "register") {
-        bad = invalid(form, "name", v("name").length < 2) || bad;
+        var nameBad = !(window.FZName ? window.FZName.ok(v("name")) : v("name").length >= 2);
+        bad = invalid(form, "name", nameBad) || bad;
         bad = invalid(form, "consent", !form.elements.consent.checked) || bad;
         var code = refValue();
         if (code && !CODE_RE.test(code)) { refInput.closest(".field").classList.add("is-invalid"); refStatus(SB.message("code_not_found"), false); bad = true; }
       }
-      if (bad) { setStatus(form, kind === "newpass" ? SB.message("weak_password") : "Проверьте отмеченные поля.", false); return; }
+      if (bad) { setStatus(form, kind === "newpass" ? SB.message("weak_password") : (kind === "register" && nameBad ? SB.message("bad_name") : "Проверьте отмеченные поля."), false); return; }
 
       busy(form, true);
       setStatus(form, "", false);
       var req;
       if (kind === "login") req = SB.account("login", { email: v("email"), password: form.elements.password.value });
       else if (kind === "register") req = SB.account("signup", {
-        name: v("name"), email: v("email"), phone: v("phone"), password: form.elements.password.value,
+        name: window.FZName ? window.FZName.clean(v("name")) : v("name"), email: v("email"), phone: v("phone"), password: form.elements.password.value,
         ref: refValue(), consent: true, website: v("website")
       });
       else if (kind === "verify") req = SB.account("verify", { email: codeEmail, code: v("code").replace(/\s+/g, "") });

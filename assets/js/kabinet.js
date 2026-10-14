@@ -36,6 +36,31 @@
     return n + " " + (m10 === 1 && m100 !== 11 ? one : m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14) ? few : many);
   }
 
+  // «С нами уже …»: считаем по календарным дням в часовом поясе посетителя
+  function sinceText(iso) {
+    var d0 = new Date(iso), now = new Date();
+    var a = new Date(d0.getFullYear(), d0.getMonth(), d0.getDate());
+    var b = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var days = Math.max(0, Math.round((b - a) / 864e5));
+    if (days === 0) return "Вы с нами с сегодняшнего дня — добро пожаловать! Мы рады, что вы выбрали «Физиотеру».";
+    var span;
+    if (days < 31) span = plural(days, "день", "дня", "дней");
+    else if (days < 365) span = plural(Math.floor(days / 30.44), "месяц", "месяца", "месяцев");
+    else {
+      var y = Math.floor(days / 365.25), m = Math.floor((days - y * 365.25) / 30.44);
+      span = plural(y, "год", "года", "лет") + (m ? " и " + plural(m, "месяц", "месяца", "месяцев") : "");
+    }
+    return "Вы с нами уже " + span + " — мы очень рады, что вы с нами!";
+  }
+
+  function askName(p) {
+    var f = $("[data-name-form]");
+    var guess = p.name || (p.telegram && p.telegram.first_name) || "";
+    if (!f.elements.name.value) f.elements.name.value = window.FZName && window.FZName.ok(guess) ? window.FZName.clean(guess) : "";
+    state("name");
+    setTimeout(function () { f.elements.name.focus(); }, 50);
+  }
+
   function copy(text, okMsg) {
     var done = function () { toast(okMsg); };
     if (navigator.clipboard && window.isSecureContext) {
@@ -60,12 +85,19 @@
     var inv = rules.referral_invitee;
     var programOn = d.program && d.program.referral_enabled;
 
-    $("[data-hello]").textContent = p.name ? "Здравствуйте, " + p.name.split(" ")[0] + "!" : "Здравствуйте!";
-    var via = p.telegram ? "Telegram" + (p.telegram.username ? " @" + p.telegram.username : "") : (p.email || "");
-    $("[data-who]").innerHTML = "Вы вошли как <b></b>" + (via ? " (" + esc(via) + ")" : "") +
-      ' · <button type="button" class="cab-hero__switch" data-switch>Не вы? Сменить аккаунт</button>';
-    $("[data-who] b").textContent = p.name || ("клиент № " + p.client_no);
     $("[data-admin-link]").hidden = !p.is_admin;
+
+    // имя обязательно: без подтверждённого имени (например, после входа через Telegram) кабинет не открываем
+    if (!p.name_confirmed) { askName(p); return; }
+
+    $("[data-hello]").textContent = "Здравствуйте, " + p.name.split(" ")[0] + "!";
+    $("[data-avatar]").textContent = p.name.charAt(0).toUpperCase();
+    $("[data-client-no]").textContent = "Клиент № " + p.client_no;
+    $("[data-client-no-dd]").textContent = String(p.client_no);
+    $("[data-reg-date]").textContent = date(p.created_at);
+    var since = $("[data-since]");
+    since.hidden = !p.created_at;
+    if (p.created_at) since.textContent = sinceText(p.created_at);
 
     var welcome = d.bonuses.filter(function (b) { return b.kind === "welcome" && b.status === "available"; })[0];
     $("[data-welcome]").hidden = !welcome;
@@ -213,10 +245,21 @@
       SB.rpc("request_bonus", { p_bonus: form.getAttribute("data-use"), p_service: svc })
         .then(function () { toast("Запрос отправлен. Скидка будет применена на приёме"); return load(); })
         .catch(function (err) { busy(form, false); formStatus(form, err.message, false); });
+    } else if (form.hasAttribute("data-name-form")) {
+      e.preventDefault();
+      var nm = window.FZName.clean(form.elements.name.value);
+      if (!window.FZName.ok(nm)) { form.elements.name.closest(".field").classList.add("is-invalid"); formStatus(form, SB.message("bad_name"), false); form.elements.name.focus(); return; }
+      form.elements.name.closest(".field").classList.remove("is-invalid");
+      busy(form, true);
+      SB.rpc("update_my_profile", { p_name: nm, p_phone: (data && data.profile.phone) || "" })
+        .then(function () { busy(form, false); formStatus(form, "", true); toast("Приятно познакомиться, " + nm.split(" ")[0] + "!"); return load(); })
+        .catch(function (err) { busy(form, false); formStatus(form, err.message, false); });
     } else if (form.hasAttribute("data-profile-form")) {
       e.preventDefault();
+      var pn = window.FZName.clean(form.elements.name.value);
+      if (!window.FZName.ok(pn)) { formStatus(form, SB.message("bad_name"), false); form.elements.name.focus(); return; }
       busy(form, true);
-      SB.rpc("update_my_profile", { p_name: form.elements.name.value, p_phone: form.elements.phone.value })
+      SB.rpc("update_my_profile", { p_name: pn, p_phone: form.elements.phone.value })
         .then(function () { busy(form, false); formStatus(form, "Сохранено", true); return load(); })
         .catch(function (err) { busy(form, false); formStatus(form, err.message, false); });
     } else if (form.hasAttribute("data-refcode-form")) {
@@ -267,13 +310,8 @@
   doc.addEventListener("click", function (e) {
     var back = e.target.closest("[data-email-back]");
     if (back) { $("[data-email-code-form]").hidden = true; $("[data-email-form]").hidden = false; return; }
-    var t = e.target.closest("[data-switch],[data-copy-code],[data-copy-link],[data-share],[data-cancel-req],[data-signout],[data-delete],[data-link-tg],[data-open-auth],[data-reload]");
+    var t = e.target.closest("[data-copy-code],[data-copy-link],[data-share],[data-cancel-req],[data-signout],[data-delete],[data-link-tg],[data-open-auth],[data-reload]");
     if (!t) return;
-    if (t.hasAttribute("data-switch")) {
-      SB.signOut(); data = null; state("guest");
-      if (window.FZAuth) window.FZAuth.open("login");
-      return;
-    }
     if (t.hasAttribute("data-copy-code")) copy(data.profile.ref_code, "Промокод скопирован");
     else if (t.hasAttribute("data-copy-link")) copy($("[data-ref-link]").value, "Ссылка скопирована");
     else if (t.hasAttribute("data-share")) {

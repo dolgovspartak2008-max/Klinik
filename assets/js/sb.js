@@ -20,7 +20,7 @@
     rate_limited: "Слишком много попыток. Подождите несколько минут и попробуйте снова.",
     bad_email: "Проверьте email — похоже, в адресе опечатка.",
     weak_password: "Пароль — минимум 8 символов, хотя бы одна буква и одна цифра.",
-    bad_name: "Укажите имя (минимум 2 буквы).",
+    bad_name: "Напишите настоящее имя буквами — например, Анна или Иван Петров.",
     bad_phone: "Проверьте номер телефона: например, +7 987 600-00-37.",
     consent_required: "Нужно согласие на обработку персональных данных.",
     email_taken: "Этот email уже зарегистрирован. Войдите или восстановите пароль.",
@@ -184,6 +184,33 @@
     },
     storeRef: function (code) {
       try { localStorage.setItem("fz.ref", JSON.stringify({ code: code, until: Date.now() + 30 * 864e5 })); } catch (e) {}
+    }
+  };
+
+  // Проверка имени — те же правила, что app.name_ok в БД (supabase/migrations/20261014000005_name_check.sql).
+  // Мягкая: пропускает обычные имена (в т.ч. «Анна-Мария», «Мкртчян Арам»), отсекает «алшамлпмкшо», «фыва», «ааа».
+  var KB_ROWS = ["йцукенгшщзхъ", "фывапролджэ", "ячсмитьбю", "qwertyuiop", "asdfghjkl", "zxcvbnm"];
+  var STOP = ["тест", "test", "admin", "админ", "user", "имя", "name", "нет", "хз", "аноним", "anonymous", "qwerty", "asdf"];
+  window.FZName = {
+    clean: function (n) { return String(n || "").replace(/\s+/g, " ").trim(); },
+    ok: function (n) {
+      var v = window.FZName.clean(n).toLowerCase();
+      if (v.length < 2 || v.length > 60) return false;
+      if (!/^[a-zа-яё]+([ '-][a-zа-яё]+){0,3}$/.test(v)) return false;
+      if (/[a-z]/.test(v) && /[а-яё]/.test(v)) return false;
+      if (/(.)\1\1/.test(v)) return false;
+      if (/[бвгджзйклмнпрстфхцчшщъь]{6}/.test(v) || /[bcdfghjklmnpqrstvwxz]{6}/.test(v)) return false;
+      var words = v.split(/[ '-]/);
+      for (var i = 0; i < words.length; i++) {
+        if (!/[аеёиоуыэюяaeiouy]/.test(words[i]) || words[i].length > 20 || /^[ъьы]/.test(words[i])) return false;
+      }
+      for (var r = 0; r < KB_ROWS.length; r++) {
+        for (var j = 0; j + 4 <= KB_ROWS[r].length; j++) {
+          var seq = KB_ROWS[r].substr(j, 4);
+          if (v.indexOf(seq) >= 0 || v.indexOf(seq.split("").reverse().join("")) >= 0) return false;
+        }
+      }
+      return STOP.indexOf(v) < 0;
     }
   };
 
