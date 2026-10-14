@@ -1,7 +1,8 @@
 // Физиотера — Telegram-бот (Supabase Edge Function).
 //
 //   POST /tg-bot                    — вебхук Telegram (проверка X-Telegram-Bot-Api-Secret-Token)
-//   POST /tg-bot?task=dispatch      — отправить накопившиеся уведомления (вызывает база, x-internal-secret)
+//   POST /tg-bot?task=dispatch      — отправить накопившиеся уведомления администраторам и очередь сообщений
+//                                     клиентам (рассылки, персональные скидки) — вызывает база, x-internal-secret
 //   POST /tg-bot?task=setup         — зарегистрировать вебхук и команды (x-internal-secret)
 //
 // Доступ к служебным командам — только у Telegram ID из app.admin_telegram_ids.
@@ -55,6 +56,7 @@ const KIND: Record<string, string> = {
   welcome: "Приветственный бонус",
   referral_invitee: "Скидка по приглашению",
   referrer_reward: "Награда за друга",
+  manual: "Персональная скидка",
 };
 const STATUS: Record<string, string> = {
   available: "доступен", pending: "ожидает подтверждения", used: "использован",
@@ -149,6 +151,12 @@ function formatEvent(ev: Ev): string {
       return `↩️ <b>Возврат за услугу со скидкой</b>\n\n${who(ev)}Бонус: ${esc(d.bonus)} — отменён${d.note ? `\nКомментарий: ${esc(d.note)}` : ""}\nНаграда пригласившему (если была) отменена\n${date}${by}`;
     case "bonus_cancelled":
       return `🚫 <b>Бонус отменён администратором</b>\n\n${who(ev)}Бонус: ${esc(d.bonus)}\nПричина: ${esc(d.reason || "—")}\n${date}${by}`;
+    case "bonus_granted":
+      return `🎁 <b>Начислена персональная скидка</b>\n\n${who(ev)}«${esc(d.title)}»: ${discount(d.discount_type, d.amount)} на ${esc(d.valid_days)} дн.\n` +
+        `${d.note ? `Комментарий: ${esc(d.note)}\n` : ""}Клиенту в Telegram: ${d.client_notified ? "отправлено" : "не отправлено (Telegram не привязан или выключено)"}\n` +
+        `Начислил: ${esc(d.by_name || "администратор")}\n${date}${by}`;
+    case "broadcast_sent":
+      return `📣 <b>Запущена рассылка</b>\n\nПолучателей: ${esc(d.recipients)}\nАвтор: ${esc(d.by_name || "администратор")}\n\n«${esc(d.preview)}${String(d.preview || "").length >= 120 ? "…" : ""}»\n${date}`;
     case "bonus_issued":
       return `🎁 <b>Начислен бонус</b>\n\n${who(ev)}${esc(KIND[d.kind] || d.title)}: ${discount(d.discount_type, d.amount)}\n${date}`;
     case "referral_qualified":
@@ -220,7 +228,54 @@ async function dispatch(): Promise<Record<string, unknown>> {
       delivered ? sent++ : failed++;
     }
   }
-  return { ok: true, sent, failed };
+  const out = await sendOutbox(Date.now() + 25_000);
+  return { ok: true, sent, failed, outbox: out };
+}
+
+// ------------------------------------------------------------------ Сообщения клиентам (очередь app.tg_outbox)
+
+type Out = { id: number; telegram_id: number; kind: string; text: string; button_text: string | null; button_url: string | null };
+
+const NEWS_FOOTER = "\n\n—\nВы получили это сообщение, потому что включили новости клиники. Отписаться: /stop";
+
+async function sendOutbox(deadline: number): Promise<{ sent: number; failed: number }> {
+  let sent = 0, failed = 0;
+  while (Date.now() < deadline) {
+    const { data, error } = await db.rpc("svc_claim_outbox", { p_limit: 25 });
+    if (error) throw error;
+    const items = (data || []) as Out[];
+    if (!items.length) break;
+    for (const m of items) {
+      if (Date.now() > deadline) {
+        // не успели — вернём в очередь без штрафа по времени
+        await db.rpc("svc_outbox_result", { p_id: m.id, p_result: "retry", p_error: "deferred", p_wait: 5 });
+        continue;
+      }
+      const text = esc(m.text) + (m.kind === "broadcast" ? esc(NEWS_FOOTER) : m.kind === "test" ? "\n\n<i>Это проверочная отправка — видите её только вы.</i>" : "");
+      const extra = m.button_text && m.button_url
+        ? { reply_markup: { inline_keyboard: [[{ text: m.button_text, url: m.button_url }]] } } : {};
+      const r = await send(m.telegram_id, text, extra);
+      let result = "sent", wait = 0;
+      if (!r.ok) {
+        const desc = String(r.description || "");
+        if (r.status === 429) { result = "retry"; wait = Number(r.retryAfter) || 30; }
+        else if (r.status === 403 || /blocked|deactivated|chat not found/i.test(desc)) result = "blocked";
+        else if (r.status >= 500 || r.status === 0) { result = "retry"; wait = 60; }
+        else result = "failed";
+      }
+      await db.rpc("svc_outbox_result", { p_id: m.id, p_result: result, p_error: r.ok ? null : `${r.status} ${r.description || ""}`, p_wait: wait });
+      if (result === "sent") sent++; else if (result !== "retry") failed++;
+      if (r.status === 429) {
+        // Telegram просит подождать — вернём остальное в очередь и продолжим при следующем запуске
+        for (const rest of items.slice(items.indexOf(m) + 1)) {
+          await db.rpc("svc_outbox_result", { p_id: rest.id, p_result: "retry", p_error: "rate limited", p_wait: wait });
+        }
+        return { sent, failed };
+      }
+      await new Promise((res) => setTimeout(res, 45)); // не больше ~20 сообщений в секунду
+    }
+  }
+  return { sent, failed };
 }
 
 // ------------------------------------------------------------------ Настройка вебхука
@@ -432,6 +487,17 @@ async function handleUpdate(update: any) {
 
   if (cmd === "/start" && /^L[A-Za-z0-9_-]{20,40}$/.test(arg)) return handleLoginStart(chatId, arg.slice(1));
 
+  if (cmd === "/stop" || cmd === "/news") {
+    const on = cmd === "/news";
+    const { data: r } = await db.rpc("svc_news_opt", { p_tg: msg.from.id, p_on: on });
+    if (!(r as { ok: boolean } | null)?.ok) {
+      return send(chatId, "Этот Telegram не привязан к личному кабинету на сайте — рассылки ему не приходят.");
+    }
+    return send(chatId, on
+      ? "✅ Готово! Будем присылать новости и акции клиники. Отписаться в любой момент: /stop"
+      : "Вы отписались от новостей клиники. Сообщения о ваших скидках и входе на сайт по-прежнему будут приходить.\nВключить снова: /news");
+  }
+
   const { data: chatsData } = await db.rpc("svc_admin_chats");
   const isAdmin = ((chatsData || []) as number[]).map(Number).includes(Number(msg.from.id));
   if (isAdmin && cmd.startsWith("/")) {
@@ -446,7 +512,8 @@ async function handleUpdate(update: any) {
   return send(chatId,
     "Здравствуйте! 👋 Это бот клиники лечения и реабилитации «Физиотера» (Уфа, ул. Энтузиастов, 16).\n\n" +
     `Через него выполняется вход в личный кабинет на сайте: ${esc(s?.site_url || "https://www.fiziotera.online")}\n` +
-    "Записаться на приём: +7 (987) 600-00-37");
+    "Записаться на приём: +7 (987) 600-00-37\n\n" +
+    "Новости и акции клиники: /news — подписаться, /stop — отписаться");
 }
 
 // ------------------------------------------------------------------ HTTP

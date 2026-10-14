@@ -33,8 +33,10 @@
     user_blocked: "Блокировка", user_unblocked: "Разблокировка", user_deleted: "Аккаунт удалён",
     rules_changed: "Изменены условия скидок", settings_changed: "Изменены настройки", service_toggled: "Изменён список услуг",
     password_reset_requested: "Восстановление пароля", email_added: "Добавлен email", rate_limited: "Превышен лимит запросов",
-    system_error: "Ошибка системы"
+    system_error: "Ошибка системы", bonus_granted: "Начислена персональная скидка", broadcast_sent: "Рассылка",
+    news_subscribed: "Подписался на новости", news_unsubscribed: "Отписался от новостей"
   };
+  var KIND = { welcome: "подарок за регистрацию", referral_invitee: "по приглашению", referrer_reward: "за друга", manual: "персональная" };
 
   // подписи столбцов для карточного вида таблиц на телефоне
   function labelTables(root) {
@@ -53,7 +55,7 @@
     $$("[data-tab]").forEach(function (t) { t.setAttribute("aria-selected", String(t.getAttribute("data-tab") === name)); });
     $$("[data-panel]").forEach(function (p) { p.hidden = p.getAttribute("data-panel") !== name; });
     history.replaceState(null, "", "#" + name);
-    if (!loaded[name] || name === "requests" || name === "overview") { loaded[name] = true; LOADERS[name](); }
+    if (!loaded[name] || name === "requests" || name === "overview" || name === "broadcast") { loaded[name] = true; LOADERS[name](); }
   }
   doc.addEventListener("click", function (e) {
     var t = e.target.closest("[data-tab]");
@@ -146,7 +148,7 @@
       .then(function () {
         toast(dec === "confirm" ? "Скидка подтверждена" : dec === "cancel" ? "Запрос отменён" : "Возврат оформлен");
         loadRequests(); loadOverview();
-        var open = $("#userModal"); if (!open.hidden && open.dataset.user) openUser(open.dataset.user);
+        var open = $("#userModal"); if (!open.hidden && open.dataset.userId) openUser(open.dataset.userId);
       })
       .catch(function (err) { b.disabled = false; fail(err); });
   });
@@ -173,7 +175,7 @@
 
   function openUser(id) {
     var m = $("#userModal");
-    m.dataset.user = id;
+    m.dataset.userId = id;
     m.hidden = false;
     var box = $("[data-user-detail]");
     box.innerHTML = '<p class="cab-muted">Загрузка…</p>';
@@ -186,6 +188,7 @@
           "<div><dt>Телефон</dt><dd>" + esc(u.phone || "—") + "</dd></div>" +
           "<div><dt>Email</dt><dd>" + esc(u.email || "—") + "</dd></div>" +
           "<div><dt>Telegram</dt><dd>" + (u.telegram ? "@" + esc(u.telegram.username || u.telegram.id) : "—") + "</dd></div>" +
+          "<div><dt>Новости в Telegram</dt><dd>" + (u.news_opt_in && u.telegram ? "подписан" : "нет") + "</dd></div>" +
           "<div><dt>Промокод</dt><dd>" + esc(u.ref_code) + "</dd></div>" +
           "<div><dt>Регистрация</dt><dd>" + esc(dt(u.created_at)) + " · " + (u.signup_method === "telegram" ? "Telegram" : "Email") + "</dd></div>" +
           "<div><dt>Пригласил его</dt><dd>" + (x.referrer ? who(x.referrer) + " · " + esc(x.referrer.code) + (x.referrer.same_network ? " · ⚠️ одна сеть" : "") : "—") + "</dd></div>" +
@@ -195,10 +198,14 @@
             ? '<button class="btn btn--outline btn--sm acc-link--danger" data-block="' + esc(u.id) + '">Заблокировать</button>'
             : '<button class="btn btn--outline btn--sm" data-unblock="' + esc(u.id) + '">Разблокировать</button>') + "</div>") +
         "<h3>Бонусы</h3>" +
+        (u.status === "active" ? '<button class="btn btn--accent btn--sm" type="button" data-grant-open>+ Начислить скидку</button>' +
+          '<div data-grant-box hidden></div>' : "") +
         (x.bonuses.length ? x.bonuses.map(function (b) {
           return '<div class="adm-bonus"><div><b>' + esc(F.discount(b)) + "</b> · " + esc(b.title) +
+            (KIND[b.kind] ? ' <small class="cab-muted">(' + esc(KIND[b.kind]) + ")</small>" : "") +
             ' <span class="chip-status is-' + esc(b.status) + '">' + esc(B_STATUS[b.status]) + "</span><br><small class=\"cab-muted\">до " + esc(d(b.expires_at)) +
-            (b.cancel_reason ? " · " + esc(b.cancel_reason) : "") + "</small>" +
+            (b.cancel_reason ? " · " + esc(b.cancel_reason) : "") +
+            (b.kind === "manual" ? "<br>Начислил: " + esc(b.issued_by || "администратор") + (b.admin_note ? " · «" + esc(b.admin_note) + "»" : "") : "") + "</small>" +
             (b.redemptions.length ? "<ul>" + b.redemptions.map(function (r) {
               return "<li>" + esc(dt(r.requested_at)) + " — " + esc(r.service) + ": " + esc(R_STATUS[r.status]) + "</li>";
             }).join("") + "</ul>" : "") + "</div>" +
@@ -210,10 +217,11 @@
           return '<li><button class="acc-link" data-user="' + esc(i.user_id) + '">' + who(i) + "</button> · " + esc(d(i.created_at)) + " · " + esc(REF_STATUS[i.status]) + (i.same_network ? " · ⚠️ одна сеть" : "") + "</li>";
         }).join("") + "</ul>" : '<p class="cab-muted">Никого.</p>') +
         "<h3>Журнал действий</h3><ol class=\"adm-events adm-events--compact\">" + x.events.map(eventRow).join("") + "</ol>";
+      m.dataset.tg = u.telegram ? "1" : "";
       $(".modal__close", m).focus();
     }).catch(fail);
   }
-  function closeUser() { var m = $("#userModal"); m.hidden = true; delete m.dataset.user; }
+  function closeUser() { var m = $("#userModal"); m.hidden = true; delete m.dataset.userId; }
   doc.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("#userModal").hidden) closeUser(); });
 
   doc.addEventListener("click", function (e) {
@@ -234,9 +242,123 @@
       reason = prompt("Отменить бонус как неправомерный? Право на подарок не вернётся. Причина:", "");
       if (reason === null) return;
       SB.rpc("admin_cancel_bonus", { p_bonus: t.getAttribute("data-cancel-bonus"), p_reason: reason })
-        .then(function () { toast("Бонус отменён"); openUser($("#userModal").dataset.user); }).catch(fail);
+        .then(function () { toast("Бонус отменён"); openUser($("#userModal").dataset.userId); }).catch(fail);
     }
   });
+
+  // ---------------------------------------------------------------- персональная скидка
+  function grantForm(services, hasTg) {
+    return '<form class="adm-grant" data-grant-form novalidate>' +
+      '<label class="field"><span>Как скидка будет называться у клиента</span><input name="title" maxlength="80" value="Персональная скидка" required /></label>' +
+      '<div class="adm-rule__main">' +
+        '<label class="field"><span>Размер скидки</span><span class="adm-amount">' +
+          '<input name="amount" type="number" min="1" step="1" inputmode="decimal" placeholder="10" required />' +
+          '<select name="discount_type" aria-label="Проценты или рубли"><option value="percent">%</option><option value="fixed">₽</option></select></span></label>' +
+        '<label class="field"><span>Сколько дней действует</span><input name="valid_days" type="number" min="1" max="3650" value="30" required /></label>' +
+      "</div>" +
+      '<details class="adm-rule__more"><summary>Дополнительно</summary>' +
+        '<label class="field"><span>Сколько раз можно использовать</span><input name="max_uses" type="number" min="1" max="100" value="1" /></label>' +
+        '<label class="check"><input type="checkbox" name="stackable" /><span>Можно использовать вместе с другими скидками</span></label>' +
+        '<label class="check"><input type="checkbox" name="all_services" checked /><span>Действует на все услуги</span></label>' +
+        '<div class="adm-services" data-grant-svc hidden>' + services.filter(function (x) { return x.active; }).map(function (x) {
+          return '<label class="check"><input type="checkbox" name="svc" value="' + esc(x.id) + '" /><span>' + esc(x.title) + "</span></label>";
+        }).join("") + "</div>" +
+      "</details>" +
+      '<label class="field"><span>Комментарий для администраторов <small>— клиент его не видит</small></span><input name="note" maxlength="300" placeholder="Например: извинения за перенос приёма" /></label>' +
+      '<label class="check"><input type="checkbox" name="notify"' + (hasTg ? " checked" : " disabled") + " /><span>" +
+        (hasTg ? "Сообщить клиенту в Telegram" : "Сообщить в Telegram нельзя — клиент не привязал Telegram") + "</span></label>" +
+      '<div class="adm-actions"><button class="btn btn--primary acc-submit" type="submit">Начислить</button>' +
+      '<button class="btn btn--outline" type="button" data-grant-cancel>Отмена</button></div>' +
+      '<p class="acc-status" role="status" aria-live="polite"></p></form>';
+  }
+  doc.addEventListener("click", function (e) {
+    var open = e.target.closest("[data-grant-open]");
+    var cancel = e.target.closest("[data-grant-cancel]");
+    if (!open && !cancel) return;
+    var box = $("[data-grant-box]");
+    if (cancel) { box.hidden = true; box.innerHTML = ""; $("[data-grant-open]").hidden = false; return; }
+    (overview ? Promise.resolve() : loadOverview()).then(function () {
+      box.innerHTML = grantForm((overview && overview.services) || [], !!$("#userModal").dataset.tg);
+      box.hidden = false; open.hidden = true;
+      $('[name="amount"]', box).focus();
+    });
+  });
+  doc.addEventListener("change", function (e) {
+    var t = e.target;
+    if (t.name === "all_services" && t.form && t.form.hasAttribute("data-grant-form")) $("[data-grant-svc]", t.form).hidden = t.checked;
+  });
+  doc.addEventListener("submit", function (e) {
+    var f = e.target;
+    if (!f.hasAttribute("data-grant-form")) return;
+    e.preventDefault();
+    var el = f.elements, st = $(".acc-status", f);
+    var bonus = {
+      title: el.title.value.trim(), discount_type: el.discount_type.value, amount: el.amount.value,
+      valid_days: el.valid_days.value, max_uses: el.max_uses.value || "1", stackable: el.stackable.checked,
+      all_services: el.all_services.checked, service_ids: $$('input[name="svc"]:checked', f).map(function (x) { return x.value; }),
+      note: el.note.value, notify: el.notify.checked
+    };
+    var n = Number(bonus.amount);
+    var problem = bonus.title.length < 3 ? SB.message("bad_title")
+      : !(n > 0) || (bonus.discount_type === "percent" && n > 100) || n > 100000 ? SB.message("bad_amount")
+      : !(Number(bonus.valid_days) >= 1 && Number(bonus.valid_days) <= 3650) ? SB.message("bad_days")
+      : !bonus.all_services && !bonus.service_ids.length ? SB.message("no_services") : "";
+    if (problem) { st.textContent = problem; st.className = "acc-status is-error"; return; }
+    var who = $("#userModalTitle").textContent;
+    if (!confirm("Начислить «" + bonus.title + "» — " + F.discount(bonus) + " на " + bonus.valid_days + " дн.\nКлиент: " + who + "?")) return;
+    var btn = $(".acc-submit", f); btn.disabled = true;
+    SB.rpc("admin_grant_bonus", { p_user: $("#userModal").dataset.userId, p_bonus: bonus })
+      .then(function (r) {
+        toast(r.notified ? "Скидка начислена, клиенту отправлено сообщение в Telegram" : "Скидка начислена — клиент увидит её в личном кабинете");
+        openUser($("#userModal").dataset.userId); loadOverview();
+      })
+      .catch(function (err) { btn.disabled = false; st.textContent = err.message; st.className = "acc-status is-error"; });
+  });
+
+  // ---------------------------------------------------------------- рассылка
+  function loadBroadcast() {
+    return SB.rpc("admin_broadcast_info").then(function (x) {
+      var f = $("[data-bc-form]");
+      f.dataset.audience = x.audience;
+      $("[data-bc-audience]").innerHTML = "Подписаны на новости: <b>" + esc(x.audience) + "</b> из " + esc(x.telegram_total) + " клиентов с Telegram";
+      $("[data-bc-send]").textContent = x.audience ? "Отправить подписчикам (" + x.audience + ")" : "Отправить подписчикам";
+      $("[data-bc-send]").disabled = !x.audience;
+      $("[data-bc-test]").disabled = !x.admin_has_telegram;
+      $("[data-bc-test]").title = x.admin_has_telegram ? "" : SB.message("no_telegram");
+      var h = $("[data-bc-history]");
+      if (!x.history.length) { h.innerHTML = '<p class="cab-empty">Рассылок ещё не было.</p>'; return; }
+      h.innerHTML = '<div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>Дата</th><th>Текст</th><th>Кто</th><th>Доставлено</th></tr></thead><tbody>' +
+        x.history.map(function (b) {
+          var txt = b.text.length > 140 ? b.text.slice(0, 140) + "…" : b.text;
+          var stat = b.is_test ? "проверка себе" :
+            esc(b.sent) + " из " + esc(b.recipients) + (b.queued ? " · в очереди " + esc(b.queued) : "") + (b.failed ? " · не доставлено " + esc(b.failed) : "");
+          return "<tr><td>" + esc(dt(b.created_at)) + '</td><td class="adm-bc__text">' + esc(txt) + "</td><td>" + esc(b.by || "—") + "</td><td>" + stat + "</td></tr>";
+        }).join("") + "</tbody></table></div>";
+      labelTables(h);
+    }).catch(fail);
+  }
+  $("[data-bc-form] textarea").addEventListener("input", function (e) {
+    $("[data-bc-count]").textContent = e.target.value.length + " / 3500";
+  });
+  function sendBroadcast(test) {
+    var f = $("[data-bc-form]");
+    var text = f.elements.text.value.trim();
+    var st = $(".acc-status", f);
+    if (text.length < 5) { st.textContent = SB.message("text_too_short"); st.className = "acc-status is-error"; f.elements.text.focus(); return; }
+    if (!test && !confirm("Отправить сообщение " + f.dataset.audience + " подписчикам? Отменить отправку будет нельзя.")) return;
+    var btns = $$("[data-bc-test],[data-bc-send]"); btns.forEach(function (b) { b.disabled = true; });
+    st.textContent = ""; st.className = "acc-status";
+    SB.rpc("admin_broadcast", { p_text: text, p_button: f.elements.button.checked, p_test: test })
+      .then(function (r) {
+        toast(test ? "Проверочное сообщение отправлено вам в Telegram" : "Рассылка запущена: " + r.recipients + " получателей");
+        if (!test) { f.reset(); $("[data-bc-count]").textContent = "0 / 3500"; }
+        loadBroadcast();
+        if (!test) setTimeout(loadBroadcast, 8000); // обновить счётчик доставленных
+      })
+      .catch(function (err) { st.textContent = err.message; st.className = "acc-status is-error"; loadBroadcast(); });
+  }
+  $("[data-bc-form]").addEventListener("submit", function (e) { e.preventDefault(); sendBroadcast(false); });
+  $("[data-bc-test]").addEventListener("click", function () { sendBroadcast(true); });
 
   // ---------------------------------------------------------------- приглашения
   function loadReferrals(q) {
@@ -399,7 +521,7 @@
 
   var LOADERS = {
     overview: loadOverview, requests: loadRequests, users: function () { loadUsers(""); },
-    referrals: function () { loadReferrals(""); }, rules: loadRules, events: function () { loadEvents(false); }
+    referrals: function () { loadReferrals(""); }, rules: loadRules, broadcast: loadBroadcast, events: function () { loadEvents(false); }
   };
 
   doc.addEventListener("click", function (e) {

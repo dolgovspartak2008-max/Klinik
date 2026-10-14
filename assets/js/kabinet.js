@@ -23,7 +23,7 @@
     used: ["Использован", "is-used"], expired: ["Истёк", "is-muted"], cancelled: ["Отменён", "is-muted"]
   };
   var R_STATUS = { pending: "ожидает подтверждения", confirmed: "подтверждено", cancelled: "отменено", refunded: "возврат" };
-  var KIND = { welcome: "Подарок за регистрацию", referral_invitee: "Скидка по приглашению друга", referrer_reward: "Награда за приглашённого друга" };
+  var KIND = { welcome: "Подарок за регистрацию", referral_invitee: "Скидка по приглашению друга", referrer_reward: "Награда за приглашённого друга", manual: "Персональная скидка от клиники" };
 
   function date(iso, withTime) {
     if (!iso) return "";
@@ -154,6 +154,14 @@
     $("[data-telegram]").textContent = p.telegram ? (p.telegram.username ? "@" + p.telegram.username : p.telegram.first_name || "привязан") : "не привязан";
     $("[data-link-tg]").hidden = !!p.telegram;
     $("[data-email-block]").hidden = !!p.email;
+
+    // новости в Telegram — только по согласию и только при привязанном Telegram
+    var news = $("[data-news]");
+    news.checked = !!p.news_opt_in && !!p.telegram;
+    news.disabled = !p.telegram;
+    $("[data-news-hint]").textContent = p.telegram
+      ? "Изредка присылаем акции и новости клиники. Отписаться можно в любой момент — здесь или командой /stop в боте."
+      : "Чтобы получать новости, сначала привяжите Telegram.";
 
     state("dashboard");
   }
@@ -305,6 +313,19 @@
         .then(function () { toast("Пароль обновлён"); history.replaceState(null, "", "/kabinet/"); state("loading"); return load(); })
         .catch(function (err) { busy(form, false); formStatus(form, err.message, false); });
     }
+  });
+
+  doc.addEventListener("change", function (e) {
+    var t = e.target;
+    if (!t.matches("[data-news]")) return;
+    var on = t.checked;
+    t.disabled = true;
+    SB.rpc("set_news_opt_in", { p_on: on })
+      .then(function () {
+        t.disabled = false; data.profile.news_opt_in = on;
+        toast(on ? "Готово: будем присылать новости в Telegram" : "Вы отписались от новостей");
+      })
+      .catch(function (err) { t.disabled = false; t.checked = !on; toast(err.message); });
   });
 
   doc.addEventListener("click", function (e) {

@@ -47,6 +47,7 @@
           <button role="tab" type="button" class="adm-tab" data-tab="users" aria-selected="false">Клиенты</button>
           <button role="tab" type="button" class="adm-tab" data-tab="referrals" aria-selected="false">Приглашения</button>
           <button role="tab" type="button" class="adm-tab" data-tab="rules" aria-selected="false">Настройка скидок</button>
+          <button role="tab" type="button" class="adm-tab" data-tab="broadcast" aria-selected="false">Рассылка</button>
           <button role="tab" type="button" class="adm-tab" data-tab="events" aria-selected="false">Журнал событий</button>
         </div>
 
@@ -94,6 +95,30 @@
         </section>
 
         <section class="adm-panel" data-panel="rules" hidden aria-label="Условия"></section>
+
+        <section class="adm-panel" data-panel="broadcast" hidden aria-label="Рассылка">
+          <div class="adm-explain">
+            <h2>Рассылка в Telegram</h2>
+            <p>Сообщение получат только клиенты, которые <b>сами включили «Новости и акции»</b> в личном кабинете (или командой /news в боте) — так требует закон о рекламе. В конце каждого сообщения бот добавит строку, как отписаться.</p>
+            <p class="cab-muted">Сначала нажмите «Отправить себе» — проверьте, как выглядит сообщение. Не больше 5 рассылок в сутки.</p>
+          </div>
+          <form class="cab-block adm-bc" data-bc-form novalidate>
+            <p class="adm-bc__audience" data-bc-audience>Считаем подписчиков…</p>
+            <label class="field"><span>Текст сообщения</span>
+              <textarea name="text" rows="7" maxlength="3500" placeholder="Например: С 1 по 15 ноября — скидка 20% на курс массажа спины. Запишитесь по телефону +7 (987) 600-00-37 или кнопкой ниже." required></textarea></label>
+            <p class="cab-muted cab-small adm-bc__count" data-bc-count>0 / 3500</p>
+            <label class="check"><input type="checkbox" name="button" checked /><span>Добавить под сообщением кнопку «Записаться» (ведёт на сайт)</span></label>
+            <div class="adm-actions adm-bc__actions">
+              <button class="btn btn--outline" type="button" data-bc-test>Отправить себе (проверка)</button>
+              <button class="btn btn--accent acc-submit" type="submit" data-bc-send>Отправить подписчикам</button>
+            </div>
+            <p class="acc-status" role="status" aria-live="polite"></p>
+          </form>
+          <div class="cab-block">
+            <h2>История рассылок</h2>
+            <div data-bc-history></div>
+          </div>
+        </section>
 
         <section class="adm-panel" data-panel="events" hidden aria-label="Журнал">
           <div class="adm-toolbar">
