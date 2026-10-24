@@ -66,6 +66,9 @@ const STATUS: Record<string, string> = {
 const ERR: Record<string, string> = {
   not_found: "не найдено", not_pending: "запрос уже обработан", not_confirmed: "услуга не была подтверждена",
   bonus_cancelled: "бонус отменён", forbidden: "нет доступа",
+  owner_only: "выдавать и снимать права может только владелец", no_telegram: "у этого клиента не привязан Telegram — пусть войдёт на сайт через Telegram",
+  user_not_active: "аккаунт клиента заблокирован или удалён", already_admin: "уже администратор", not_admin: "не администратор",
+  last_owner: "нельзя снять последнего владельца", bad_target: "укажите номер клиента или Telegram ID",
 };
 
 // ------------------------------------------------------------------ Telegram API
@@ -184,6 +187,10 @@ function formatEvent(ev: Ev): string {
       return `🚨 <b>Много неудачных попыток входа</b>\n\nEmail: ${esc(d.email_hint)}\nВход временно ограничен на 15 минут\n${date}`;
     case "blocked_login_attempt":
       return `⛔️ <b>Попытка входа в заблокированный аккаунт</b>\n\n${who(ev)}${d.email_hint ? `Email: ${esc(d.email_hint)}\n` : ""}${date}`;
+    case "admin_granted":
+    case "admin_revoked":
+      return `${ev.type === "admin_granted" ? "🛡 <b>Выданы права администратора</b>" : "🚫 <b>Сняты права администратора</b>"}\n\n` +
+        `${personLine(d)}\nКем: Telegram ID ${esc(d.by_tg)}\n${date}`;
     case "system_error":
       return `❌ <b>Ошибка в работе системы</b>\n\nГде: ${esc(d.where)}\n${esc(d.message)}\n${date}`;
     default: {
@@ -278,6 +285,36 @@ async function sendOutbox(deadline: number): Promise<{ sent: number; failed: num
   return { sent, failed };
 }
 
+// ------------------------------------------------------------------ Меню команд администратора
+
+const ADMIN_COMMANDS = [
+  ["help", "Список команд"], ["stats", "Статистика"], ["pending", "Ожидают подтверждения"],
+  ["users", "Поиск клиентов: /users Анна"], ["user", "Клиент по номеру: /user 1042"],
+  ["codes", "Лучшие пригласившие"], ["suspicious", "Подозрительные действия"],
+  ["rules", "Условия скидок"], ["program", "Программа: /program on|off"], ["diag", "Диагностика: /diag on|off"],
+  ["admins", "Администраторы"], ["addadmin", "Выдать права: /addadmin 1042"], ["removeadmin", "Снять права: /removeadmin 1042"],
+].map(([command, description]) => ({ command, description }));
+
+// Показать (или убрать) служебные команды в меню конкретного чата
+function adminMenu(chatId: number, on: boolean) {
+  return on
+    ? tg("setMyCommands", { commands: ADMIN_COMMANDS, scope: { type: "chat", chat_id: chatId } })
+    : tg("deleteMyCommands", { scope: { type: "chat", chat_id: chatId } });
+}
+
+// Строка о человеке: имя, номер клиента, Telegram
+function personLine(p: any): string {
+  const name = p?.name || p?.first_name || "без имени";
+  return `👤 ${esc(name)}${p?.client_no ? ` · клиент № ${p.client_no}` : " · аккаунта на сайте нет"}\n` +
+    `Telegram: ${p?.username ? "@" + esc(p.username) + " · " : ""}<code>${esc(p?.telegram_id)}</code>`;
+}
+
+async function manage(tgId: number, action: string, args: Record<string, unknown> = {}) {
+  const { data, error } = await db.rpc("svc_admin_manage", { p_tg: tgId, p_action: action, p_args: args });
+  if (error) throw new Error(error.message);
+  return data as any;
+}
+
 // ------------------------------------------------------------------ Настройка вебхука
 
 async function setup() {
@@ -292,15 +329,9 @@ async function setup() {
   });
   await tg("setMyCommands", { commands: [{ command: "start", description: "Начать" }] });
   const { data: chatsData } = await db.rpc("svc_admin_chats");
-  const adminCommands = [
-    ["help", "Список команд"], ["stats", "Статистика"], ["pending", "Ожидают подтверждения"],
-    ["users", "Поиск клиентов: /users Анна"], ["user", "Клиент по номеру: /user 1042"],
-    ["codes", "Лучшие пригласившие"], ["suspicious", "Подозрительные действия"],
-    ["rules", "Условия скидок"], ["program", "Программа: /program on|off"], ["diag", "Диагностика: /diag on|off"],
-  ].map(([command, description]) => ({ command, description }));
   const scoped: Record<string, unknown> = {};
   for (const chat of (chatsData || []) as number[]) {
-    const r = await tg("setMyCommands", { commands: adminCommands, scope: { type: "chat", chat_id: chat } });
+    const r = await adminMenu(chat, true);
     scoped[String(chat)] = r.ok ? "ok" : r.description;
   }
   return { ok: wh.ok, bot: me.result?.username, webhook: wh.description, admin_commands: scoped };
@@ -313,6 +344,8 @@ const HELP =
   "/stats — статистика\n/pending — скидки, ожидающие подтверждения\n/users <i>поиск</i> — клиенты (имя, телефон, email, промокод)\n" +
   "/user <i>номер</i> — карточка клиента\n/codes — лучшие пригласившие\n/suspicious — подозрительные действия\n" +
   "/rules — условия скидок\n/program on|off — включить/выключить реферальную программу\n/diag on|off — расширенная диагностика\n\n" +
+  "<b>Администраторы</b>\n/admins — список\n/addadmin <i>номер клиента или Telegram ID</i> — выдать права (только владелец)\n" +
+  "/removeadmin <i>номер или ID</i> — снять права (только владелец)\n\n" +
   "Полная админ-панель: сайт → Войти через Telegram → Админ-панель.";
 
 async function bot(tgId: number, cmd: string, args: Record<string, unknown> = {}) {
@@ -405,6 +438,33 @@ async function handleAdminCommand(chatId: number, tgId: number, cmd: string, arg
       await bot(tgId, "settings", { [key]: on });
       return send(chatId, `Готово: ${cmd === "/program" ? "реферальная программа" : "расширенная диагностика"} ${on ? "включена" : "выключена"}`);
     }
+    case "/admins": {
+      const list = await manage(tgId, "list") as any[];
+      return send(chatId, "🛡 <b>Администраторы</b>\n\n" + list.map((a) =>
+        `${a.role === "owner" ? "👑 Владелец" : "🛡 Админ"}\n${personLine(a)}\nДобавлен: ${fmtDate(a.added_at)}`).join("\n\n") +
+        "\n\nВыдать права: /addadmin <i>номер клиента</i>\nСнять: /removeadmin <i>номер</i>");
+    }
+    case "/addadmin":
+    case "/removeadmin": {
+      const grant = cmd === "/addadmin";
+      const q = arg.replace(/[\s№#]/g, "");
+      if (!q) {
+        return send(chatId, grant
+          ? "Укажите номер клиента с сайта или Telegram ID:\n/addadmin 1042\n/addadmin 123456789\n\nЧеловек должен хотя бы раз написать боту /start."
+          : "Укажите номер клиента или Telegram ID: /removeadmin 1042");
+      }
+      const t = await manage(tgId, "resolve", { q });
+      if (grant && t.role) return send(chatId, `${personLine(t)}\n\nУже ${t.role === "owner" ? "владелец" : "администратор"}.`);
+      if (!grant && !t.role) return send(chatId, `${personLine(t)}\n\nЭтот человек не администратор.`);
+      if (Number(t.telegram_id) === tgId && !grant) return send(chatId, "Снять права с самого себя через бота нельзя.");
+      const text = grant
+        ? `🛡 <b>Выдать права администратора?</b>\n\n${personLine(t)}\n\nПолучит: служебные команды бота, уведомления, полную админ-панель сайта (клиенты, скидки, рассылки). Управлять админами не сможет.`
+        : `🚫 <b>Снять права администратора?</b>\n\n${personLine(t)}`;
+      return send(chatId, text, { reply_markup: { inline_keyboard: [[
+        { text: grant ? "✅ Выдать" : "✅ Снять", callback_data: `${grant ? "ag" : "ar"}:${t.telegram_id}` },
+        { text: "✖️ Отмена", callback_data: "ax" },
+      ]] } });
+    }
     default:
       return send(chatId, "Неизвестная команда. /help — список команд");
   }
@@ -454,6 +514,32 @@ async function handleUpdate(update: any) {
           text: ok ? "✅ Подтверждено! Вернитесь на сайт — вход выполнится автоматически."
                    : "⏱ Ссылка устарела. Нажмите «Войти через Telegram» на сайте ещё раз.",
         });
+      }
+      return;
+    }
+    if (data === "ax" || data.startsWith("ag:") || data.startsWith("ar:")) {
+      const done = (t: string) => chatId && msgId
+        ? tg("editMessageText", { chat_id: chatId, message_id: msgId, text: t, parse_mode: "HTML" }) : null;
+      if (data === "ax") {
+        await tg("answerCallbackQuery", { callback_query_id: cq.id, text: "Отменено" });
+        await done("✖️ Отменено");
+        return;
+      }
+      const grant = data.startsWith("ag:");
+      const target = Number(data.slice(3));
+      try {
+        const t = await manage(from.id, grant ? "grant" : "revoke", { telegram_id: target });
+        await tg("answerCallbackQuery", { callback_query_id: cq.id, text: grant ? "Права выданы" : "Права сняты" });
+        // меню команд и сообщение самому человеку
+        await adminMenu(target, grant);
+        const r = await send(target, grant
+          ? "🛡 Вам выданы права администратора клиники «Физиотера».\n\n/help — служебные команды. Админ-панель: сайт → «Войти через Telegram» → «Админ-панель»."
+          : "Ваши права администратора клиники «Физиотера» сняты.");
+        await done(`${grant ? "✅ <b>Права выданы</b>" : "✅ <b>Права сняты</b>"}\n\n${personLine(t)}` +
+          (r.ok ? "" : "\n\n⚠️ Не удалось написать ему в Telegram — пусть откроет бота и нажмёт /start, после этого команды появятся."));
+      } catch (e) {
+        const code = e instanceof Error ? e.message : "";
+        await tg("answerCallbackQuery", { callback_query_id: cq.id, text: "Не получилось: " + (ERR[code] || code).slice(0, 150), show_alert: true });
       }
       return;
     }
