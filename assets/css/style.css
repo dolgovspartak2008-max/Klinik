@@ -939,6 +939,8 @@ html:has(body.svc-page) { scroll-behavior: auto; }
   .nav__link { padding: 8px 9px; font-size: 14px; }
   .nav__link::after { left: 9px; right: 9px; }
 }
+/* пункт «Онлайн-курсы» не помещается на средних экранах — «О центре» остаётся в мобильном меню и на странице */
+@media (min-width: 921px) and (max-width: 1180px) { .nav__link[href="#center"] { display: none; } }
 @media (min-width: 921px) and (max-width: 1040px) {
   .logo__text small { display: none; }
   .nav__link { padding: 8px 6px; font-size: 13.5px; }

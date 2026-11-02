@@ -349,7 +349,6 @@
     SB.rpc("course_player", { p_slug: slug }).then(function (d) {
       data = d;
       $("[data-course-link]").href = "/kursy/" + encodeURIComponent(slug) + "/";
-      $("[data-course-link]").textContent = d.course.title;
       $("[data-crumb]").textContent = d.course.title;
       wm.textContent = d.watermark || "";
       moveWm(); wmTimer = setInterval(moveWm, 17000);
