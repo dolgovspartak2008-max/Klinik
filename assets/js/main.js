@@ -123,7 +123,7 @@
   });
 
   // Активный пункт меню
-  var links = Array.prototype.slice.call(doc.querySelectorAll(".nav__link"));
+  var links = Array.prototype.slice.call(doc.querySelectorAll('.nav__link[href^="#"]'));
   var sections = links.map(function (l) { return doc.querySelector(l.getAttribute("href")); }).filter(Boolean);
   if ("IntersectionObserver" in window) {
     var navIO = new IntersectionObserver(function (entries) {

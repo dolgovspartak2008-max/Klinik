@@ -246,7 +246,8 @@
     return on;
   }
   function done() {
-    if (onCabinet) { close(); location.reload(); }
+    // на страницах курсов после входа остаёмся на месте (window.FZAuthStay)
+    if (onCabinet || window.FZAuthStay) { close(); location.reload(); }
     else location.href = "/kabinet/";
   }
 

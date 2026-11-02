@@ -307,6 +307,22 @@
     {
       "source": "/sb/:path*",
       "destination": "https://ppujswqovhembshvaxff.supabase.co/:path*"
+    },
+    {
+      "source": "/kursy/:slug([a-z0-9-]+)/uroki",
+      "destination": "/kursy/urok.html"
+    },
+    {
+      "source": "/kursy/:slug([a-z0-9-]+)/uroki/",
+      "destination": "/kursy/urok.html"
+    },
+    {
+      "source": "/kursy/:slug([a-z0-9-]+)",
+      "destination": "/kursy/kurs.html"
+    },
+    {
+      "source": "/kursy/:slug([a-z0-9-]+)/",
+      "destination": "/kursy/kurs.html"
     }
   ],
   "headers": [
@@ -315,7 +331,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'sha256-PWYuIrRoSUnIRsm1Fds7qlGqkv1QXp+VuOcqoqydr9U=' 'sha256-TIE9dcNfsAbsSpJrRGSCQR/i/sZE4Yum/FmQnfkeq5U=' 'sha256-f8hUBaVsfhG1RMsCr2Vzp2v/9IcneNdUS9MyjbBBV20=' 'sha256-jEp3GzYRq3C0SyJuN/+gbXlMFGS5+EbrUpXCBB53m4I='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; frame-src 'none'; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
+          "value": "default-src 'self'; script-src 'self' 'sha256-PWYuIrRoSUnIRsm1Fds7qlGqkv1QXp+VuOcqoqydr9U=' 'sha256-TIE9dcNfsAbsSpJrRGSCQR/i/sZE4Yum/FmQnfkeq5U=' 'sha256-f8hUBaVsfhG1RMsCr2Vzp2v/9IcneNdUS9MyjbBBV20=' 'sha256-jEp3GzYRq3C0SyJuN/+gbXlMFGS5+EbrUpXCBB53m4I='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://ppujswqovhembshvaxff.supabase.co; frame-src 'none'; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
         },
         {
           "key": "Strict-Transport-Security",
@@ -345,6 +361,19 @@
     },
     {
       "source": "/(kabinet|admin)(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    },
+    {
+      "source": "/kursy/:slug/uroki(.*)",
       "headers": [
         {
           "key": "X-Robots-Tag",

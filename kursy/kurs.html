@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Онлайн-курс — клиника «Физиотера»</title>
+  <meta name="description" content="Онлайн-курс профилактических упражнений от специалистов клиники «Физиотера»." />
+  <meta name="theme-color" content="#0b1742" />
+  <link rel="icon" href="/favicon.ico" sizes="48x48" />
+  <link rel="icon" href="/assets/img/favicon.png" type="image/png" sizes="96x96" />
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/account.css" />
+  <link rel="stylesheet" href="/assets/css/courses.css" />
+</head>
+<body class="cab-page crs-page" data-page="course">
+  <a class="skip-link" href="#main">Перейти к содержимому</a>
+
+  <header class="header is-scrolled cab-header">
+    <div class="container header__inner">
+      <a href="/" class="logo" aria-label="Физиотера — на главную">
+        <img class="logo__mark" src="/assets/img/logo-mark.svg" alt="" width="44" height="44" />
+        <span class="logo__text">Физиотера<small>Онлайн-курсы</small></span>
+      </a>
+      <nav class="cab-header__nav" aria-label="Разделы">
+        <a class="cab-header__link" href="/">Клиника</a>
+        <a class="cab-header__link" href="/kursy/">Курсы</a>
+        <a class="cab-header__link" href="/kabinet/#courses">Мои курсы</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="crs">
+    <div class="container">
+      <nav class="crs-crumbs" aria-label="Навигация"><a href="/kursy/">Курсы</a><span aria-hidden="true">/</span><span data-crumb>…</span></nav>
+
+      <div class="crs-detail" data-state="loading">
+        <div class="crs-detail__main"><div class="crs-skel" style="height:300px"></div><div class="crs-skel" style="height:200px"></div></div>
+        <div class="crs-skel" style="height:320px"></div>
+      </div>
+
+      <section class="cab-state cab-guest" data-state="error" hidden>
+        <h1 data-error-title>Не удалось открыть курс</h1>
+        <p data-error-text></p>
+        <div class="cab-guest__actions"><a class="btn btn--primary" href="/kursy/">Все курсы</a></div>
+      </section>
+
+      <div class="crs-detail" data-state="ready" hidden>
+        <div class="crs-detail__main" data-main></div>
+        <aside class="crs-buy" data-buy aria-label="Покупка курса"></aside>
+      </div>
+    </div>
+  </main>
+  <div class="crs-mbar is-hidden" data-mbar></div>
+
+  <div class="modal" id="buyModal" role="dialog" aria-modal="true" aria-labelledby="buyTitle" hidden>
+    <div class="modal__backdrop" data-buy-close></div>
+    <div class="modal__card buy-card">
+      <button class="modal__close" type="button" data-buy-close aria-label="Закрыть">×</button>
+      <div data-buy-view="form">
+        <h2 id="buyTitle">Покупка</h2>
+        <form class="buy-form acc-form" data-buy-form novalidate>
+          <dl class="buy-lines" data-buy-lines></dl>
+          <p class="buy-note buy-note--warn" data-buy-note hidden></p>
+          <label class="check"><input type="checkbox" name="gift" /><span>Купить в подарок — получу код, который можно передать другому человеку</span></label>
+          <div class="buy-promo">
+            <label class="field"><span>Промокод</span><input name="promo" type="text" maxlength="30" autocomplete="off" autocapitalize="characters" /></label>
+            <button class="btn btn--outline" type="button" data-buy-apply>Применить</button>
+          </div>
+          <label class="check"><input type="checkbox" name="terms" /><span>Согласен с <a href="/kursy/usloviya/" target="_blank">условиями покупки и предоставления доступа</a> и <a href="/politika.html" target="_blank">политикой конфиденциальности</a></span></label>
+          <label class="check"><input type="checkbox" name="health" /><span>Я ознакомился с противопоказаниями и понимаю, что курс не заменяет консультацию врача</span></label>
+          <button class="btn btn--accent btn--lg acc-submit" type="submit" data-buy-submit>Оформить заказ</button>
+          <p class="acc-status" role="status" aria-live="polite" data-buy-status></p>
+        </form>
+      </div>
+      <div class="buy-done" data-buy-view="done" hidden>
+        <h2 data-done-title>Заказ оформлен</h2>
+        <p class="buy-done__no" data-done-no></p>
+        <p data-done-text></p>
+        <div class="buy-done__actions" data-done-actions></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="/assets/js/config.js"></script>
+  <script src="/assets/js/sb.js"></script>
+  <script src="/assets/js/account.js"></script>
+  <script src="/assets/js/courses.js"></script>
+</body>
+</html>

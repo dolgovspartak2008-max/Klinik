@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Онлайн-курсы упражнений для суставов и спины — клиника «Физиотера», Уфа</title>
+  <meta name="description" content="Видеокурсы профилактических упражнений от специалистов клиники «Физиотера»: колени, тазобедренные суставы, локти, спина и шея. Занимайтесь дома, прогресс сохраняется." />
+  <link rel="canonical" href="https://www.fiziotera.online/kursy/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Физиотера" />
+  <meta property="og:title" content="Онлайн-курсы упражнений — клиника «Физиотера»" />
+  <meta property="og:description" content="Короткие видеозанятия для профилактики и поддержания здоровья суставов и спины дома." />
+  <meta property="og:url" content="https://www.fiziotera.online/kursy/" />
+  <meta property="og:image" content="https://www.fiziotera.online/assets/img/og.jpg" />
+  <meta name="theme-color" content="#0b1742" />
+  <link rel="icon" href="/favicon.ico" sizes="48x48" />
+  <link rel="icon" href="/assets/img/favicon.png" type="image/png" sizes="96x96" />
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/account.css" />
+  <link rel="stylesheet" href="/assets/css/courses.css" />
+</head>
+<body class="cab-page crs-page" data-page="catalog">
+  <a class="skip-link" href="#main">Перейти к содержимому</a>
+
+  <header class="header is-scrolled cab-header">
+    <div class="container header__inner">
+      <a href="/" class="logo" aria-label="Физиотера — на главную">
+        <img class="logo__mark" src="/assets/img/logo-mark.svg" alt="" width="44" height="44" />
+        <span class="logo__text">Физиотера<small>Онлайн-курсы</small></span>
+      </a>
+      <nav class="cab-header__nav" aria-label="Разделы">
+        <a class="cab-header__link" href="/">Клиника</a>
+        <a class="cab-header__link" href="/kursy/" aria-current="page">Курсы</a>
+        <a class="cab-header__link" href="/kabinet/#courses">Мои курсы</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="crs">
+    <div class="container">
+      <section class="crs-hero" aria-labelledby="crsTitle">
+        <h1 id="crsTitle">Онлайн-курсы упражнений</h1>
+        <p class="crs-hero__lead">Короткие видеозанятия от специалистов клиники «Физиотера» для профилактики и поддержания здоровья суставов и спины. Занимайтесь дома в удобное время — прогресс сохраняется на любом устройстве.</p>
+        <div class="crs-hero__facts">
+          <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>Упражнения показывают специалисты клиники</span>
+          <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>Телефон, планшет или компьютер</span>
+          <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>Доступ сразу после оплаты</span>
+        </div>
+      </section>
+
+      <div data-state="loading">
+        <div class="crs-section"><div class="crs-grid">
+          <div class="crs-skel" style="height:420px"></div><div class="crs-skel" style="height:420px"></div><div class="crs-skel" style="height:420px"></div>
+        </div></div>
+      </div>
+
+      <section class="cab-state cab-guest" data-state="error" hidden>
+        <h2>Не удалось загрузить курсы</h2>
+        <p data-error-text></p>
+        <div class="cab-guest__actions"><button class="btn btn--primary" type="button" data-reload>Обновить</button></div>
+      </section>
+
+      <div data-state="ready" hidden>
+        <section class="crs-section" aria-labelledby="listTitle">
+          <div class="crs-cats" role="tablist" aria-label="Направления" data-cats hidden></div>
+          <div class="crs-section__head">
+            <h2 id="listTitle" class="sr-only">Курсы</h2>
+            <p data-cat-desc></p>
+          </div>
+          <div data-courses></div>
+        </section>
+
+        <section class="crs-section" id="komplekty" aria-labelledby="bundleTitle" data-bundles hidden>
+          <div class="crs-section__head">
+            <h2 id="bundleTitle">Комплекты</h2>
+            <p>Несколько курсов вместе — дешевле, чем по отдельности.</p>
+          </div>
+          <div class="crs-col" data-bundle-list></div>
+        </section>
+      </div>
+
+      <section class="crs-section" aria-labelledby="howTitle">
+        <div class="crs-section__head"><h2 id="howTitle">Как это устроено</h2></div>
+        <ol class="crs-steps">
+          <li><b>Выберите курс</b><p>Прочитайте описание, программу и противопоказания.</p></li>
+          <li><b>Войдите и оформите</b><p>Через Telegram или email — за минуту. Можно купить в подарок.</p></li>
+          <li><b>Получите доступ</b><p>Курс появится в разделе «Мои курсы» сразу после подтверждения оплаты.</p></li>
+          <li><b>Занимайтесь</b><p>Смотрите уроки в своём темпе — плеер запомнит, где вы остановились.</p></li>
+        </ol>
+      </section>
+
+      <p class="crs-note">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 20h20L12 3Z"/><path d="M12 10v4M12 17.5v.5"/></svg>
+        <span>Курсы носят профилактический характер и не заменяют консультацию врача, диагностику и лечение. Перед занятиями ознакомьтесь с противопоказаниями на странице курса. При острой боли, травме или недавней операции сначала проконсультируйтесь со специалистом — <a href="/#promo">записаться на приём</a>. <a href="/kursy/usloviya/">Условия покупки и возврата</a>.</span>
+      </p>
+    </div>
+  </main>
+
+  <div class="modal" id="buyModal" role="dialog" aria-modal="true" aria-labelledby="buyTitle" hidden>
+    <div class="modal__backdrop" data-buy-close></div>
+    <div class="modal__card buy-card">
+      <button class="modal__close" type="button" data-buy-close aria-label="Закрыть">×</button>
+      <div data-buy-view="form">
+        <h2 id="buyTitle">Покупка</h2>
+        <form class="buy-form acc-form" data-buy-form novalidate>
+          <dl class="buy-lines" data-buy-lines></dl>
+          <p class="buy-note buy-note--warn" data-buy-note hidden></p>
+          <label class="check"><input type="checkbox" name="gift" /><span>Купить в подарок — получу код, который можно передать другому человеку</span></label>
+          <div class="buy-promo">
+            <label class="field"><span>Промокод</span><input name="promo" type="text" maxlength="30" autocomplete="off" autocapitalize="characters" /></label>
+            <button class="btn btn--outline" type="button" data-buy-apply>Применить</button>
+          </div>
+          <label class="check"><input type="checkbox" name="terms" /><span>Согласен с <a href="/kursy/usloviya/" target="_blank">условиями покупки и предоставления доступа</a> и <a href="/politika.html" target="_blank">политикой конфиденциальности</a></span></label>
+          <label class="check"><input type="checkbox" name="health" /><span>Я ознакомился с противопоказаниями и понимаю, что курс не заменяет консультацию врача</span></label>
+          <button class="btn btn--accent btn--lg acc-submit" type="submit" data-buy-submit>Оформить заказ</button>
+          <p class="acc-status" role="status" aria-live="polite" data-buy-status></p>
+        </form>
+      </div>
+      <div class="buy-done" data-buy-view="done" hidden>
+        <h2 data-done-title>Заказ оформлен</h2>
+        <p class="buy-done__no" data-done-no></p>
+        <p data-done-text></p>
+        <div class="buy-done__actions" data-done-actions></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="/assets/js/config.js"></script>
+  <script src="/assets/js/sb.js"></script>
+  <script src="/assets/js/account.js"></script>
+  <script src="/assets/js/courses.js"></script>
+</body>
+</html>

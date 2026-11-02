@@ -5,6 +5,10 @@
 //                                     клиентам (рассылки, персональные скидки) — вызывает база, x-internal-secret
 //   POST /tg-bot?task=setup         — зарегистрировать вебхук и команды (x-internal-secret)
 //
+// Клиентам: /profile (профиль как в личном кабинете), /mycourses (купленные курсы и прогресс,
+// кнопка ведёт на защищённую страницу уроков на сайте). Видео в Telegram не отправляются, курсы в боте
+// не продаются (цифровые товары в Telegram — только через Telegram Stars; оплата — на сайте).
+//
 // Доступ к служебным командам — только у Telegram ID из app.admin_telegram_ids.
 // Токен бота и секреты читаются из Supabase Vault.
 
@@ -58,6 +62,14 @@ const KIND: Record<string, string> = {
   referrer_reward: "Награда за друга",
   manual: "Персональная скидка",
 };
+const COURSE_STATUS: Record<string, string> = { draft: "черновик", published: "в продаже", archived: "снят с продажи" };
+const ORDER_STATUS: Record<string, string> = { pending: "ждёт оплаты", paid: "оплачен", expired: "истёк срок оплаты", refunded: "возврат", cancelled: "отменён" };
+
+function money(v: unknown): string {
+  const n = Number(v);
+  return isFinite(n) ? `${Math.round(n).toLocaleString("ru-RU")} ₽` : "—";
+}
+
 const STATUS: Record<string, string> = {
   available: "доступен", pending: "ожидает подтверждения", used: "использован",
   expired: "истёк", cancelled: "отменён", confirmed: "подтверждён", refunded: "возврат",
@@ -69,6 +81,7 @@ const ERR: Record<string, string> = {
   owner_only: "выдавать и снимать права может только владелец", no_telegram: "у этого клиента не привязан Telegram — пусть войдёт на сайт через Telegram",
   user_not_active: "аккаунт клиента заблокирован или удалён", already_admin: "уже администратор", not_admin: "не администратор",
   last_owner: "нельзя снять последнего владельца", bad_target: "укажите номер клиента или Telegram ID",
+  order_not_payable: "заказ отменён — оплату по нему не принять", amount_mismatch: "сумма не совпадает",
 };
 
 // ------------------------------------------------------------------ Telegram API
@@ -191,6 +204,44 @@ function formatEvent(ev: Ev): string {
     case "admin_revoked":
       return `${ev.type === "admin_granted" ? "🛡 <b>Выданы права администратора</b>" : "🚫 <b>Сняты права администратора</b>"}\n\n` +
         `${personLine(d)}\nКем: Telegram ID ${esc(d.by_tg)}\n${date}`;
+    case "course_order_created":
+      return `🛒 <b>Новый заказ курса № ${esc(d.order_no)}</b>\n\n${who(ev)}Курс: ${esc(d.title)}${d.gift ? " (в подарок)" : ""}\n` +
+        `Сумма: ${money(d.total)}${Number(d.discount) ? ` (скидка ${money(d.discount)}${d.promo ? ", промокод " + esc(d.promo) : ""})` : ""}\n` +
+        `Телефон: ${esc(d.phone || "—")}\nEmail: ${esc(d.email || "—")}\nTelegram: ${d.telegram ? "@" + esc(d.telegram) : "—"}\n${date}\n\n` +
+        `Свяжитесь с клиентом для оплаты. Когда деньги получены — нажмите «Оплата получена», доступ откроется автоматически.`;
+    case "course_order_paid":
+      return `✅ <b>Заказ курса № ${esc(d.order_no)} оплачен</b>\n\n${who(ev)}${esc(d.title)} — ${money(d.total)}\n` +
+        `Способ: ${esc(d.method || d.provider)}${d.gift ? "\nПодарок: клиенту отправлен подарочный код" : `\nВыдано курсов: ${esc(d.granted)}`}\n${date}${by}`;
+    case "course_refund":
+      return `↩️ <b>Возврат за курс</b>\n\n${who(ev)}Заказ № ${esc(d.order_no)}: ${money(d.amount)}${d.full ? " (полный)" : ""}\nПричина: ${esc(d.reason)}\n` +
+        `Доступ: ${d.revoke ? "закрыт" : "оставлен"}\n${date}${by}`;
+    case "course_access_granted":
+      return `🎓 <b>Курс выдан вручную</b>\n\n${who(ev)}Курс: ${esc(d.course)}\nПричина: ${esc(d.note)}\n${date}${by}`;
+    case "course_access_revoked":
+      return `🚫 <b>Доступ к курсу отозван</b>\n\n${who(ev)}Курс: ${esc(d.course)}\nПричина: ${esc(d.reason)}\n${date}${by}`;
+    case "courses_blocked":
+    case "courses_unblocked":
+      return `${ev.type === "courses_blocked" ? "⛔️ <b>Клиенту заблокированы курсы</b>" : "✅ <b>Клиенту разблокированы курсы</b>"}\n\n${who(ev)}${d.reason ? "Причина: " + esc(d.reason) + "\n" : ""}${date}${by}`;
+    case "gift_activated":
+      return `🎁 <b>Активирован подарочный курс</b>\n\n${who(ev)}${esc(d.title)}\nКупил: клиент № ${esc(d.buyer_no)}\n${date}`;
+    case "gift_reuse_attempt":
+      return `⚠️ <b>Попытка активировать уже использованный подарок</b>\n\n${who(ev)}${esc(d.title)}\n${date}`;
+    case "gift_bruteforce":
+      return `🚨 <b>Перебор подарочных кодов</b>\n\n${who(ev)}Активация подарков для аккаунта временно ограничена\n${date}`;
+    case "video_url_flood":
+      return `🚨 <b>Подозрительно много запросов видео</b>\n\n${who(ev)}Урок: ${esc(d.lesson)}\nВозможна попытка выкачать видео — проверьте карточку клиента в админке (просмотры, устройства)\n${date}`;
+    case "many_devices":
+      return `⚠️ <b>Курсы смотрят с многих устройств</b>\n\n${who(ev)}Устройств за сутки: ${esc(d.devices_24h)}\nВозможна передача доступа другим людям\n${date}`;
+    case "payment_amount_mismatch":
+      return `🚨 <b>Сумма оплаты не совпала с заказом</b>\n\nЗаказ № ${esc(d.order_no)}: ожидалось ${money(d.expected)}, пришло ${money(d.got)}\nДоступ не выдан\n${date}`;
+    case "course_price_changed":
+      return `💰 <b>Изменена цена</b>\n\n${esc(d.course)}: ${money(d.before)} → ${money(d.after)}${d.old_price ? ` (старая цена ${money(d.old_price)})` : ""}\n${date}`;
+    case "course_status_changed":
+      return `📚 <b>${esc(d.course)}</b>: ${esc(COURSE_STATUS[d.before] || d.before)} → ${esc(COURSE_STATUS[d.after] || d.after)}\n${date}`;
+    case "lesson_published":
+      return `🎬 <b>Опубликован новый урок</b>\n\n${esc(d.course)}: «${esc(d.lesson)}»\nУчеников курса: ${esc(d.students)} — им отправлено уведомление\n${date}`;
+    case "course_promo_saved":
+      return `🏷 <b>Промокод на курсы сохранён</b>\n\n${esc(d.code)} — ${esc(d.discount)}\n${date}`;
     case "system_error":
       return `❌ <b>Ошибка в работе системы</b>\n\nГде: ${esc(d.where)}\n${esc(d.message)}\n${date}`;
     default: {
@@ -205,6 +256,12 @@ function eventButtons(ev: Ev) {
     return { reply_markup: { inline_keyboard: [[
       { text: "✅ Услуга оказана", callback_data: `rd:${ev.data.redemption_id}:c` },
       { text: "✖️ Не состоялась", callback_data: `rd:${ev.data.redemption_id}:x` },
+    ]] } };
+  }
+  if (ev.type === "course_order_created" && ev.data?.order_id) {
+    return { reply_markup: { inline_keyboard: [[
+      { text: "✅ Оплата получена", callback_data: `co:${ev.data.order_id}:p` },
+      { text: "✖️ Отменить заказ", callback_data: `co:${ev.data.order_id}:x` },
     ]] } };
   }
   return {};
@@ -288,7 +345,7 @@ async function sendOutbox(deadline: number): Promise<{ sent: number; failed: num
 // ------------------------------------------------------------------ Меню команд администратора
 
 const ADMIN_COMMANDS = [
-  ["help", "Список команд"], ["stats", "Статистика"], ["pending", "Ожидают подтверждения"],
+  ["help", "Список команд"], ["profile", "Мой профиль"], ["mycourses", "Мои курсы"], ["stats", "Статистика"], ["pending", "Ожидают подтверждения"],
   ["users", "Поиск клиентов: /users Анна"], ["user", "Клиент по номеру: /user 1042"],
   ["codes", "Лучшие пригласившие"], ["suspicious", "Подозрительные действия"],
   ["rules", "Условия скидок"], ["program", "Программа: /program on|off"], ["diag", "Диагностика: /diag on|off"],
@@ -327,7 +384,7 @@ async function setup() {
     url: `${base}/tg-bot`, secret_token: hook, allowed_updates: ["message", "callback_query"],
     drop_pending_updates: true, max_connections: 10,
   });
-  await tg("setMyCommands", { commands: [{ command: "start", description: "Начать" }] });
+  await tg("setMyCommands", { commands: [{ command: "start", description: "Начать" }, ...CLIENT_COMMANDS] });
   const { data: chatsData } = await db.rpc("svc_admin_chats");
   const scoped: Record<string, unknown> = {};
   for (const chat of (chatsData || []) as number[]) {
@@ -335,6 +392,94 @@ async function setup() {
     scoped[String(chat)] = r.ok ? "ok" : r.description;
   }
   return { ok: wh.ok, bot: me.result?.username, webhook: wh.description, admin_commands: scoped };
+}
+
+// ------------------------------------------------------------------ Клиент: профиль и курсы
+
+const CLIENT_COMMANDS = [
+  { command: "profile", description: "Мой профиль" },
+  { command: "mycourses", description: "Мои курсы" },
+  { command: "news", description: "Подписаться на новости" },
+  { command: "stop", description: "Отписаться от новостей" },
+];
+
+const MENU = (site: string) => ({ reply_markup: { inline_keyboard: [
+  [{ text: "👤 Мой профиль", callback_data: "m:profile" }, { text: "🎓 Мои курсы", callback_data: "m:courses" }],
+  [{ text: "📚 Каталог курсов", url: `${site}/kursy/` }],
+] } });
+
+async function siteUrl(): Promise<string> {
+  const s = (await db.rpc("svc_settings")).data as { site_url?: string } | null;
+  return (s?.site_url || "https://www.fiziotera.online").replace(/\/+$/, "");
+}
+
+type Profile = {
+  client_no: number; name: string | null; email: string | null; phone: string | null; status: string; courses_blocked: boolean;
+  created_at: string; ref_code: string; news_opt_in: boolean; course_news: boolean; invites: number;
+  bonuses: { title: string; discount_type: string; amount: number; status: string; expires_at: string }[];
+  courses: { title: string; slug: string; progress: { percent: number; completed: number; total: number } }[];
+  orders: { order_no: number; title: string; total: number; status: string; created_at: string; is_gift: boolean }[];
+};
+
+async function clientProfile(tgId: number): Promise<Profile | null> {
+  const { data, error } = await db.rpc("svc_tg_profile", { p_tg: tgId });
+  if (error) throw new Error(error.message);
+  return data as Profile | null;
+}
+
+function notLinked(chatId: number, site: string) {
+  return send(chatId,
+    "Этот Telegram пока не привязан к личному кабинету.\n\nОткройте сайт, нажмите «Войти» → «Войти через Telegram» и подтвердите вход здесь, в боте. После этого профиль и купленные курсы появятся в боте.",
+    { reply_markup: { inline_keyboard: [[{ text: "Открыть сайт", url: `${site}/kabinet/` }]] } });
+}
+
+function bar(p: number): string {
+  const n = Math.max(0, Math.min(10, Math.round((p || 0) / 10)));
+  return "▓".repeat(n) + "░".repeat(10 - n);
+}
+
+async function showProfile(chatId: number, tgId: number) {
+  const site = await siteUrl();
+  const p = await clientProfile(tgId);
+  if (!p) return notLinked(chatId, site);
+  const state = p.status !== "active" ? "заблокирован" : p.courses_blocked ? "активен, доступ к курсам приостановлен" : "активен";
+  const bonuses = p.bonuses.length
+    ? p.bonuses.map((b) => `• ${esc(b.title)} — ${discount(b.discount_type, b.amount)}, ${STATUS[b.status] || b.status}, до ${fmtDate(b.expires_at).slice(0, 10)}`).join("\n")
+    : "нет активных";
+  const courses = p.courses.length
+    ? p.courses.map((c) => `• ${esc(c.title)} — ${c.progress?.percent || 0}%`).join("\n") : "пока нет";
+  const orders = p.orders.length
+    ? p.orders.map((o) => `• № ${o.order_no} · ${esc(o.title)}${o.is_gift ? " (подарок)" : ""} · ${money(o.total)} · ${ORDER_STATUS[o.status] || o.status}`).join("\n") : "";
+  return send(chatId,
+    `👤 <b>${esc(p.name || "Без имени")}</b> · клиент № ${p.client_no}\n\n` +
+    `Email: ${esc(p.email || "не указан")}\nТелефон: ${esc(p.phone || "не указан")}\nАккаунт: ${state}\nС нами с ${fmtDate(p.created_at).slice(0, 10)}\n\n` +
+    `🎁 <b>Скидки в клинике</b>\n${bonuses}\n\n🔗 <b>Промокод для друзей</b>: <code>${esc(p.ref_code)}</code> · приглашено: ${p.invites}\n\n` +
+    `🎓 <b>Курсы</b>\n${courses}` + (orders ? `\n\n🧾 <b>Последние заказы</b>\n${orders}` : "") +
+    `\n\n📣 Новости клиники: ${p.news_opt_in ? "подписаны (/stop — отписаться)" : "не подписаны (/news — подписаться)"}`,
+    { reply_markup: { inline_keyboard: [
+      [{ text: "🎓 Мои курсы", callback_data: "m:courses" }, { text: "Личный кабинет", url: `${site}/kabinet/` }],
+    ] } });
+}
+
+async function showCourses(chatId: number, tgId: number) {
+  const site = await siteUrl();
+  const p = await clientProfile(tgId);
+  if (!p) return notLinked(chatId, site);
+  if (p.courses_blocked) return send(chatId, "Доступ к курсам на вашем аккаунте приостановлен. Если это ошибка — позвоните в клинику: +7 (987) 600-00-37.");
+  if (!p.courses.length) {
+    const pending = p.orders.filter((o) => o.status === "pending");
+    return send(chatId, "У вас пока нет онлайн-курсов." +
+      (pending.length ? `\n\nЗаказ ${pending.map((o) => "№ " + o.order_no).join(", ")} ждёт оплаты — администратор свяжется с вами. Доступ откроется автоматически после подтверждения.` : ""),
+      { reply_markup: { inline_keyboard: [[{ text: "📚 Каталог курсов", url: `${site}/kursy/` }]] } });
+  }
+  return send(chatId, "🎓 <b>Мои курсы</b>\n\n" + p.courses.map((c) => {
+    const pr = c.progress || { percent: 0, completed: 0, total: 0 };
+    return `<b>${esc(c.title)}</b>\n${bar(pr.percent)} ${pr.percent || 0}% · пройдено ${pr.completed} из ${pr.total}`;
+  }).join("\n\n") + "\n\nУроки открываются на сайте — нажмите кнопку под курсом. Если попросит войти, выберите «Войти через Telegram».",
+    { reply_markup: { inline_keyboard: p.courses.map((c) => [{
+      text: `▶️ ${(c.progress?.completed ? "Продолжить: " : "Начать: ") + c.title}`.slice(0, 60),
+      url: `${site}/kursy/${encodeURIComponent(c.slug)}/uroki/`,
+    }]) } });
 }
 
 // ------------------------------------------------------------------ Команды
@@ -346,6 +491,8 @@ const HELP =
   "/rules — условия скидок\n/program on|off — включить/выключить реферальную программу\n/diag on|off — расширенная диагностика\n\n" +
   "<b>Администраторы</b>\n/admins — список\n/addadmin <i>номер клиента или Telegram ID</i> — выдать права (только владелец)\n" +
   "/removeadmin <i>номер или ID</i> — снять права (только владелец)\n\n" +
+  "<b>Онлайн-курсы</b>\nНовые заказы приходят сюда с кнопкой «Оплата получена» — она открывает клиенту доступ.\n" +
+  "/profile, /mycourses — ваш собственный профиль и курсы\n\n" +
   "Полная админ-панель: сайт → Войти через Telegram → Админ-панель.";
 
 async function bot(tgId: number, cmd: string, args: Record<string, unknown> = {}) {
@@ -543,6 +690,31 @@ async function handleUpdate(update: any) {
       }
       return;
     }
+    if (data === "m:profile" || data === "m:courses") {
+      await tg("answerCallbackQuery", { callback_query_id: cq.id });
+      if (chatId) await (data === "m:profile" ? showProfile(chatId, from.id) : showCourses(chatId, from.id));
+      return;
+    }
+    if (data.startsWith("co:")) {
+      const [, id, act] = data.split(":");
+      try {
+        const r = await db.rpc(act === "p" ? "svc_order_paid_tg" : "svc_order_cancel_tg", { p_tg: from.id, p_order: id });
+        if (r.error) throw new Error(r.error.message);
+        const res = r.data as { already?: boolean; gift_code?: string; ok?: boolean; error?: string };
+        if (res && res.ok === false) throw new Error(res.error || "error");
+        await tg("answerCallbackQuery", { callback_query_id: cq.id, text: act === "p" ? (res.already ? "Уже оплачен" : "Доступ выдан") : "Заказ отменён" });
+        if (chatId && msgId) {
+          await tg("editMessageReplyMarkup", { chat_id: chatId, message_id: msgId, reply_markup: { inline_keyboard: [] } });
+          await send(chatId, act === "p"
+            ? (res.already ? "Этот заказ уже был оплачен ранее." : "✅ Оплата отмечена, доступ выдан. Клиент получит уведомление." + (res.gift_code ? `\nПодарочный код: <code>${esc(res.gift_code)}</code>` : ""))
+            : "↩️ Заказ отменён", { reply_to_message_id: msgId });
+        }
+      } catch (e) {
+        const code = e instanceof Error ? e.message : "";
+        await tg("answerCallbackQuery", { callback_query_id: cq.id, text: "Не получилось: " + (ERR[code] || code).slice(0, 150), show_alert: true });
+      }
+      return;
+    }
     if (data.startsWith("rd:")) {
       const [, id, act] = data.split(":");
       try {
@@ -584,6 +756,16 @@ async function handleUpdate(update: any) {
       : "Вы отписались от новостей клиники. Сообщения о ваших скидках и входе на сайт по-прежнему будут приходить.\nВключить снова: /news");
   }
 
+  if (cmd === "/profile" || cmd === "/mycourses" || cmd === "/menu") {
+    try {
+      if (cmd === "/menu") return send(chatId, "Меню:", MENU(await siteUrl()));
+      return await (cmd === "/profile" ? showProfile(chatId, msg.from.id) : showCourses(chatId, msg.from.id));
+    } catch (e) {
+      console.error("client cmd", e instanceof Error ? e.message : e);
+      return send(chatId, "Не получилось загрузить данные. Попробуйте через минуту.");
+    }
+  }
+
   const { data: chatsData } = await db.rpc("svc_admin_chats");
   const isAdmin = ((chatsData || []) as number[]).map(Number).includes(Number(msg.from.id));
   if (isAdmin && cmd.startsWith("/")) {
@@ -594,12 +776,12 @@ async function handleUpdate(update: any) {
     }
   }
 
-  const s = (await db.rpc("svc_settings")).data as { site_url?: string } | null;
+  const site = await siteUrl();
   return send(chatId,
     "Здравствуйте! 👋 Это бот клиники лечения и реабилитации «Физиотера» (Уфа, ул. Энтузиастов, 16).\n\n" +
-    `Через него выполняется вход в личный кабинет на сайте: ${esc(s?.site_url || "https://www.fiziotera.online")}\n` +
+    `Через него выполняется вход в личный кабинет на сайте ${esc(site)}, здесь же — ваш профиль и онлайн-курсы.\n` +
     "Записаться на приём: +7 (987) 600-00-37\n\n" +
-    "Новости и акции клиники: /news — подписаться, /stop — отписаться");
+    "/profile — мой профиль\n/mycourses — мои курсы\n/news — подписаться на новости, /stop — отписаться", MENU(site));
 }
 
 // ------------------------------------------------------------------ HTTP

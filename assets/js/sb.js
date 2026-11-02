@@ -73,6 +73,50 @@
     broadcast_limit: "Достигнут лимит: не больше 5 рассылок в сутки.",
     no_audience: "Пока никто не подписался на новости — отправлять некому.",
     no_telegram: "Привяжите Telegram к своему аккаунту, чтобы получить проверочное сообщение.",
+    // онлайн-курсы
+    course_unavailable: "Курс сейчас недоступен для покупки.",
+    already_owned: "Этот курс уже есть в вашем кабинете.",
+    bundle_overlap: "Часть курсов комплекта у вас уже есть — докупите недостающие по отдельности.",
+    promo_invalid: "Такого промокода нет или он выключен.",
+    promo_not_started: "Промокод ещё не начал действовать.",
+    promo_expired: "Срок действия промокода закончился.",
+    promo_not_applicable: "Промокод не действует на этот курс.",
+    promo_exhausted: "Промокод уже использовали максимальное число раз.",
+    promo_used: "Вы уже использовали этот промокод.",
+    courses_blocked: "Доступ к курсам на аккаунте приостановлен. Позвоните нам: +7 (987) 600-00-37.",
+    not_pending: "Заказ уже обработан.",
+    order_not_payable: "Этот заказ нельзя оплатить — он отменён.",
+    order_not_paid: "Заказ ещё не оплачен.",
+    amount_mismatch: "Сумма оплаты не совпадает с суммой заказа.",
+    no_access: "Урок откроется после покупки курса.",
+    other_device: "Курс сейчас смотрят на другом устройстве.",
+    video_unavailable: "Видео временно недоступно. Попробуйте через минуту.",
+    gift_invalid: "Подарочный код не найден. Проверьте написание: FZG-XXXX-XXXX.",
+    gift_used: "Этот подарочный код уже активирован.",
+    gift_cancelled: "Этот подарочный код аннулирован.",
+    bad_request: "Некорректный запрос. Обновите страницу.",
+    bad_slug: "Адрес — латиница, цифры и дефис, например kolennye-sustavy.",
+    slug_taken: "Такой адрес уже занят.",
+    bad_category: "Выберите категорию.",
+    bad_price: "Цена — от 0 до 1 000 000 ₽.",
+    bad_old_price: "Старая цена должна быть больше текущей.",
+    price_required: "Укажите цену — без неё курс нельзя продавать.",
+    no_lessons: "Сначала добавьте хотя бы один опубликованный урок с видео.",
+    no_video: "Загрузите видео — без него урок нельзя показать ученикам.",
+    lesson_has_progress: "Урок уже смотрели ученики — удалить его нельзя, можно только скрыть.",
+    category_not_empty: "В категории есть курсы — сначала перенесите их.",
+    bundle_min_courses: "В комплекте должно быть хотя бы два курса.",
+    bundle_courses_unpublished: "Сначала опубликуйте все курсы комплекта.",
+    bad_promo_code: "Промокод — латиница, цифры и дефис, от 3 символов (не GIFT-…).",
+    promo_taken: "Такой промокод уже есть.",
+    method_required: "Укажите способ оплаты (например, перевод на карту).",
+    reason_required: "Укажите причину.",
+    video_too_big: "Файл больше 50 МБ — сожмите видео (например, 720p) и загрузите снова.",
+    video_format: "Нужен файл MP4 (H.264).",
+    image_too_big: "Картинка больше 5 МБ.",
+    image_format: "Нужна картинка JPG, PNG или WebP.",
+    file_missing: "Файл не загрузился. Попробуйте ещё раз.",
+    upload_unavailable: "Хранилище недоступно. Попробуйте через минуту.",
     network: "Нет связи с сервером. Проверьте интернет и попробуйте ещё раз.",
     server_error: "Что-то пошло не так на сервере. Попробуйте ещё раз через минуту.",
     not_configured: "Личный кабинет скоро заработает."
@@ -114,7 +158,9 @@
             var code = (j && (j.error_code || j.error || j.message)) || "server_error";
             if (typeof code !== "string") code = "server_error";
             if (r.status === 401 && !ERRORS[code]) code = "not_authenticated";
-            throw new SbError(code, r.status);
+            var err = new SbError(code, r.status);
+            err.data = j;
+            throw err;
           }
           return j;
         });
@@ -142,7 +188,7 @@
 
   function rpc(fn, args) {
     return token().then(function (t) {
-      if (!t && fn !== "program_info") throw new SbError("not_authenticated", 401);
+      if (!t && ["program_info", "courses_catalog", "course_detail"].indexOf(fn) < 0) throw new SbError("not_authenticated", 401);
       return call("/rest/v1/rpc/" + fn, { method: "POST", headers: headers(t), body: JSON.stringify(args || {}) });
     }).then(function (res) {
       if (res && res.ok === false && res.error) throw new SbError(res.error, 400);
@@ -157,6 +203,15 @@
     }).then(function (res) {
       if (res && res.session) save(res.session);
       return res;
+    });
+  }
+
+  // Серверная функция онлайн-курсов (выдача видео, загрузка в админке)
+  function courses(action, body) {
+    return token().then(function (t) {
+      if (!t) throw new SbError("not_authenticated", 401);
+      return call("/functions/v1/courses", { method: "POST", headers: headers(t),
+        body: JSON.stringify(Object.assign({ action: action }, body || {})) });
     });
   }
 
@@ -184,6 +239,10 @@
     onChange: function (fn) { listeners.push(fn); },
     rpc: rpc,
     account: account,
+    courses: courses,
+    token: token,
+    base: BASE,
+    key: KEY,
     verifyRecovery: verifyRecovery,
     updatePassword: updatePassword,
     signOut: signOut,

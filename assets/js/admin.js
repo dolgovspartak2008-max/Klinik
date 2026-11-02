@@ -55,7 +55,7 @@
     $$("[data-tab]").forEach(function (t) { t.setAttribute("aria-selected", String(t.getAttribute("data-tab") === name)); });
     $$("[data-panel]").forEach(function (p) { p.hidden = p.getAttribute("data-panel") !== name; });
     history.replaceState(null, "", "#" + name);
-    if (!loaded[name] || name === "requests" || name === "overview" || name === "broadcast") { loaded[name] = true; LOADERS[name](); }
+    if (!loaded[name] || name === "requests" || name === "overview" || name === "broadcast" || /^c-/.test(name)) { loaded[name] = true; LOADERS[name](); }
   }
   doc.addEventListener("click", function (e) {
     var t = e.target.closest("[data-tab]");
@@ -216,8 +216,11 @@
         (x.invited.length ? "<ul class=\"adm-list\">" + x.invited.map(function (i) {
           return '<li><button class="acc-link" data-user="' + esc(i.user_id) + '">' + who(i) + "</button> · " + esc(d(i.created_at)) + " · " + esc(REF_STATUS[i.status]) + (i.same_network ? " · ⚠️ одна сеть" : "") + "</li>";
         }).join("") + "</ul>" : '<p class="cab-muted">Никого.</p>') +
+        '<div data-user-courses></div>' +
         "<h3>Журнал действий</h3><ol class=\"adm-events adm-events--compact\">" + x.events.map(eventRow).join("") + "</ol>";
       m.dataset.tg = u.telegram ? "1" : "";
+      // онлайн-курсы клиента (assets/js/admin-courses.js)
+      if (window.FZAdminUser) window.FZAdminUser(u.id, $("[data-user-courses]", box));
       $(".modal__close", m).focus();
     }).catch(fail);
   }
@@ -523,6 +526,8 @@
     overview: loadOverview, requests: loadRequests, users: function () { loadUsers(""); },
     referrals: function () { loadReferrals(""); }, rules: loadRules, broadcast: loadBroadcast, events: function () { loadEvents(false); }
   };
+  // расширения (онлайн-курсы) добавляют свои вкладки и подписи событий
+  window.FZAdmin = { loaders: LOADERS, ev: EV, openUser: openUser, openTab: function (n) { openTab(n); } };
 
   doc.addEventListener("click", function (e) {
     if (e.target.closest("[data-open-auth]") && window.FZAuth) window.FZAuth.open("login");

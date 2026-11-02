@@ -299,7 +299,7 @@ function legacyPage() {
 /* ---------- sitemap.xml ---------- */
 function sitemap() {
   var today = new Date().toISOString().slice(0, 10);
-  var urls = [SITE_URL + "/"].concat(ids.map(function (id) { return url(INFO[id].slug); }));
+  var urls = [SITE_URL + "/", SITE_URL + "/kursy/", SITE_URL + "/kursy/usloviya/"].concat(ids.map(function (id) { return url(INFO[id].slug); }));
   return '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
     urls.map(function (u) { return "  <url><loc>" + u + "</loc><lastmod>" + today + "</lastmod></url>"; }).join("\n") +
     "\n</urlset>\n";
@@ -338,7 +338,8 @@ function securityHeaders() {
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data:",
     "media-src 'self'",
-    "connect-src 'self'",
+    // прямой адрес Supabase нужен только админке: загрузка видео по одноразовой ссылке, минуя прокси
+    "connect-src 'self'" + (SUPABASE_REF ? " https://" + SUPABASE_REF + ".supabase.co" : ""),
     "frame-src 'none'",
     "frame-ancestors 'none'",
     "object-src 'none'",
@@ -370,10 +371,18 @@ function vercelConfig() {
   if (SUPABASE_REF) {
     conf.rewrites = [{ source: "/sb/:path*", destination: "https://" + SUPABASE_REF + ".supabase.co/:path*" }];
   }
+  // Онлайн-курсы: одна страница курса и один плеер на все курсы (данные — из базы)
+  conf.rewrites = (conf.rewrites || []).concat([
+    { source: "/kursy/:slug([a-z0-9-]+)/uroki", destination: "/kursy/urok.html" },
+    { source: "/kursy/:slug([a-z0-9-]+)/uroki/", destination: "/kursy/urok.html" },
+    { source: "/kursy/:slug([a-z0-9-]+)", destination: "/kursy/kurs.html" },
+    { source: "/kursy/:slug([a-z0-9-]+)/", destination: "/kursy/kurs.html" }
+  ]);
   return JSON.stringify(Object.assign(conf, {
     headers: [
       { source: "/(.*)", headers: securityHeaders() },
       { source: "/(kabinet|admin)(.*)", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }, { key: "Cache-Control", value: "no-store" }] },
+      { source: "/kursy/:slug/uroki(.*)", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }, { key: "Cache-Control", value: "no-store" }] },
       { source: "/sb/(.*)", headers: [{ key: "X-Robots-Tag", value: "noindex" }, { key: "Cache-Control", value: "no-store" }] },
       { source: "/api/(.*)", headers: [{ key: "X-Robots-Tag", value: "noindex" }] },
       { source: "/assets/(img|video)/(.*)", headers: [{ key: "Cache-Control", value: "public, max-age=604800, stale-while-revalidate=86400" }] }
@@ -397,4 +406,4 @@ if (fs.existsSync(path.join(ROOT, "uslugi"))) {
 write("usluga.html", legacyPage());
 write("sitemap.xml", sitemap());
 write("vercel.json", vercelConfig());
-console.log("Готово: " + ids.length + " страниц услуг, sitemap.xml (" + (ids.length + 1) + " URL), usluga.html, vercel.json");
+console.log("Готово: " + ids.length + " страниц услуг, sitemap.xml (" + (ids.length + 3) + " URL), usluga.html, vercel.json");

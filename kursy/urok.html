@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Урок — клиника «Физиотера»</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="referrer" content="no-referrer" />
+  <meta name="theme-color" content="#0b1742" />
+  <link rel="icon" href="/favicon.ico" sizes="48x48" />
+  <link rel="icon" href="/assets/img/favicon.png" type="image/png" sizes="96x96" />
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/account.css" />
+  <link rel="stylesheet" href="/assets/css/courses.css" />
+</head>
+<body class="cab-page crs-page" data-page="player">
+  <a class="skip-link" href="#main">Перейти к содержимому</a>
+
+  <header class="header is-scrolled cab-header">
+    <div class="container header__inner">
+      <a href="/" class="logo" aria-label="Физиотера — на главную">
+        <img class="logo__mark" src="/assets/img/logo-mark.svg" alt="" width="44" height="44" />
+        <span class="logo__text">Физиотера<small>Онлайн-курсы</small></span>
+      </a>
+      <nav class="cab-header__nav" aria-label="Разделы">
+        <a class="cab-header__link" href="/">Клиника</a>
+        <a class="cab-header__link" href="/kursy/">Курсы</a>
+        <a class="cab-header__link" href="/kabinet/#courses">Мои курсы</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="crs">
+    <div class="container">
+      <nav class="crs-crumbs" aria-label="Навигация"><a href="/kursy/">Курсы</a><span aria-hidden="true">/</span><a data-course-link href="/kursy/"><span data-crumb>…</span></a><span aria-hidden="true">/</span><span>Уроки</span></nav>
+
+      <div class="cab-state" data-state="loading"><span class="cab-spinner" aria-hidden="true"></span><p>Загружаем уроки…</p></div>
+
+      <section class="cab-state cab-guest" data-state="guest" hidden>
+        <h1>Войдите, чтобы смотреть уроки</h1>
+        <p>Уроки доступны в личном кабинете. Вход через Telegram или email занимает минуту.</p>
+        <div class="cab-guest__actions"><button class="btn btn--primary btn--lg" type="button" data-open-auth="login">Войти</button></div>
+      </section>
+
+      <section class="cab-state cab-guest" data-state="error" hidden>
+        <h1>Не удалось открыть уроки</h1>
+        <p data-error-text></p>
+        <div class="cab-guest__actions"><a class="btn btn--primary" href="/kursy/">Все курсы</a></div>
+      </section>
+
+      <section class="cab-state cab-guest" data-state="empty" hidden>
+        <h1>Уроки скоро появятся</h1>
+        <p>Мы пришлём уведомление в Telegram, когда опубликуем первый урок.</p>
+      </section>
+
+      <div class="ply" data-state="ready" hidden>
+        <div>
+          <div class="ply-box" data-ply>
+            <video playsinline preload="metadata" controlslist="nodownload noremoteplayback" disablepictureinpicture disableremoteplayback></video>
+            <span class="ply-wm" data-wm aria-hidden="true"></span>
+            <span class="ply-spin" data-spin hidden></span>
+            <div class="ply-veil" data-veil hidden></div>
+            <div class="ply-ctrl">
+              <div class="ply-seek" data-seek role="slider" tabindex="0" aria-label="Перемотка">
+                <div class="ply-seek__track"><i class="ply-seek__buf" data-buf></i><i class="ply-seek__fill" data-fill></i></div>
+              </div>
+              <div class="ply-row">
+                <button class="ply-btn" type="button" data-play aria-label="Смотреть"></button>
+                <button class="ply-btn" type="button" data-mute aria-label="Звук"></button>
+                <input class="ply-vol" type="range" min="0" max="1" step="0.05" value="1" data-vol aria-label="Громкость" />
+                <span class="ply-time" data-time>0:00 / 0:00</span>
+                <button class="ply-btn ply-rate" type="button" data-rate aria-label="Скорость">1×</button>
+                <button class="ply-btn" type="button" data-fs aria-label="Во весь экран"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ply__side">
+          <p class="buy-note buy-note--warn" data-blocked hidden>Доступ к курсам на аккаунте приостановлен. Позвоните в клинику: +7 (987) 600-00-37.</p>
+          <section class="cab-block ply-info">
+            <p class="ply-info__course">Урок</p>
+            <h1 data-title></h1>
+            <div class="crs-text" data-desc></div>
+            <div data-rec hidden><h3>Рекомендации</h3><div class="crs-text" data-rec-text></div></div>
+            <div class="ply-info__actions">
+              <button class="btn btn--primary" type="button" data-next hidden>Следующий урок</button>
+              <button class="btn btn--outline" type="button" data-done hidden>Отметить как пройденный</button>
+            </div>
+          </section>
+          <section class="cab-block">
+            <h2>Уроки курса</h2>
+            <div class="ply-total" data-total></div>
+            <ol class="ply-list" data-list></ol>
+            <p class="cab-muted cab-small" data-buy-hint hidden>Остальные уроки откроются после покупки курса.</p>
+          </section>
+          <details class="cab-block crs-block--warn" data-contra-block>
+            <summary><b>Противопоказания и меры предосторожности</b></summary>
+            <div class="crs-text" data-contra></div>
+          </details>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="/assets/js/config.js"></script>
+  <script src="/assets/js/sb.js"></script>
+  <script src="/assets/js/account.js"></script>
+  <script src="/assets/js/courses.js"></script>
+  <script src="/assets/js/player.js"></script>
+</body>
+</html>
